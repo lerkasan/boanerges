@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-${{ inputs.app_part }}
+  IMAGE_NAME: ${{ github.repository }}
   IMAGE_TAG: ${{ github.sha }}
   CODEDEPLOY_APPLICATION: 'boanerges'
   DEPLOYMENT_GROUP: 'production'
@@ -18,7 +18,7 @@ env:
 jobs:
 
   publish_docker_image:
-    name: Build and Push Backend Docker Image to GitHub Container Registry
+    name: Build and Push Docker Image to GitHub Container Registry
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -52,7 +52,7 @@ jobs:
         with:
           file: Dockerfile.${{ inputs.app_part }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest,${{ steps.docker_meta.outputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.app_part }}-latest,${{ inputs.app_part }}-${{ steps.docker_meta.outputs.tags }}
 
       - name: Sign the Docker images with GitHub OIDC Token
         env:
