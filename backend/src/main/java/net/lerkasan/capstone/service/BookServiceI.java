@@ -1,6 +1,6 @@
-package org.lerkasan.capstone.service;
+package net.lerkasan.capstone.service;
 
-import org.lerkasan.capstone.model.Book;
+import net.lerkasan.capstone.model.Book;
 
 import java.util.List;
 

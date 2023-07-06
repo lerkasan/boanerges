@@ -1,4 +1,4 @@
-package org.lerkasan.capstone.model;
+package net.lerkasan.capstone.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

@@ -1,11 +1,11 @@
-package org.lerkasan.capstone;
+package net.lerkasan.capstone;
 
+import net.lerkasan.capstone.model.Book;
+import net.lerkasan.capstone.repository.BookRepository;
+import net.lerkasan.capstone.service.BookService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.lerkasan.capstone.model.Book;
-import org.lerkasan.capstone.repository.BookRepository;
-import org.lerkasan.capstone.service.BookService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

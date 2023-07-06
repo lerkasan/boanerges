@@ -1,7 +1,7 @@
-package org.lerkasan.capstone.controller;
+package net.lerkasan.capstone.controller;
 
-import org.lerkasan.capstone.model.Book;
-import org.lerkasan.capstone.service.BookServiceI;
+import net.lerkasan.capstone.model.Book;
+import net.lerkasan.capstone.service.BookServiceI;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

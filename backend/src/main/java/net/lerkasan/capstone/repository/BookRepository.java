@@ -1,6 +1,6 @@
-package org.lerkasan.capstone.repository;
+package net.lerkasan.capstone.repository;
 
-import org.lerkasan.capstone.model.Book;
+import net.lerkasan.capstone.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
-package org.lerkasan.capstone.service;
+package net.lerkasan.capstone.service;
 
-import org.lerkasan.capstone.model.Book;
-import org.lerkasan.capstone.repository.BookRepository;
+import net.lerkasan.capstone.model.Book;
+import net.lerkasan.capstone.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

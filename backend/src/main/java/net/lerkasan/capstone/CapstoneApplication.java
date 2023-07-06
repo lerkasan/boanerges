@@ -1,4 +1,4 @@
-package org.lerkasan.capstone;
+package net.lerkasan.capstone;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
