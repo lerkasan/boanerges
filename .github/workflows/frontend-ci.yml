@@ -1,4 +1,4 @@
-name: Build and test via npm, then build and push Docker image
+name: Build, test and deploy frontend
 
 on:
   push:
@@ -7,18 +7,6 @@ on:
     paths:
       - 'frontend/**'
       - 'Dockerfile.frontend'
-      - '.github/workflows/frontend-ci.yml'
-      - '.github/workflows/dockerize_and_deploy.yml'
-      - 'infra/**'
-      - 'compose.yml'
-#    paths-ignore:
-#      - 'backend/**'
-#      - 'Dockerfile.backend'
-#      - '.github/workflows/backend-ci.yml'
-##      - '.github/**'
-#      - 'README.md'
-#      - '.gitignore'
-#      - '.dockerignore'
 
 # for debugging purposes
   workflow_dispatch:
@@ -46,7 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -78,7 +66,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -91,15 +79,26 @@ jobs:
 #        working-directory: ${{ env.WORKING_DIRECTORY }}
 
 
-  dockerize_and_deploy_frontend:
-    name: Dockerize and Deploy Frontend
+  push_docker_image:
+    name: Push Frontend Docker image
     needs: [ build, test ]
     if: github.event_name != 'pull_request'
     permissions:
       contents: read
       packages: write
       id-token: write       # For signing images via sigstore/cosign with GitHub OIDC Token
-    uses: ./.github/workflows/dockerize_and_deploy.yml
+    uses: ./.github/workflows/push-docker-image.yml
     with:
       app_part: frontend
+    secrets: inherit
+
+
+  deploy:
+    name: Deploy to AWS
+    needs: [ build, test, push_docker_image ]
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
     secrets: inherit

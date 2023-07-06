@@ -1,4 +1,4 @@
-name: Build Jar and Test via Maven then Build and Push Docker Image
+name: Build, test and deploy backend
 
 on:
   push:
@@ -7,18 +7,6 @@ on:
     paths:
       - 'backend/**'
       - 'Dockerfile.backend'
-      - '.github/workflows/backend-ci.yml'
-#      - '.github/workflows/dockerize_and_deploy.yml'
-      - 'infra/**'
-      - 'compose.yml'
-#    paths-ignore:
-#      - 'frontend/**'
-#      - 'Dockerfile.frontend'
-#      - '.github/workflows/frontend-ci.yml'
-##      - '.github/**'
-#      - 'README.md'
-#      - '.gitignore'
-#      - '.dockerignore'
 
 # for debugging purposes
   workflow_dispatch:
@@ -114,18 +102,29 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-  dockerize_and_deploy_backend:
-    name: Dockerize and Deploy Backend
+  push_docker_image:
+    name: Push Backend Docker image
     needs: [ build, test ]
     if: github.event_name != 'pull_request'
     permissions:
       contents: read
       packages: write
       id-token: write       # For signing images via sigstore/cosign with GitHub OIDC Token
-    uses: ./.github/workflows/dockerize_and_deploy.yml
+    uses: ./.github/workflows/push-docker-image.yml
     with:
       app_part: backend
     secrets: inherit
 #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      PIPELINE_AWS_ACCESS_KEY_ID: ${{ secrets.PIPELINE_AWS_ACCESS_KEY_ID }}
 #      PIPELINE_AWS_SECRET_KEY_ID: ${{ secrets.PIPELINE_AWS_SECRET_KEY_ID }}
+
+
+  deploy:
+    name: Deploy to AWS
+    needs: [ build, test, push_docker_image ]
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit

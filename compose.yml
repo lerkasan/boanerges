@@ -3,7 +3,7 @@ version: '3'
 services:
 
   frontend:
-    image: ghcr.io/lerkasan/boanerges-frontend:${FRONTEND_TAG:-latest} # commit sha from environment variable    aws deploy get-deployment --deployment-id $DEPLOYMENT_ID  --query  ".deploymentInfo.revision.gitHubLocation.commitId" --output text
+    image: ghcr.io/lerkasan/boanerges/boanerges-frontend:${FRONTEND_TAG:-latest} # commit sha from environment variable    aws deploy get-deployment --deployment-id $DEPLOYMENT_ID  --query  ".deploymentInfo.revision.gitHubLocation.commitId" --output text
     restart: always
     read_only: true
     tmpfs:
@@ -28,7 +28,7 @@ services:
       - backend
 
   backend:
-    image: ghcr.io/lerkasan/boanerges-backend:${BACKEND_TAG:-latest} # commit sha from environment variable   aws deploy get-deployment --deployment-id $DEPLOYMENT_ID  --query  ".deploymentInfo.revision.gitHubLocation.commitId" --output text
+    image: ghcr.io/lerkasan/boanerges/boanerges-backend:${BACKEND_TAG:-latest} # commit sha from environment variable   aws deploy get-deployment --deployment-id $DEPLOYMENT_ID  --query  ".deploymentInfo.revision.gitHubLocation.commitId" --output text
     restart: always
     read_only: true
     tmpfs:
