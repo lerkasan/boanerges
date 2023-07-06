@@ -1,4 +1,4 @@
-name: Push docker image
+name: Reusable workflow to build and push docker image
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Deploy frontend and backend
+name: Deploy frontend and backend after IaC changes
 
 on:
   push:

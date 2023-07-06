@@ -1,4 +1,4 @@
-name: Deploy
+name: Reusable workflow for deploying to AWS
 
 on:
   workflow_call:

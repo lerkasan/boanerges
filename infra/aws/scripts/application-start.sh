@@ -13,7 +13,7 @@ DEPLOYMENT_ID=$(aws deploy list-deployments --application-name $APPLICATION_NAME
 GITHUB_TOKEN=$(aws ssm get-parameter --region $REGION --name GITHUB_TOKEN --with-decryption --query Parameter.Value --output text)
 COMMIT_SHA=$(aws deploy get-deployment --deployment-id $DEPLOYMENT_ID --query "deploymentInfo.revision.gitHubLocation.commitId" --output text)
 REPOSITORY=$(aws deploy get-deployment --deployment-id $DEPLOYMENT_ID --query "deploymentInfo.revision.gitHubLocation.repository" --output text)
-GITHUB_USER=$(echo $REPOSITORY | cut -d ";" -f 1)
+GITHUB_USER=$(echo $REPOSITORY | cut -d "/" -f 1)
 
 DB_HOST=$(aws ssm get-parameter --region $REGION --name ${APPLICATION_NAME}_database_host --with-decryption --query Parameter.Value --output text)
 DB_NAME=$(aws ssm get-parameter --region $REGION --name ${APPLICATION_NAME}_database_name --with-decryption --query Parameter.Value --output text)
@@ -22,10 +22,10 @@ DB_PASSWORD=$(aws ssm get-parameter --region $REGION --name ${APPLICATION_NAME}_
 
 TOKEN=$(curl -u $GITHUB_USER:$GITHUB_TOKEN https://ghcr.io/token\?scope\="repository:$REPOSITORY:pull" | jq -r .token)
 BACKEND_MANIFESTS_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$GITHUB_USER/$REPOSITORY/$BACKEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
-BACKEND_MANIFESTS_RESPONSE=$(curl -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$GITHUB_USER/$REPOSITORY/$BACKEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
+BACKEND_MANIFESTS_RESPONSE=$(curl -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$BACKEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
 
-FRONTEND_MANIFESTS_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$GITHUB_USER/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
-FRONTEND_MANIFESTS_RESPONSE=$(curl -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$GITHUB_USER/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
+FRONTEND_MANIFESTS_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
+FRONTEND_MANIFESTS_RESPONSE=$(curl -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
 
 FRONTEND_TAG=$([ $FRONTEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
 BACKEND_TAG=$([ $BACKEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
@@ -49,7 +49,7 @@ echo "FRONTEND_MANIFESTS_HTTP_CODE=$FRONTEND_MANIFESTS_HTTP_CODE"
 echo "FRONTEND_MANIFESTS_RESPONSE=$FRONTEND_MANIFESTS_RESPONSE"
 
 
-echo $GITHUB_TOKEN | docker login ghcr.io -u lerkasan --password-stdin
+echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
 
 cd /home/ubuntu/app
 
