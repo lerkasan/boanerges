@@ -28,6 +28,7 @@ BACKEND_TAG=$([ $BACKEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" 
 
 export FRONTEND_TAG=$FRONTEND_TAG
 export BACKEND_TAG=$BACKEND_TAG
+export GITHUB_TOKEN=$GITHUB_TOKEN
 # export DOCKER_TAG=$DOCKER_TAG
 
 echo $GITHUB_TOKEN | docker login ghcr.io -u lerkasan --password-stdin
