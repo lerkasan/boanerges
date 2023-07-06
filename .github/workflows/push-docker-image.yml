@@ -8,9 +8,8 @@ on:
         type: string
 
 env:
-  APPLICATION_NAME: 'boanerges'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/${{ env.APPLICATION_NAME }}-${{ inputs.app_part }}
+  IMAGE_NAME: ${{ github.repository }}/${{ vars.APPLICATION_NAME }}-${{ inputs.app_part }}
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:

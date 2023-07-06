@@ -4,7 +4,6 @@ on:
   workflow_call:
 
 env:
-  APPLICATION_NAME: 'boanerges'
   DEPLOYMENT_GROUP: 'production'
   AWS_REGION: 'us-east-1'
 
@@ -30,7 +29,7 @@ jobs:
       - name: Check for other ongoing deployment
         id: deployment_in_progress
         run: |
-          deployments=$(aws deploy list-deployments --application-name ${{ env.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --region ${{ env.AWS_REGION }} --include-only-statuses "InProgress" --output json)
+          deployments=$(aws deploy list-deployments --application-name ${{ vars.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --region ${{ env.AWS_REGION }} --include-only-statuses "InProgress" --output json)
           count=$(echo $deployments | jq -r '.deployments | length')
           in_progress_deployment_id=$(echo $deployments | jq -r '.deployments[0]')
           echo count=$count >> "$GITHUB_OUTPUT"
@@ -48,7 +47,7 @@ jobs:
       - name: Create Deployment at AWS CodeDeploy
         id: codedeploy
         run: |
-          deployment_id=$(aws deploy create-deployment --application-name ${{ env.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --github-location repository=$GITHUB_REPOSITORY,commitId=$GITHUB_SHA --ignore-application-stop-failures --query "deploymentId" --output text --no-paginate)
+          deployment_id=$(aws deploy create-deployment --application-name ${{ vars.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --github-location repository=$GITHUB_REPOSITORY,commitId=$GITHUB_SHA --ignore-application-stop-failures --query "deploymentId" --output text --no-paginate)
           echo deployment_id=$deployment_id >> "$GITHUB_OUTPUT"
 
       - name: Wait and verify whether the deployment was successful
