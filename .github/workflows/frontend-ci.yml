@@ -88,7 +88,7 @@ jobs:
       contents: read
       packages: write
       id-token: write       # For signing images via sigstore/cosign with GitHub OIDC Token
-    uses: ./.github/workflows/reusable/build-and-push-docker-image.yml
+    uses: ./.github/workflows/build-and-push-docker-image.yml
     with:
       app_part: frontend
     secrets: inherit
@@ -98,7 +98,7 @@ jobs:
     name: Provision AWS infrastructure
     needs: [ build, test, build_push_docker_image ]
     if: github.event_name != 'pull_request'
-    uses: ./.github/workflows/reusable/provision-infrastructure.yml
+    uses: ./.github/workflows/provision-infrastructure.yml
     secrets: inherit
 
 
@@ -109,5 +109,5 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: ./.github/workflows/reusable/deploy.yml
+    uses: ./.github/workflows/deploy.yml
     secrets: inherit
