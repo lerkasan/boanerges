@@ -6,6 +6,9 @@ on:
 env:
   AWS_REGION: 'us-east-1'
 #  WORKING_DIRECTORY: './infra/terraform'
+  TF_database_name: ${{ secrets.DATABASE_NAME }}
+  TF_database_username: ${{ secrets.DATABASE_USERNAME }}
+  TF_database_password: ${{ secrets.DATABASE_PASSWORD }}
 
 jobs:
 
@@ -15,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       WORKING_DIRECTORY: './infra/terraform'
-      TF_database_name: ${{ secrets.DATABASE_NAME }}
-      TF_database_username: ${{ secrets.DATABASE_USERNAME }}
-      TF_database_password: ${{ secrets.DATABASE_PASSWORD }}
+#      TF_database_name: ${{ secrets.DATABASE_NAME }}
+#      TF_database_username: ${{ secrets.DATABASE_USERNAME }}
+#      TF_database_password: ${{ secrets.DATABASE_PASSWORD }}
     defaults:
       run:
         working-directory: ${{ env.WORKING_DIRECTORY }}
