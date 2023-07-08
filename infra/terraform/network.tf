@@ -66,7 +66,7 @@ resource "aws_route_table_association" "public" {
 resource "aws_eip" "this" {
   for_each   = aws_subnet.public
 
-  vpc        = true
+  domain     = "vpc"
 
   tags = {
     Name        = join("_", [var.project_name, "_nat_gw_eip"])

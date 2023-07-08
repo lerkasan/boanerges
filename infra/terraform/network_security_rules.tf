@@ -83,6 +83,16 @@ resource "aws_security_group_rule" "appserver_allow_outbound_http_to_all" {
   security_group_id = aws_security_group.appserver.id
 }
 
+resource "aws_security_group_rule" "appserver_allow_inbound_ssh_from_ec2_connect_endpoint" {
+  type              = "ingress"
+  description       = "SSH ingress"
+  from_port         = var.ssh_port
+  to_port           = var.ssh_port
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.ec2_connect_endpoint.id
+  security_group_id = aws_security_group.appserver.id
+}
+
 resource "aws_security_group_rule" "appserver_allow_inbound_ssh_from_admin_ip" {
   type              = "ingress"
   description       = "SSH ingress"
@@ -115,4 +125,16 @@ resource "aws_security_group_rule" "database_allow_inbound_from_appserver" {
 
   source_security_group_id = aws_security_group.appserver.id
   security_group_id        = aws_security_group.database.id
+}
+
+# -------------------- EC2 Instance Connect Endpoint rules ---------------------------
+
+resource "aws_security_group_rule" "ec2_connect_endpoint_allow_outbound_ssh_to_appserver" {
+  type              = "egress"
+  description       = "SSH egress"
+  from_port         = var.ssh_port
+  to_port           = var.ssh_port
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.appserver.id
+  security_group_id = aws_security_group.ec2_connect_endpoint.id
 }

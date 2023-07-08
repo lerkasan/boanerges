@@ -55,7 +55,7 @@ resource "aws_iam_role" "appserver_iam_role" {
 
 data "aws_iam_policy_document" "assume_role_ec2" {
   statement {
-    sid           = "1"
+    sid           = "EC2AssumeRole"
     effect        = "Allow"
     actions       = [ "sts:AssumeRole" ]
     principals {
@@ -76,14 +76,14 @@ resource "aws_iam_role_policy_attachment" "GetDeploymentAndGetSSMParameter" {
 }
 
 resource "aws_iam_policy" "read_access_to_parameters_and_deployments" {
-  name        = "test-policy"
+  name        = "read-access-to-parameters-and-deployments"
   description = "Allow to get deployment information to retrieve a commitId hash"
   policy      = data.aws_iam_policy_document.read_access_to_parameters_and_deployments.json
 }
 
 data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
   statement {
-    sid       = "2"
+    sid       = "CodeDeployGetDeployments"
     effect    = "Allow"
     actions   = [
       "codedeploy:GetDeployment",
@@ -93,7 +93,7 @@ data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
   }
 
   statement {
-    sid       = "3"
+    sid       = "SSMGetParameter"
     effect    = "Allow"
     actions   = [ "ssm:GetParameter" ]
     resources = [
@@ -105,7 +105,7 @@ data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
   }
 
   statement {
-    sid       = "4"
+    sid       = "KMSDecrypt"
     effect    = "Allow"
     actions   = [
       "kms:Decrypt",
@@ -116,7 +116,7 @@ data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
 }
 
 data "aws_ami" "amazon_linux2" {
-  owners = ["amazon"]
+  owners      = ["amazon"]
   most_recent = true
 
   filter {
@@ -167,3 +167,72 @@ data "cloudinit_config" "user_data" {
   }
 }
 
+resource "aws_ec2_instance_connect_endpoint" "this" {
+  for_each              = toset(local.availability_zones)
+
+  subnet_id             = aws_subnet.private[each.value].id
+  security_group_ids    = [ aws_security_group.ec2_connect_endpoint.id ]
+  preserve_client_ip    = true
+
+  tags = {
+    Name        = join("_", [var.project_name, "ec2_connect_endpoint"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
+resource "aws_security_group" "ec2_connect_endpoint" {
+  name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
+  description = "security group for ec2 instance connect endpoint"
+  vpc_id      = aws_vpc.this.id
+
+  tags = {
+    Name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
+resource "aws_iam_policy" "connect_via_ec2_instance_connect_endpoint" {
+  name        = "ec2-instance-connect"
+  description = "Allow to connect to EC2 instance via EC2 Instance Connect Endpoint"
+  policy      = data.aws_iam_policy_document.connect_to_ec2_via_ec2_instance_connect_endpoint.json
+}
+
+data "aws_iam_policy_document" "connect_to_ec2_via_ec2_instance_connect_endpoint" {
+  #  dynamic "statement" {
+  #    for_each = toset(local.availability_zones)
+
+  statement {
+    sid     = "EC2ConnectEndpoint"
+    effect  = "Allow"
+    actions = [
+      "ec2-instance-connect:OpenTunnel"
+    ]
+    resources = [for az in toset(local.availability_zones) : aws_ec2_instance_connect_endpoint.this[az].arn ]
+
+    condition {
+      test     = "NumericEquals"
+      variable = "ec2-instance-connect:remotePort"
+      values   = [var.ssh_port]
+    }
+
+    condition {
+      test     = "IpAddress"
+      variable = "ec2-instance-connect:privateIpAddress"
+      values   = [ for az in toset(local.availability_zones) : aws_instance.appserver[az].private_ip]
+    }
+  }
+
+  statement {
+    sid     = "EC2DescribeConnectEndpoints"
+    effect  = "Allow"
+    actions = [
+      "ec2:DescribeInstances",
+      "ec2:DescribeInstanceConnectEndpoints"
+    ]
+    resources = ["*"]
+  }
+}
