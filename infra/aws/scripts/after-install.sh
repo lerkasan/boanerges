@@ -24,11 +24,9 @@ BACKEND_TAG=$([ $BACKEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" 
 
 # FRONTEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-frontend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 # BACKEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-backend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
-# DOCKER_TAG=$([ $REPOSITORY == "lerkasan/boanerges" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 
 export FRONTEND_TAG=$FRONTEND_TAG
 export BACKEND_TAG=$BACKEND_TAG
-# export DOCKER_TAG=$DOCKER_TAG
 
 echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
 

@@ -102,7 +102,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-  push_docker_image:
+  build_push_docker_image:
     name: Push Backend Docker image
     needs: [ build, test ]
     if: github.event_name != 'pull_request'
@@ -110,7 +110,7 @@ jobs:
       contents: read
       packages: write
       id-token: write       # For signing images via sigstore/cosign with GitHub OIDC Token
-    uses: ./.github/workflows/push-docker-image.yml
+    uses: ./.github/workflows/reusable/build-and-push-docker-image.yml
     with:
       app_part: backend
     secrets: inherit
@@ -119,12 +119,20 @@ jobs:
 #      PIPELINE_AWS_SECRET_KEY_ID: ${{ secrets.PIPELINE_AWS_SECRET_KEY_ID }}
 
 
+  infrastructure:
+    name: Provision AWS infrastructure
+    needs: [ build, test, build_push_docker_image ]
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/reusable/provision-infrastructure.yml
+    secrets: inherit
+
+
   deploy:
     name: Deploy to AWS
-    needs: [ build, test, push_docker_image ]
+    needs: [ build, test, build_push_docker_image, infrastructure ]
     if: github.event_name != 'pull_request'
     permissions:
       contents: read
       id-token: write
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/reusable/deploy.yml
     secrets: inherit

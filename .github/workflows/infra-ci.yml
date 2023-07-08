@@ -6,7 +6,8 @@ on:
       - master
     paths:
       - '.github/workflows/**'
-      - 'infra/**'
+      - 'infra/aws/**'
+      - 'infra/terraform/**'
       - 'compose.yml'
       - 'appspec.yml'
 
@@ -15,11 +16,19 @@ on:
 
 jobs:
 
+  infrastructure:
+    name: Provision AWS infrastructure
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    uses: ./.github/workflows/reusable/provision-infrastructure.yml
+    secrets: inherit
+
+
   deploy:
     name: Deploy to AWS
-    if: github.event_name != 'pull_request'
+    needs: [ infrastructure ]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     permissions:
       contents: read
       id-token: write
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/reusable/deploy.yml
     secrets: inherit

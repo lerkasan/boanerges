@@ -1,0 +1,117 @@
+name: Reusable workflow for provisioning AWS infrastructure and deploying to AWS
+
+on:
+  workflow_call:
+
+env:
+  AWS_REGION: 'us-east-1'
+
+jobs:
+
+  infrastructure:
+    name: Provision AWS infrastructure
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: './infra/terraform'
+      TF_database_name: ${{ secrets.DATABASE_NAME }}
+      TF_database_username: ${{ secrets.DATABASE_USERNAME }}
+      TF_database_password: ${{ secrets.DATABASE_PASSWORD }}
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@98637d7db679cd12b4ae373378e391551b922539   # v3.5.3
+
+      - name: Get AWS Credentials
+        uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355   # v2.2.0
+        with:
+          #          role-to-assume: ${{ secrets.PIPELINE_IAM_ROLE }}
+          #          role-session-name: GitHub-Action-Role
+          aws-access-key-id: ${{ secrets.TERRAFORM_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TERRAFORM_AWS_SECRET_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1    # v2.0.3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -input=false
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+
+
+  deploy:
+    name: Deploy to AWS EC2
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      DEPLOYMENT_GROUP: 'production'
+    steps:
+      - name: Get AWS Credentials
+        uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355   # v2.2.0
+        with:
+          #          role-to-assume: ${{ secrets.PIPELINE_IAM_ROLE }}
+          #          role-session-name: GitHub-Action-Role
+          aws-access-key-id: ${{ secrets.PIPELINE_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PIPELINE_AWS_SECRET_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Check for other ongoing deployment
+        id: deployment_in_progress
+        run: |
+          deployments=$(aws deploy list-deployments --application-name ${{ vars.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --region ${{ env.AWS_REGION }} --include-only-statuses "InProgress" --output json)
+          count=$(echo $deployments | jq -r '.deployments | length')
+          in_progress_deployment_id=$(echo $deployments | jq -r '.deployments[0]')
+          echo count=$count >> "$GITHUB_OUTPUT"
+          echo in_progress_deployment_id=$in_progress_deployment_id >> "$GITHUB_OUTPUT"
+          echo count=$count
+          echo in_progress_deployment_id=$in_progress_deployment_id
+
+      - name: Wait for other ongoing deployment to finish
+        if: steps.deployment_in_progress.outputs.count > 0
+        run: |
+          echo ${{ steps.deployment_in_progress.outputs.count }}
+          echo ${{ steps.deployment_in_progress.outputs.in_progress_deployment_id }}
+          aws deploy wait deployment-successful --deployment-id ${{ steps.deployment_in_progress.outputs.in_progress_deployment_id }}
+
+      - name: Create Deployment at AWS CodeDeploy
+        id: codedeploy
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: |
+          deployment_id=$(aws deploy create-deployment --application-name ${{ vars.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --github-location repository=$GITHUB_REPOSITORY,commitId=$GITHUB_SHA --ignore-application-stop-failures --query "deploymentId" --output text --no-paginate)
+          echo deployment_id=$deployment_id >> "$GITHUB_OUTPUT"
+
+      - name: Wait and verify whether the CodeDeploy deployment was successful
+        run: |
+          aws deploy wait deployment-successful --deployment-id ${{ steps.codedeploy.outputs.deployment_id }}
+
+      - name: App server health check
+        run: |
+          NUMBER_OF_ATTEMPTS=10
+          SLEEP_TIME=5
+          URL=http://lerkasan.net
+          for i in $(seq 1 $NUMBER_OF_ATTEMPTS);
+          do
+            HTTP_CODE=$(curl --insecure --write-out '%{http_code}' -o /dev/null -m 10 -q -s $URL)
+            if [ "$HTTP_CODE" == "200" ]; then
+              echo "App server is running."
+              exit 0
+            fi
+            echo "Attempt to curl endpoint returned HTTP Code $HTTP_CODE. Backing off and retrying."
+            sleep $SLEEP_TIME
+          done
+          echo "App server did not respond after expected time. Failing."
+          exit 1

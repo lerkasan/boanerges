@@ -32,7 +32,6 @@ BACKEND_TAG=$([ $BACKEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" 
 
 # FRONTEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-frontend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 # BACKEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-backend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
-# DOCKER_TAG=$([ $REPOSITORY == "lerkasan/boanerges" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 
 export DB_HOST=$DB_HOST
 export DB_NAME=$DB_NAME
@@ -40,16 +39,6 @@ export DB_USERNAME=$DB_USERNAME
 export DB_PASSWORD=$DB_PASSWORD
 export FRONTEND_TAG=$FRONTEND_TAG
 export BACKEND_TAG=$BACKEND_TAG
-# export DOCKER_TAG=$DOCKER_TAG
-
-# for debugging
-echo "myoutputFRONTEND_TAG=$FRONTEND_TAG"
-echo "myoutputBACKEND_TAG=$BACKEND_TAG"
-echo "myoutputBACKEND_MANIFESTS_HTTP_CODE=$BACKEND_MANIFESTS_HTTP_CODE"
-echo "myoutputBACKEND_MANIFESTS_RESPONSE=$BACKEND_MANIFESTS_RESPONSE"
-echo "myoutputFRONTEND_MANIFESTS_HTTP_CODE=$FRONTEND_MANIFESTS_HTTP_CODE"
-echo "myoutputFRONTEND_MANIFESTS_RESPONSE=$FRONTEND_MANIFESTS_RESPONSE"
-
 
 echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
 
