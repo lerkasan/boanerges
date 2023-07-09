@@ -19,6 +19,9 @@ jobs:
   infrastructure:
     name: Provision AWS infrastructure
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    permissions:
+      contents: read
+      id-token: write  # GitHub OIDC Token
     uses: ./.github/workflows/provision-infrastructure.yml
     secrets: inherit
 
@@ -29,6 +32,6 @@ jobs:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     permissions:
       contents: read
-      id-token: write
+      id-token: write  # GitHub OIDC Token
     uses: ./.github/workflows/deploy.yml
     secrets: inherit

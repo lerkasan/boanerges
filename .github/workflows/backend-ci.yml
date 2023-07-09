@@ -123,6 +123,9 @@ jobs:
     name: Provision AWS infrastructure
     needs: [ build, test, build_push_docker_image ]
     if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/provision-infrastructure.yml
     secrets: inherit
 
