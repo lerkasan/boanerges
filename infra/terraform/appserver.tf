@@ -168,9 +168,7 @@ data "cloudinit_config" "user_data" {
 }
 
 resource "aws_ec2_instance_connect_endpoint" "this" {
-  for_each              = toset(local.availability_zones)
-
-  subnet_id             = aws_subnet.private[each.value].id
+  subnet_id             = aws_subnet.private[local.availability_zones[0]].id
   security_group_ids    = [ aws_security_group.ec2_connect_endpoint.id ]
   preserve_client_ip    = true
 
@@ -181,6 +179,22 @@ resource "aws_ec2_instance_connect_endpoint" "this" {
     project     = var.project_name
   }
 }
+
+# According to AWS documentation, there are no quotas for ec2 instance connect endpoints, however recently it is not possible to create more than 1 ec2 instance connect endpoint
+#resource "aws_ec2_instance_connect_endpoint" "this" {
+#  for_each              = toset(local.availability_zones)
+#
+#  subnet_id             = aws_subnet.private[each.value].id
+#  security_group_ids    = [ aws_security_group.ec2_connect_endpoint.id ]
+#  preserve_client_ip    = true
+#
+#  tags = {
+#    Name        = join("_", [var.project_name, "ec2_connect_endpoint"])
+#    terraform   = "true"
+#    environment = var.environment
+#    project     = var.project_name
+#  }
+#}
 
 resource "aws_security_group" "ec2_connect_endpoint" {
   name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
@@ -211,7 +225,8 @@ data "aws_iam_policy_document" "connect_to_ec2_via_ec2_instance_connect_endpoint
     actions = [
       "ec2-instance-connect:OpenTunnel"
     ]
-    resources = [for az in toset(local.availability_zones) : aws_ec2_instance_connect_endpoint.this[az].arn ]
+    resources = [ aws_ec2_instance_connect_endpoint.this.arn ]
+  #  resources = [for az in toset(local.availability_zones) : aws_ec2_instance_connect_endpoint.this[az].arn ]  # Because of the issue with creating more than 1 ec2 instance connect endpoint, we use only 1 ec2 instance connect endpoint
 
     condition {
       test     = "NumericEquals"
