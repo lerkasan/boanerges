@@ -7,12 +7,6 @@ server {
     deny all;
 }
 
-# server {
-#    location ~ /\.git {
-#        deny all;
-#    }
-#}
-
 server {
     listen 80;
 
@@ -68,11 +62,11 @@ server {
     # End HTTP Methods
 
     # Only requests to lerkasan.net domain are allowed
-    if ($host !~ ^("${NGINX_HOST}"|"${PRIVATE_IP}"|localhost)$ ) {
+    if ($host !~ ^(${NGINX_HOST}|${PRIVATE_IP}|localhost)$ ) {
         return 444;
     }
 
-    if ($http_host !~ ^("${NGINX_HOST}"|"${PRIVATE_IP}"|localhost)$ ) {
+    if ($http_host !~ ^(${NGINX_HOST}|${PRIVATE_IP}|localhost)$ ) {
         return 444;
     }
     #
@@ -94,5 +88,16 @@ server {
         autoindex off;
 
         limit_except GET HEAD POST { deny all; }
+    }
+    
+    location ~ /\.git.* {
+        deny all;
+    }
+
+    location ~ /\.(?!well-known).* {
+             deny all;
+    }
+    location ~ /\.(.*)/?(.*)? {
+             deny all;
     }
 }
