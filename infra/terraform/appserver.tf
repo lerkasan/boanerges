@@ -113,6 +113,17 @@ data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
     ]
     resources = [ aws_kms_key.ssm_param_encrypt_key.arn ]
   }
+
+  statement {
+    sid       = "CloudWatchLogs"
+    effect    = "Allow"
+    actions   = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup"
+    ]
+    resources = [ "*" ]
+  }
 }
 
 data "aws_ami" "amazon_linux2" {
@@ -249,5 +260,16 @@ data "aws_iam_policy_document" "connect_to_ec2_via_ec2_instance_connect_endpoint
       "ec2:DescribeInstanceConnectEndpoints"
     ]
     resources = ["*"]
+  }
+}
+
+resource "aws_cloudwatch_log_group" "nginx" {
+  name = "/var/log/nginx"
+
+  tags = {
+    Name        = join("_", [var.project_name, "nginx_log_group"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
   }
 }
