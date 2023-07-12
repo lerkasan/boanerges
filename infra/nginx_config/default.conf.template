@@ -68,11 +68,11 @@ server {
     # End HTTP Methods
 
     # Only requests to lerkasan.net domain are allowed
-    if ($host !~ ^("${NGINX_HOST}"|"${PRIVATE_IP"}|localhost)$ ) {
+    if ($host !~ ^("${NGINX_HOST}"|"${PRIVATE_IP}"|localhost)$ ) {
         return 444;
     }
 
-    if ($http_host !~ ^("${NGINX_HOST}"|"${PRIVATE_IP"}|localhost)$ ) {
+    if ($http_host !~ ^("${NGINX_HOST}"|"${PRIVATE_IP}"|localhost)$ ) {
         return 444;
     }
     #
