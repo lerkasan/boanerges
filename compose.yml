@@ -19,7 +19,11 @@ services:
       - SETGID
       - SETUID
     environment:
-      DOMAIN_NAME: ${DOMAIN_NAME:-lerkasan.net}
+      - APP_NAME=boanerges
+      - NGINX_HOST=lerkasan.net
+      - PRIVATE_IP
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
     ports:
       - "80:80"
     networks:

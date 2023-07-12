@@ -19,8 +19,8 @@ TOKEN=$(curl -u $GITHUB_USER:$GITHUB_TOKEN https://ghcr.io/token\?scope\="reposi
 BACKEND_MANIFESTS_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$BACKEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
 FRONTEND_MANIFESTS_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
 
-FRONTEND_TAG=$([ $FRONTEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
-BACKEND_TAG=$([ $BACKEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
+FRONTEND_TAG=$([ "$FRONTEND_MANIFESTS_HTTP_CODE" == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
+BACKEND_TAG=$([ "$BACKEND_MANIFESTS_HTTP_CODE" == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
 
 # FRONTEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-frontend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 # BACKEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-backend" ] && echo "sha-$COMMIT_SHA" || echo "latest")

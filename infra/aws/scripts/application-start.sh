@@ -8,6 +8,9 @@ FRONTEND_IMAGE_NAME="$APPLICATION_NAME-frontend"
 
 REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
 
+PRIVATE_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+#PRIVATE_IP=$([ "$PRIVATE_IP" == "" ] && echo "127.0.0.1" || echo $PRIVATE_IP)
+
 DEPLOYMENT_ID=$(aws deploy list-deployments --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP_NAME --region $REGION --include-only-statuses "InProgress" --query "deployments[0]" --output text --no-paginate)
 
 GITHUB_TOKEN=$(aws ssm get-parameter --region $REGION --name GITHUB_TOKEN --with-decryption --query Parameter.Value --output text)
@@ -27,8 +30,8 @@ BACKEND_MANIFESTS_RESPONSE=$(curl -w "%{http_code}" -H "Authorization: Bearer $T
 FRONTEND_MANIFESTS_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
 FRONTEND_MANIFESTS_RESPONSE=$(curl -w "%{http_code}" -H "Authorization: Bearer $TOKEN" https://ghcr.io/v2/$REPOSITORY/$FRONTEND_IMAGE_NAME/manifests/sha-$COMMIT_SHA)
 
-FRONTEND_TAG=$([ $FRONTEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
-BACKEND_TAG=$([ $BACKEND_MANIFESTS_HTTP_CODE == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
+FRONTEND_TAG=$([ "$FRONTEND_MANIFESTS_HTTP_CODE" == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
+BACKEND_TAG=$([ "$BACKEND_MANIFESTS_HTTP_CODE" == 200 ] && echo "sha-$COMMIT_SHA" || echo "latest")
 
 # FRONTEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-frontend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 # BACKEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-backend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
@@ -39,6 +42,7 @@ export DB_USERNAME=$DB_USERNAME
 export DB_PASSWORD=$DB_PASSWORD
 export FRONTEND_TAG=$FRONTEND_TAG
 export BACKEND_TAG=$BACKEND_TAG
+export PRIVATE_IP=$PRIVATE_IP
 
 echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
 
