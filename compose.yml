@@ -24,7 +24,7 @@ services:
       - PRIVATE_IP
     volumes:
       - ./nginx_conf:/etc/nginx/conf.d
-      - ./nginx_logs:/var/log/nginx/
+#      - ./nginx_logs:/var/log/nginx/
     ports:
       - "80:80"
     networks:
