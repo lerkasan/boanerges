@@ -23,18 +23,18 @@ services:
       - NGINX_HOST=lerkasan.net
       - PRIVATE_IP
     volumes:
-      - ./nginx_conf:/etc/nginx/conf.d
-#      - ./nginx_logs:/var/log/nginx/
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx/
     ports:
       - "80:80"
     networks:
       app:
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: us-east-1
-        awslogs-group: /var/log/nginx
-        awslogs-stream: frontend
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-east-1
+#        awslogs-group: /var/log/nginx
+#        awslogs-stream: frontend
     depends_on:
       - backend
 

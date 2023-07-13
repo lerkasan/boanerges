@@ -3,6 +3,8 @@ os: linux
 files:
   - source: compose.yml
     destination: /home/ubuntu/app/
+  - source: infra/aws/amazon-cloudwatch-agent.json
+    destination: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 permissions:
   - object: /home/ubuntu/app/
     pattern: "**"

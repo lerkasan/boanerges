@@ -150,14 +150,14 @@
             "timezone": "Local"
           },
           {
-            "file_path": "/var/log/nginx/access.log",
-            "log_group_name": "/var/log/nginx/access.log",
+            "file_path": "/home/ubuntu/app/nginx/logs/access.log",
+            "log_group_name": "boanerges: app/nginx/logs/access.log",
             "log_stream_name": "{instance_id}_{hostname}",
             "timezone": "Local"
           },
           {
-            "file_path": "/var/log/nginx/error.log",
-            "log_group_name": "/var/log/nginx/error.log",
+            "file_path": "/home/ubuntu/app/nginx/logs/nginx/error.log",
+            "log_group_name": "boanerges: app/nginx/logs/error.log",
             "log_stream_name": "{instance_id}_{hostname}",
             "timezone": "Local"
           }
