@@ -63,6 +63,8 @@ services:
         awslogs-region: us-east-1
         awslogs-group: boanerges_/var/log/spring-boot
         awslogs-stream: "{instance_id}_{hostname}"
+#        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        tag: '{{ with split .ImageName ":" }}{{join . "_"}}{{end}}/{{.Name}}/{{.ID}}'
 
 networks:
   app:
