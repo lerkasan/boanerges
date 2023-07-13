@@ -228,8 +228,8 @@ variable "admin_public_ssh_keys" {
   default     = [ "admin_public_ssh_key", "lerkasan_ssh_public_key_bastion" ]
 }
 
-variable "log_group_names" {
-  description = "A list of names of log groups to create"
-  type        = list(string)
-  default     = ["app/nginx/logs/access.log", "app/nginx/logs/error.log"]
-}
+#variable "log_group_names" {
+#  description = "A list of names of log groups to create"
+#  type        = list(string)
+#  default     = ["app/nginx/logs/access.log", "app/nginx/logs/error.log"]
+#}
