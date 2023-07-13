@@ -53,14 +53,16 @@ services:
       - DB_USERNAME
       - DB_PASSWORD
       - SPRING_SERVER_PORT=8080
+#    volumes:
+#      - ./spring-boot/logs:/var/log/spring-boot/
     networks:
       app:
-#    logging:
-#      driver: awslogs
-#      options:
-#        awslogs-region: us-east-1
-#        awslogs-group: /var/log/tomcat
-#        awslogs-stream: backend
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-1
+        awslogs-group: boanerges_/var/log/spring-boot
+        awslogs-stream: "{instance_id}_{hostname}"
 
 networks:
   app:

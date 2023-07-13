@@ -16,10 +16,16 @@ FROM eclipse-temurin:17-jre-alpine@sha256:dd8238c151293ae6a7c22898ef2f0df2af8a05
 ARG APP_NAME=boanerges
 ARG APP_VERSION=0.0.1-SNAPSHOT
 
+#COPY infra/tomcat_config/chown_tomcat_logs.sh /docker-entrypoint.d/chown_tomcat_logs.sh
+
 RUN mkdir /app &&  \
     addgroup javauser &&  \
     adduser --disabled-password --shell /usr/sbin/nologin --ingroup javauser javauser && \
-    chown -R javauser:javauser /app
+    chown -R javauser:javauser /app && \
+    mkdir -p /var/lib/tomcat/logs && \
+    chown -R javauser:javauser /var/lib/tomcat
+
+VOLUME ["/var/lib/tomcat"]
 
 USER javauser
 

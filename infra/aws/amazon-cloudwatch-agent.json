@@ -133,19 +133,19 @@
         "collect_list": [
           {
             "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
-            "log_group_name": "/ec2/CloudWatchAgentLog/",
+            "log_group_name": "boanerges_/ec2/CloudWatchAgentLog/",
             "log_stream_name": "{instance_id}_{hostname}",
             "timezone": "Local"
           },
           {
             "file_path": "/var/log/messages",
-            "log_group_name": "/ec2/var/log/messages",
+            "log_group_name": "boanerges_/ec2/var/log/messages",
             "log_stream_name": "{instance_id}_{hostname}",
             "timezone": "Local"
           },
           {
             "file_path": "/var/log/secure",
-            "log_group_name": "/ec2/var/log/secure",
+            "log_group_name": "boanerges_/ec2/var/log/secure",
             "log_stream_name": "{instance_id}_{hostname}",
             "timezone": "Local"
           },
@@ -174,7 +174,7 @@
             "timezone": "Local"
           },
           {
-            "file_path": "/home/ubuntu/app/nginx/logs/nginx/error.log",
+            "file_path": "/home/ubuntu/app/nginx/logs/error.log",
             "log_group_name": "boanerges_app/nginx/logs/error.log",
             "log_stream_name": "{instance_id}_{hostname}",
             "timezone": "Local"

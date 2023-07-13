@@ -263,15 +263,15 @@ data "aws_iam_policy_document" "connect_to_ec2_via_ec2_instance_connect_endpoint
   }
 }
 
-#resource "aws_cloudwatch_log_group" "nginx_logs" {
-#  for_each      = toset(var.log_group_names)
-#
-#  name          = join("_", [var.project_name, var.log_group_names[index(var.log_group_names, each.value)]])
-#
-#  tags          = {
-#    Name        = join("_", [var.project_name, "nginx_log_group"])
-#    terraform   = "true"
-#    environment = var.environment
-#    project     = var.project_name
-#  }
-#}
+resource "aws_cloudwatch_log_group" "nginx_logs" {
+  for_each      = toset(var.log_group_names)
+
+  name          = join("_", [var.project_name, var.log_group_names[index(var.log_group_names, each.value)]])
+
+  tags          = {
+    Name        = join("_", [var.project_name, "nginx_log_group"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
