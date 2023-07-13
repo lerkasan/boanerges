@@ -30,7 +30,7 @@ runcmd:
   - unzip awscliv2.zip
   - sudo ./aws/install
 # install Cloudwatch agent
-  - wget https://s3.$REGION.amazonaws.com/amazoncloudwatch-agent-region/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb
+  - wget https://s3.$REGION.amazonaws.com/amazoncloudwatch-agent-$REGION/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb
   - sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
   - sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 # install Docker and Docker Compose v2
