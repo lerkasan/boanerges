@@ -47,10 +47,35 @@ resource "aws_lb_target_group_attachment" "app" {
   port             = var.http_port
 }
 
-resource "aws_lb_listener" "app" {
+resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app.arn
-  port              = var.http_port
+  port              = local.http_port
   protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = https_port
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  tags = {
+    Name        = join("_", [var.project_name, "_app_lb_listener"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.app.arn
+  port              = local.https_port
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.lerkasan_net.arn
 
   default_action {
     type             = "forward"
@@ -63,6 +88,11 @@ resource "aws_lb_listener" "app" {
     environment = var.environment
     project     = var.project_name
   }
+}
+
+data "aws_acm_certificate" "lerkasan_net" {
+  domain   = "lerkasan.net"
+  statuses = ["ISSUED"]
 }
 
 resource "aws_security_group" "alb" {
@@ -79,4 +109,10 @@ resource "aws_security_group" "alb" {
 
   # Dependency is used to ensure that VPC has an Internet gateway
   depends_on  = [ aws_internet_gateway.this ]
+}
+
+locals {
+  http_port = 80
+  https_port = 443
+  availability_zones = [for az_letter in var.az_letters : format("%s%s", var.aws_region, az_letter)]
 }

@@ -61,7 +61,7 @@ jobs:
         run: |
           NUMBER_OF_ATTEMPTS=10
           SLEEP_TIME=5
-          URL=http://lerkasan.net
+          URL=https://lerkasan.net
           for i in $(seq 1 $NUMBER_OF_ATTEMPTS);
           do
             HTTP_CODE=$(curl --insecure --write-out '%{http_code}' -o /dev/null -m 10 -q -s $URL)

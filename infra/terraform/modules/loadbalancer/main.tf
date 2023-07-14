@@ -49,10 +49,35 @@ resource "aws_lb_target_group_attachment" "app" {
   port             = local.http_port
 }
 
-resource "aws_lb_listener" "app" {
+resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app.arn
   port              = local.http_port
   protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = https_port
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  tags = {
+    Name        = join("_", [var.project_name, "_app_lb_listener"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.app.arn
+  port              = local.https_port
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.lerkasan_net.arn
 
   default_action {
     type             = "forward"
@@ -67,7 +92,13 @@ resource "aws_lb_listener" "app" {
   }
 }
 
+data "aws_acm_certificate" "lerkasan_net" {
+  domain   = "lerkasan.net"
+  statuses = ["ISSUED"]
+}
+
 locals {
   http_port = 80
+  https_port = 443
   availability_zones = [for az_letter in var.az_letters : format("%s%s", var.aws_region, az_letter)]
 }
