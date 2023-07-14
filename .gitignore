@@ -44,6 +44,12 @@ dist/
 .env.local
 .env.*.local
 
+# Terraform
+.terraform.lock.hcl
+terraform.tfstate
+secret.auto.tfvars
+.terraform
+
 # Log files
 npm-debug.log*
 yarn-debug.log*
