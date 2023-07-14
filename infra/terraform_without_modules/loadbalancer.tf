@@ -56,7 +56,7 @@ resource "aws_lb_listener" "http" {
     type = "redirect"
 
     redirect {
-      port        = https_port
+      port        = local.https_port
       protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
@@ -91,8 +91,11 @@ resource "aws_lb_listener" "https" {
 }
 
 data "aws_acm_certificate" "lerkasan_net" {
-  domain   = "lerkasan.net"
-  statuses = ["ISSUED"]
+  domain      = "lerkasan.net"
+  statuses    = ["ISSUED"]
+  types       = ["AMAZON_ISSUED"]
+  key_types   = ["EC_prime256v1"]
+  most_recent = true
 }
 
 resource "aws_security_group" "alb" {
