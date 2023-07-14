@@ -58,6 +58,26 @@ resource "aws_security_group" "database" {
 
 # -------------------- Load balancer rules ---------------------------
 
+resource "aws_security_group_rule" "lb_allow_inbound_https_from_all" {
+  type              = "ingress"
+  description       = "HTTPS ingress"
+  from_port         = local.https_port
+  to_port           = local.https_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.alb.id
+}
+
+resource "aws_security_group_rule" "lb_allow_inbound_http_from_all" {
+  type              = "ingress"
+  description       = "HTTP ingress"
+  from_port         = local.http_port
+  to_port           = local.http_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.alb.id
+}
+
 resource "aws_security_group_rule" "lb_allow_outbound_https_to_appserver" {
   type              = "egress"
   description       = "HTTPS egress"
