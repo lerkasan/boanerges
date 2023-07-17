@@ -27,7 +27,11 @@
                 </p>
                 <p>Link: {{ audioUrl }}</p>
                 <p>mime-type: {{ mimeType }}</p>
+
+                <p>Transcribe Job: {{ transcribingJob }}</p>
+                <p>Transcribe Job Status: {{ transcribingJobStatus }}</p>
                 <p>Text: {{ transcribedText }}</p>
+
             </div>
         </main>
     </div>
@@ -38,9 +42,9 @@
 
 import {ref} from "vue";
 // import {StartStreamTranscriptionCommand, TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
-import {StartTranscriptionJobCommand, TranscribeClient} from "@aws-sdk/client-transcribe";
+import { TranscribeClient, StartTranscriptionJobCommand, GetTranscriptionJobCommand } from "@aws-sdk/client-transcribe";
 // eslint-disable-next-line no-unused-vars
-import { PutObjectCommand, S3Client, S3 } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand,  PutObjectCommand } from "@aws-sdk/client-s3";
 // import { Upload } from "@aws-sdk/lib-storage";
 
 let stream;
@@ -58,6 +62,8 @@ const recordingStatus = ref(false);
 const audioUrl = ref("");
 const mimeType = ref(audioMime.mimeType);
 let transcribedText = ref("");
+let transcribingJob = ref("");
+let transcribingJobStatus = ref("");
 // eslint-disable-next-line no-unused-vars
 let transcribeClient;
 // let transcribeStreamClient;
@@ -174,7 +180,7 @@ async function startRecording() {
 
 // eslint-disable-next-line no-unused-vars
 function stopRecording() {
-    let s3PutCommand;
+    let s3PutCmd;
     let audioBlob;
 
     const s3Client = new S3Client({
@@ -215,25 +221,25 @@ function stopRecording() {
 
         audioChunks = [];
 
-        s3PutCommand = new PutObjectCommand({
+        s3PutCmd = new PutObjectCommand({
             Bucket: "boanerges-recorded-audio",
             Key: "recordedAudio.webm",
             Body: audioBlob,
         });
 
         console.log("S3PutCommand");
-        console.log(s3PutCommand);
+        console.log(s3PutCmd);
 
         try {
-            const response = await s3Client.send(s3PutCommand);
+            const response = await s3Client.send(s3PutCmd);
             console.log(response);
         } catch (err) {
             console.error(err);
         }
 
 
-        const input = { // StartTranscriptionJobRequest
-            TranscriptionJobName: "boanerges-transcribe4",
+        const startTranscribingInput = { // StartTranscriptionJobRequest
+            TranscriptionJobName: "boanerges-transcribe9g",
             LanguageCode: "en-US",
             MediaSampleRateHertz: Number(48000),
             // MediaSampleRateHertz: Number(16000),
@@ -242,13 +248,68 @@ function stopRecording() {
                 MediaFileUri: "s3://boanerges-recorded-audio/recordedAudio.webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
             },
             OutputBucketName: "boanerges-recorded-audio",
-            OutputKey: "automatedresult4.json",
+            OutputKey: "automatedresult9g.json",
         }
 
 
         // eslint-disable-next-line no-unused-vars
-        const command = new StartTranscriptionJobCommand(input);
-        transcribedText.value = await transcribeClient.send(command);
+        const startTranscribingCmd = new StartTranscriptionJobCommand(startTranscribingInput);
+        transcribingJob.value = await transcribeClient.send(startTranscribingCmd);
+
+
+
+        const GetTranscriptionJobInput = { // GetTranscriptionJobRequest
+            TranscriptionJobName: "boanerges-transcribe9g", // required
+        };
+        const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
+
+        // let attempts = 0;
+
+        // while (transcribingJobStatus.value !== "COMPLETED" || transcribingJobStatus.value !== "FAILED" || attempts < 20 ) {
+        //     attempts++;
+
+        setTimeout(() => { console.log("World!"); getTranscribedText(); }, 150000);
+
+        async function getTranscribedText() {
+            // let attempts = 0;
+
+            // while (transcribingJobStatus.value !== "COMPLETED" || transcribingJobStatus.value !== "FAILED" || attempts < 10 ) {
+            //     attempts++;
+            for (let attempts = 0; attempts < 10; attempts++) {
+                let transcribeResponse = await transcribeClient.send(GetTranscriptionJobCmd);
+                transcribingJobStatus.value = transcribeResponse.TranscriptionJob.TranscriptionJobStatus;
+                // transcribedText.value = transcribeResponse.TranscriptionJob.transcript;
+                console.log("transcribingJobStatus attempt", attempts);
+                console.log(transcribingJobStatus.value)
+                // console.log(transcribedText.value)
+            // let responseBodyJson = JSON.parse(transcribeResponse).TranscriptionJobStatus;;
+            }
+
+
+            if (transcribingJobStatus.value === "COMPLETED") {
+                try {
+                    let s3GetCmd = new GetObjectCommand({
+                        Bucket: "boanerges-recorded-audio",
+                        Key: "automatedresult9g.json"
+                    });
+
+                    let s3GetResponse = await s3Client.send(s3GetCmd);
+                    let responseBody = await s3GetResponse.Body.transformToString();
+                    let responseBodyJson = JSON.parse(responseBody);
+                    transcribedText.value = responseBodyJson.results.transcripts[0].transcript;
+                    console.log(s3GetResponse);
+                    console.log(responseBody);
+                    console.log(responseBodyJson);
+                    console.log(transcribedText.value);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+        }
+
+
+
 
         //
         // file = {
