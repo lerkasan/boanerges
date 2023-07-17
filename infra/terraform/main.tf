@@ -17,14 +17,14 @@ module "ec2" {
   aws_region   = var.aws_region
   az_letters   = var.az_letters
 
-  ec2_instance_type   = "t2.micro"
+  ec2_instance_type   = "t3.micro"
   os                  = "ubuntu"
   os_architecture     = "amd64"
   os_version          = "22.04"
   os_releases         = { "22.04" = "jammy" }
   ami_virtualization  = "hvm"
-  ami_architectures   = { "amd64"   = "x86_64" }
-  ami_owner_ids       = {"ubuntu"  = "099720109477" }   #Canonical
+  ami_architectures   = { "amd64" = "x86_64" }
+  ami_owner_ids       = {"ubuntu" = "099720109477" }   #Canonical
 
   appserver_private_ssh_key_name = "appserver_ssh_key"
   admin_public_ssh_keys = [ "admin_public_ssh_key"]

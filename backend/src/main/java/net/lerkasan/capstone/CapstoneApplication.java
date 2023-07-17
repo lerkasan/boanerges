@@ -25,7 +25,7 @@ public class CapstoneApplication {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         // *** URL below needs to match the Vue client URL and port ***
-        config.setAllowedOrigins(List.of("frontend", "http://frontend", "localhost", "http://localhost", "http://lerkasan.net", "https://lerkasan.net"));
+        config.setAllowedOrigins(List.of("frontend", "http://frontend", "localhost", "http://localhost", "localhost:8080", "http://localhost:8080", "http://lerkasan.net", "https://lerkasan.net"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);

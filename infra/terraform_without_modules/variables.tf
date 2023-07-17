@@ -85,7 +85,7 @@ variable "appserver_private_ssh_key_name" {
 variable "ec2_instance_type" {
   description = "AWS EC2 instance type"
   type        = string
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 # ---------------- OS parameters --------------------
