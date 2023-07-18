@@ -35,7 +35,8 @@ public class ChatGptService implements ChatService {
 
 //    public Mono<ChatResponseBody> sendPrompt(String prompt) {
 //    public ChatResponseBody sendPrompt(String prompt) {
-    public Mono<String> sendPrompt(String prompt) {
+    public String sendPrompt(String prompt) {
+//    public Mono<String> sendPrompt(String prompt) {
 //    public Flux<String> sendPrompt(String prompt) {
 
 //        https://api.openai.com/v1/chat/completions
@@ -58,8 +59,8 @@ public class ChatGptService implements ChatService {
                 .bodyToMono(ChatResponseBody.class)
 //                .map(responseBody -> responseBody.getChoices().get(0).getDelta().getContent()
                 .map(responseBody -> responseBody.getChoices().get(0).getMessage().getContent()
-                );
-//                .block();
+                )
+                .block();
 
 
 //        UriSpec<WebClient.RequestBodySpec> uriSpec = chatGptWebClient.method(HttpMethod.POST);
