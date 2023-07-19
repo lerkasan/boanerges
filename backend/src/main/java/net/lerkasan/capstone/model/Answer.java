@@ -21,7 +21,7 @@ public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NonNull
     @NotBlank
@@ -33,7 +33,7 @@ public class Answer {
     @Column(name = "audio_url", nullable = false)
     private String audioUrl;
 
-    @ManyToOne
+    @OneToOne
     @PrimaryKeyJoinColumn(name="question_id", referencedColumnName="id")
     private Question question;
 

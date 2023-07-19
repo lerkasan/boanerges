@@ -2,14 +2,13 @@ package net.lerkasan.capstone.controller;
 
 import net.lerkasan.capstone.dto.chatgpt.ChatResponseWithAudio;
 import net.lerkasan.capstone.service.ChatService;
-import net.lerkasan.capstone.service.S3Service;
+import net.lerkasan.capstone.service.aws.S3Service;
 import net.lerkasan.capstone.service.SpeechService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 
 import java.io.File;

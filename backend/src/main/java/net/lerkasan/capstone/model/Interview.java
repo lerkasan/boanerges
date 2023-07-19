@@ -27,7 +27,7 @@ public class Interview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NonNull
     @NotBlank(message = "Name field is required.")

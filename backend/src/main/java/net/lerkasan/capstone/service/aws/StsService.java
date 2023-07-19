@@ -1,4 +1,4 @@
-package net.lerkasan.capstone.service;
+package net.lerkasan.capstone.service.aws;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

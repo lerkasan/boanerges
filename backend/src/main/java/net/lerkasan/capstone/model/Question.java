@@ -19,7 +19,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NonNull
     @NotBlank(message = "Text field is required.")
@@ -35,5 +35,8 @@ public class Question {
     @PrimaryKeyJoinColumn(name="interview_id", referencedColumnName="id")
     @JsonIgnoreProperties(value = {"questions"})
     private Interview interview;
+
+    @OneToOne(mappedBy = "question")
+    private Answer answer;
 
 }

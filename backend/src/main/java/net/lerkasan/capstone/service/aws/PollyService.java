@@ -1,6 +1,7 @@
-package net.lerkasan.capstone.service;
+package net.lerkasan.capstone.service.aws;
 
 
+import net.lerkasan.capstone.service.SpeechService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;

@@ -1,7 +1,7 @@
 package net.lerkasan.capstone.controller;
 
 import net.lerkasan.capstone.dto.aws.AwsCredentials;
-import net.lerkasan.capstone.service.StsService;
+import net.lerkasan.capstone.service.aws.StsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.sts.model.Credentials;
