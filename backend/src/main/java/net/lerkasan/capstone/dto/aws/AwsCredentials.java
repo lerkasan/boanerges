@@ -1,4 +1,4 @@
-package net.lerkasan.capstone.controller;
+package net.lerkasan.capstone.dto.aws;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
