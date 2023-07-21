@@ -17,7 +17,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/v1/chat")
-public class ChatGptController {
+public class ChatController {
 
     @Qualifier("ChatGptService")
     private final ChatService chatGptService;
@@ -26,13 +26,14 @@ public class ChatGptController {
     private final S3Service s3Service;
 
     @Autowired
-    public ChatGptController(ChatService chatGptService, SpeechService pollySpeechService, S3Service s3Service) {
+    public ChatController(ChatService chatGptService, SpeechService pollySpeechService, S3Service s3Service) {
         this.chatGptService = chatGptService;
         this.pollySpeechService = pollySpeechService;
         this.s3Service = s3Service;
     }
 
     @GetMapping
+//    @GetMapping(path = "/chat")
     public ChatResponseWithAudio getChatResponse() {
 //    public String getChatResponse() {
 //    public Mono<String> getChatResponse() {

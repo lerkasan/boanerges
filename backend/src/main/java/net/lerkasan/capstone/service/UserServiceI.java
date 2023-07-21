@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface UserServiceI {
 
+    String USER_NOT_FOUND_BY_ID = "A user with the id %d not found%n";
+    String USER_NOT_FOUND = "A user %s not found%n";
     User create(User user);
 
     List<User> findAll();

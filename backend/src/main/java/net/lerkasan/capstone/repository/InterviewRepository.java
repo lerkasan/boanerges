@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
@@ -21,5 +24,11 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 //    WHERE i.id = :id;
 
     @Query(AVERAGE_SCORE_QUERY)
-    double calculateAverageScore(@Param("id") Long id );
+    double calculateAverageScore(@Param("id") long id );
+
+    Optional<Interview> findByIdAndUserId(@Param("id") long id, @Param("userId") long userId);
+//
+//    Optional<Interview> findByIdAndUsername(@Param("id") long id, @Param("username") String username);
+
+    List<Interview> findByUserId(long id);
 }

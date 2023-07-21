@@ -32,7 +32,7 @@ public class Category {
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
-    @OneToMany(mappedBy = "category_id", cascade = {PERSIST, MERGE, REFRESH, DETACH})
+    @OneToMany(mappedBy = "category", cascade = {PERSIST, MERGE, REFRESH, DETACH})
     @OrderBy(value = "id ASC")
     private Set<Topic> topics = new HashSet<>();
 }

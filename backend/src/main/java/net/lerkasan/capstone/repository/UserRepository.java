@@ -2,10 +2,12 @@ package net.lerkasan.capstone.repository;
 
 import net.lerkasan.capstone.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -19,9 +21,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByToken(String token);
 
+    void deleteById(Long id);
+
     @Query(EMAIL_AVAILABILITY_QUERY)
     boolean isEmailAvailable(@Param("email") String email);
 
     @Query(USERNAME_AVAILABILITY_QUERY)
     boolean isUsernameAvailable(@Param("username") String username);
+
+    @Modifying
+    @Query("DELETE FROM User u WHERE u.token != '' AND u.createdAt < ?1")
+    void deleteNotVerifiedExpiredUsers(LocalDateTime timestamp);
 }

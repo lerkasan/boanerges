@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"></meta>
+    <title th:text="${message}"> Error message </title>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #97a9c8
+        }
+
+        body {
+            color: #060d52;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(151, 169, 200, 0.5);
+            padding: 0;
+            min-height: 100%;
+            -webkit-box-shadow: inset 0 0 75pt rgba(151, 169, 200, 0.8);
+            box-shadow: inset 0 0 75pt rgba(151, 169, 200, 0.8);
+            display: table;
+            font-family: "Open Sans", Arial, sans-serif
+        }
+
+        h2 {
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.1;
+            color: inherit;
+            font-size: 18px
+        }
+
+        h2 small {
+            font-size: 168%;
+            font-weight: 400;
+            line-height: 1;
+            color: #771b1d
+        }
+    </style>
+</head>
+
+<body>
+<div class="cover">
+    <h2><span class="lead" th:text="${username}"> Username </span>, Thank you for registering at Boanerges website</h2>
+    <h2> Please confirm you registration via <a th:href="${url}"> this link.</a></h2>
+</div>
+</body>
+</html>

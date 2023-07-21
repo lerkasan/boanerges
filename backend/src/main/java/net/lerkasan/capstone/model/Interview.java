@@ -1,6 +1,7 @@
 package net.lerkasan.capstone.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -39,7 +40,12 @@ public class Interview {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdAt = LocalDate.now();
 
-    @OneToMany(mappedBy = "interview_id", cascade = {PERSIST, MERGE, REFRESH, DETACH})
+    @OneToMany(mappedBy = "interview", cascade = {PERSIST, MERGE, REFRESH, DETACH})
     @OrderBy(value = "id ASC")
     private Set<Question> questions = new HashSet<>();
+
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="user_id", referencedColumnName="id")
+    @JsonIgnoreProperties(value = {"interviews"})
+    private User user;
 }
