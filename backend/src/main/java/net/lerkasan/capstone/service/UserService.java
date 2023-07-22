@@ -142,6 +142,6 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException(String.format(USER_NOT_FOUND, username)));
     }
 }

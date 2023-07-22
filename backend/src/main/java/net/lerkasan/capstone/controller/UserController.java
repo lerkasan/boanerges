@@ -44,7 +44,7 @@ public class UserController {
         return ResponseEntity.created(location).body(registeredUser);
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     @ResponseStatus(HttpStatus.OK)
     public void registerUser(@Valid @RequestBody final User user, HttpServletRequest request) {
         User registeredUser = userService.create(user);
@@ -55,7 +55,7 @@ public class UserController {
         emailService.sendSimpleMail(new EmailDetails(userEmail, message, "Boanerges - Registration confirmation"));
     }
 
-    @GetMapping("/sign-up")
+    @GetMapping("/signup")
     @ResponseStatus(HttpStatus.OK)
     public String confirmRegistration(@RequestParam("token") String token) {
         String emailVerificationError = "Registration link expired on invalid. Please register again.";
