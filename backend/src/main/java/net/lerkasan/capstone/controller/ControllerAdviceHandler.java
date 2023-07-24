@@ -8,6 +8,7 @@ import org.springframework.boot.json.JsonParseException;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.validation.FieldError;
@@ -80,7 +81,8 @@ public class ControllerAdviceHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(NOT_FOUND)
+//    @ResponseStatus(NOT_FOUND)
+    @ResponseStatus(UNAUTHORIZED)
     @ResponseBody
     public Map<String, String> handleNotFoundException(final Exception e) {
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getMessage());
@@ -97,7 +99,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleJpaObjectRetrievalFailureException(final JpaObjectRetrievalFailureException e) {
-        return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage().replace("ua.com.brdo.business.constructor.model.",""));
+        return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage().replace("net.lerkasan.capstone.model.",""));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

@@ -1,7 +1,8 @@
 <script setup>
 import useVuelidate from '@vuelidate/core'
-import {required, email, minLength, sameAs, maxLength} from '@vuelidate/validators'
+import {required, email, minLength, sameAs, maxLength, helpers} from '@vuelidate/validators'
 import {computed, ref} from "vue";
+import apiClient from "@/services/AxiosInstance";
 
 const form = ref({
         username: '',
@@ -23,6 +24,23 @@ const rules = {
             $validator: validUsernamePattern,
             $message: 'Only letters and digits are allowed'
         },
+        unique: helpers.withMessage(
+            ({ $params }) => {
+                if (!$params.$pending) return 'Username already exists';
+                return '';
+            }, helpers.withAsync(value => {
+                if (value === '') return true
+                return apiClient.get('/signup/available?username=' + value)
+                    .then(response => {
+                        // console.log("validation response: " + response.data)
+                        // console.log(response.data);
+                        return response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }))
+
         // unique_validation: {
         //     // $validator: helpers.withAsync(async (value) => {
         //     //     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -50,6 +68,41 @@ const rules = {
     email: {
         required, $autoDirty: true, email,
         // unique_validation: {
+        //     $message: 'Email already exists',
+
+        unique: helpers.withMessage(
+            ({ $params }) => {
+                if (!$params.$pending) return 'Email already exists';
+                return '';
+            }, helpers.withAsync(value => {
+            if (value === '') return true
+            return apiClient.get('/signup/available?email=' + value)
+                .then(response => {
+                    // console.log("validation response: " + response.data)
+                    // console.log(response.data);
+                    return response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }))
+
+        // $message: 'Email already exists',
+        //     unique: helpers.withAsync(value => {
+        //     if (value === '') return true
+        //     return apiClient.get('/signup/available?email=' + value)
+        //         .then(response => {
+        //             console.log("validation response: " + response.data)
+        //             // console.log(response.data);
+        //             return response.data
+        //         })
+        //         .catch(error => {
+        //             console.log(error)
+        //         })
+        // })
+    // }
+
+        // unique_validation: {
         //     $validator: helpers.withAsync(async (value) => {
         //         await new Promise((resolve) => setTimeout(resolve, 1000));
         //         await uniqueEmail(value)
@@ -75,6 +128,7 @@ const rules = {
 const v$ = ref(useVuelidate(rules, form));
 let uniqueUsernameError = ref('');
 let uniqueEmailError = ref('');
+let signupError = ref('');
 
 function validName(name) {
     let validNamePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
@@ -82,7 +136,9 @@ function validName(name) {
 }
 
 async function validUsernamePattern(username) {
-    let validNamePattern = new RegExp("^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$");
+    // let validNamePattern = new RegExp("^[A-Za-z][A-Za-z0-9]{2,24}$");
+    // let validNamePattern = new RegExp("^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$");
+    let validNamePattern = new RegExp("^[A-Za-z][A-Za-z0-9]*$");
     return validNamePattern.test(username);
 }
 
@@ -146,12 +202,16 @@ async function isUniqueEmail(email) {
     // return Boolean(isUnique);
 }
 
-function resetUsernameError() {
-    uniqueUsernameError.value = '';
-}
+// function resetUsernameError() {
+//     uniqueUsernameError.value = '';
+// }
+//
+// function resetEmailError() {
+//     uniqueEmailError.value = '';
+// }
 
-function resetEmailError() {
-    uniqueEmailError.value = '';
+function resetSignupError() {
+    signupError.value = '';
 }
 
 async function register() {
@@ -185,7 +245,7 @@ async function register() {
 
         // try {
         //     const response = await fetch()
-        await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + "/api/v1/signup", {
+        let signupResponse = await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + "/api/v1/signup", {
             method: "POST", // or 'PUT'
             headers: {
                 "Content-Type": "application/json",
@@ -196,16 +256,26 @@ async function register() {
                 console.log(error.message)
             });
 
-        document.getElementById("registrationForm").reset();
+        if (!signupResponse.ok) {
+            let jsonResponse = await signupResponse.json();
+            signupError.value = jsonResponse.message;
+            console.log(jsonResponse.message);
+        } else {
+            document.getElementById("registrationForm").reset();
+            alert("Thank you for registering. Please confirm your email.");
+            window.location.href = "/";
+        }
+
+        // document.getElementById("registrationForm").reset();
 
         // const result = await response.json();
-        alert("Thank you for registering. Please confirm your email.");
+        // alert("Thank you for registering. Please confirm your email.");
         // console.log("Success:", result);
         // } catch (error) {
         //     console.error("Error:", error);
         // }
 
-        window.location.href = "/";
+        // window.location.href = "/";
     }
     // console.log(v$)
 }
@@ -233,7 +303,7 @@ async function register() {
             </div>
 
             <div class="mt-10">
-                <form id="registrationForm">
+                <form id="registrationForm" @change="resetSignupError">
                     <div class="flex flex-col mb-5">
 <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
 <!--                            Username:-->
@@ -277,7 +347,6 @@ async function register() {
                                             {'border-red-500 focus:border-red-500': v$.username.$error,
                                             'border-[#42d392] ': !v$.username.$invalid}"
                                         placeholder="Enter your username"
-                                        @keyup="resetUsernameError"
                                         @blur="v$.username.$touch"
                                         v-model="v$.username.$model"
                                     >
@@ -286,11 +355,11 @@ async function register() {
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.username.$errors"
                                  :key="index">
-                                <div class="error-msg">{{ error.$message }}{{ uniqueUsernameError }}</div>
+                                <div class="error-msg">{{ error.$message }}</div>
                             </div>
-                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
-                                <div class="error-msg">{{ uniqueUsernameError }}</div>
-                            </div>
+<!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
+<!--                                <div class="error-msg">{{ uniqueUsernameError }}</div>-->
+<!--                            </div>-->
                         </div>
                     </div>
 
@@ -390,7 +459,6 @@ async function register() {
                                             py-2
                                             focus:outline-none focus:border-blue-400"
                                         placeholder="Enter your email"
-                                        @keyup="resetEmailError"
                                         @blur="v$.email.$touch"
                                         v-model="v$.email.$model"
                                     />
@@ -399,11 +467,11 @@ async function register() {
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.email.$errors"
                                  :key="index">
-                                <div class="error-msg">{{ error.$message }}{{ uniqueEmailError }}</div>
+                                <div class="error-msg">{{ error.$message }}</div>
                             </div>
-                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
-                                <div class="error-msg">{{ uniqueEmailError }}</div>
-                            </div>
+<!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
+<!--                                <div class="error-msg">{{ uniqueEmailError }}</div>-->
+<!--                            </div>-->
                         </div>
                     </div>
 
@@ -554,6 +622,11 @@ async function register() {
                             </span>
                         </button>
                     </div>
+
+                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
+                        <div class="error-msg">{{ signupError }}</div>
+                    </div>
+
                 </form>
             </div>
         </div>

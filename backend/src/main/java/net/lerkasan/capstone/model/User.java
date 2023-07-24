@@ -43,16 +43,21 @@ public class User implements UserDetails {
 
     @NonNull
     @NotBlank(message = "Username field is required.")
-    @Size(min = 3, max = 25)
-    @Pattern(regexp = "[a-zA-Z]{3,25}$", message = "Username can include only upper and lower case latin letters.")
+    @Size(min = 3, max = 25, message = "Username must be between 3 and 25 characters long.")
+//    @Pattern(regexp = "^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$", message = "Username can include only upper and lower case latin letters and digits.")
+    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]*$", message = "Username can include only upper and lower case latin letters and digits and start with a letter.")
+//    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]{2,24}$", message = "Username can include only upper and lower case latin letters and digits.")
     @Unique(field = "username", message = "Username already exists.")
     @Column(name = "username", nullable = false, unique = true, length = 25)
     private String username;
 
     @NonNull
     @NotBlank(message = "First name field is required.")
-    @Size(min = 3, max = 50)
-    @Pattern(regexp = "[a-zA-Z]{3,50}$", message = "First name can include only upper and lower case latin letters.")
+    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters long.")
+    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
+//    @Pattern(regexp = "^[A-Za-z][A-Za-z\\d.-]{2,49}$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
+//    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
+//    @Pattern(regexp = "[a-zA-Z]{3,50}$", message = "First name can include only upper and lower case latin letters.")
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
@@ -65,7 +70,7 @@ public class User implements UserDetails {
     @Transient
     @JsonProperty(access = WRITE_ONLY)
 //    @NotNull(message = "Password field is required.")
-    @Size(min = 8, max = 32, message = "Password length must be between 8 and 32 characters.")
+    @Size(min = 8, max = 32, message = "Password must be between 8 and 32 characters long.")
     @Password(message = "Password can include upper and lower case latin letters, numerals (0-9) and special symbols.")
     private char[] rawPassword;
 

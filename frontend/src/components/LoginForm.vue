@@ -27,7 +27,7 @@
 
             <div class="mt-10">
 <!--                <form action="login" method="post">-->
-                <form>
+                <form @change="resetLoginError">
                     <div class="flex flex-col mb-5">
                         <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
                         <!--                            Username:-->
@@ -134,6 +134,7 @@
                                  :key="index">
                                 <div class="error-msg">{{ error.$message }}</div>
                             </div>
+                            <div class="input-errors error-msg">{{ loginError }}</div>
                         </div>
                     </div>
 
@@ -219,6 +220,8 @@ import useVuelidate from "@vuelidate/core";
 //     password: "",
 // });
 
+let loginError = ref('');
+
 const user = ref({
         username: '',
         password: '',
@@ -235,20 +238,34 @@ const v$ = ref(useVuelidate(rules, user));
 // const router = useRouter();
 
 async function login() {
-    AuthService.login(user.value).then((response) => {
-        if (response.data.token) {
-            window.localStorage.clear();
-            window.localStorage.setItem("jwtToken", response.data.token);
-        }
-        // this.$router.push("/books");
+    try {
+        AuthService.login(user.value).then((response) => {
+            if (response !== undefined && response.status === 200) {
+                if (response.data.token) {
+                    window.localStorage.clear();
+                    window.localStorage.setItem("jwtToken", response.data.token);
+                }
+                // this.$router.push("/books");
 
-        // router.push("/books");
-        // router.push("/books");
-        // window.location.href = "http://localhost:9090/api/v1/books";
-        window.location.href = "/";
-    });
+                // router.push("/books");
+                // router.push("/books");
+                // window.location.href = "http://localhost:9090/api/v1/books";
+                window.location.href = "/";
+            } else {
+                loginError.value = "Username or password is incorrect";
+            }
+        });
+    } catch (error) {
+        loginError.value = "Username or password is incorrect";
+        console.error(error);
+    }
     // await apiClient.get("/books").then((response) => console.log(response));
 }
+
+function resetLoginError() {
+    loginError.value = '';
+}
+
 </script>
 
 <style scoped lang="css">

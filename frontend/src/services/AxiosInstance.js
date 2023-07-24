@@ -17,13 +17,19 @@ console.log(token);
 
 apiClient.interceptors.request.use(
     (config) => {
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        // config.headers.Authorization = `Bearer ${token}`;
-        return config;
+        // try {
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            // config.headers.Authorization = `Bearer ${token}`;
+            return config;
+        // } catch (error) {
+        //     console.log(error);
+        // return Promise.reject(error);
+        // }
     },
     (error) => {
+        console.log(error);
         return Promise.reject(error);
     }
 );

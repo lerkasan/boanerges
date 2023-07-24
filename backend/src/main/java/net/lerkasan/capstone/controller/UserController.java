@@ -77,9 +77,13 @@ public class UserController {
 //        return ResponseEntity.ok().body(body);
     }
 
-//    @GetMapping("available")
-//    public boolean isEmailAvailable(@RequestParam String email) {
-//        return userService.isEmailAvailable(email);
-//    }
+    @GetMapping(path = "/signup/available", params = "email")
+    public boolean isEmailAvailable(@RequestParam String email) {
+        return userService.isEmailAvailable(email);
+    }
 
+    @GetMapping(path = "/signup/available", params = "username")
+    public boolean isUsernameAvailable(@RequestParam String username) {
+        return userService.isUsernameAvailable(username);
+    }
 }

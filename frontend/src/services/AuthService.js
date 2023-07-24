@@ -9,7 +9,11 @@ class AuthService {
         return await apiClient.post("/auth/login", {
             username: user.username,
             password: user.password,
-        });
+        })
+            // .then(response => response.json())
+            // .then(response => console.log("api response: " + response))
+            .catch(err => console.log("error " + err));
+
     }
 
     async logout() {

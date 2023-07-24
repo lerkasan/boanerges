@@ -33,9 +33,4 @@ public class AuthController {
         String jwt = jwtTokenProvider.createToken(authentication);
         return new AuthenticationResponse(jwt);
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok(" you have access now  ");
-    }
 }
