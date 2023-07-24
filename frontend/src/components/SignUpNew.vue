@@ -75,6 +75,7 @@ function register() {
 </script>
 
 <template>
+
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
         <div class="
@@ -389,7 +390,7 @@ function register() {
                             :disabled="v$.$invalid"
                             @click="register"
                         >
-                            <span class="mr-2 uppercase font-bold">Sign Up</span>
+                            <span class="mr-2 uppercase font-bold">Sign up</span>
                             <span>
                                 <svg
                                     class="h-6 w-6"
@@ -426,16 +427,18 @@ function register() {
                         href="#"
                         class="text-sm ml-2 text-blue-500 font-semibold"
                     >
-                        Login here
+                        Login
                     </a>
                 </span>
             </a>
         </div>
     </div>
+
 </template>
 
 <style scoped lang="css">
 @import url("https://use.fontawesome.com/releases/v5.15.4/css/all.css");
+
 
 div.hasError input {
     border-color: red;

@@ -1,6 +1,8 @@
 <template>
+    <LoginFormNew/>
+<!--    <SignUpNew/>-->
 <!--    <Suspense>-->
-        <SignUpNew/>
+<!--        <SignUpNew/>-->
 <!--    </Suspense>-->
 <!--        <LoginForm/>-->
 <!--    </Suspense>-->
@@ -16,12 +18,15 @@
 // import HelloWorld from "@/components/HelloWorld/HelloWorld";
 // import RecordAudio from "@/components/Audio/RecordAudio";
 // import LoginForm from "@/components/LoginForm.vue";
-import SignUpNew from "@/components/SignUpNew.vue";
+// import SignUpNew from "@/components/SignUpNew.vue";
+import LoginFormNew from "@/components/LoginFormNew.vue";
 
 export default {
     name: 'App',
     components: {
-        SignUpNew,
+        LoginFormNew
+        // SignUpNew,
+        // SignUpNew,
         // LoginForm,
         // HelloWorld,
         // RecordAudio,

@@ -25,6 +25,8 @@
     "bootstrap-vue": "^2.23.1",
     "buffer": "~6.0.3",
     "core-js": "^3.8.3",
+    "flowbite": "^1.7.0",
+    "flowbite-vue": "^0.0.16",
     "microphone-stream": "^6.0.1",
     "readable-stream": "^4.4.2",
     "vue": "^3.2.13"
