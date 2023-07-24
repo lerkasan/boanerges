@@ -4,6 +4,7 @@ import {required, email, minLength, sameAs} from '@vuelidate/validators'
 import {computed, ref} from "vue";
 
 const form = ref({
+        username: '',
         firstName: '',
         email: '',
         password: '',
@@ -12,20 +13,31 @@ const form = ref({
 )
 
 const rules = {
-    firstName: {
-        required, $autoDirty: true, name_validation: {
-            $validator: validName,
-            $message: 'Invalid Name. Valid name only contain letters, dashes (-) and spaces'
+    username: {
+        required, $autoDirty: true,
+        name_validation: {
+            $validator: validUsername,
+            $message: 'Only letters and digits are allowed'
         }
     },
-    email: {required, email},
-    password: {required, min: minLength(8),
+    firstName: {
+        required, $autoDirty: true,
+        name_validation: {
+            $validator: validName,
+            $message: 'Only letters, dashes and spaces are allowed'
+        }
+    },
+    email: {required, $autoDirty: true, email},
+    password: {required, $autoDirty: true,
+        min: minLength(8),
         password_validation: {
             $validator: validPassword,
-            $message: "Weak password. Please at least one upper letter, one lower letter, one digit, one special symbol."
+            $message: "At least one upper letter, one lower letter, one digit, one special symbol required"
         }
     },
-    confirmPassword: {required, sameAsPassword: sameAs(computed(()=> form.value.password), "password field")}
+    confirmPassword: {required, $autoDirty: true,
+        sameAsPassword: sameAs(computed(()=> form.value.password), "password field")
+    }
 }
 
 const v$ = ref(useVuelidate(rules, form));
@@ -33,6 +45,12 @@ const v$ = ref(useVuelidate(rules, form));
 function validName(name) {
     let validNamePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
     return validNamePattern.test(name);
+
+}
+
+function validUsername(username) {
+    let validNamePattern = new RegExp("^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$");
+    return validNamePattern.test(username);
 
 }
 
@@ -71,60 +89,115 @@ function register() {
           rounded-3xl
           w-96
           max-w-md">
-            <div class="font-medium self-center text-xl sm:text-3xl text-gray-800">
+            <div class="font-medium self-center text-2xl text-gray-800">
                 Create an account
             </div>
-<!--            <div class="mt-4 self-center text-xl sm:text-sm text-gray-800">-->
-<!--                Create an account-->
-<!--            </div>-->
 
             <div class="mt-10">
                 <form action="#">
                     <div class="flex flex-col mb-5">
-<!--                        <label-->
-<!--                            for="firstName"-->
-<!--                            class="mb-1 text-xs tracking-wide text-gray-600">-->
-<!--                        First name:</label>-->
+<!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Username:-->
+<!--                        </label>-->
                         <div class="relative">
-                            <div class="
-                                inline-flex
-                                items-center
-                                justify-center
-                                absolute
-                                left-0
-                                top-0
-                                h-full
-                                w-10
-                                text-gray-400"
-                            >
-                                <i class="fas fa-user absolute left-3.5 top-3"
-                                   :class="
+                            <div :class="{ 'hasError': v$.username.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Username</span>
+                                    <div class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        absolute
+                                        left-0
+                                        top-0
+                                        h-full
+                                        w-10
+                                        text-gray-400"
+                                    >
+                                        <i class="fas fa-user absolute left-3.5 top-3"
+                                           :class="
+                                        {'text-red-500': v$.username.$error,
+                                        'text-blue-500': !v$.username.$invalid}">
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="username"
+                                        type="text"
+                                        name="username"
+                                        class="
+                                            text-sm
+                                            placeholder-gray-500
+                                            pl-10
+                                            pr-4
+                                            rounded-md
+                                            border border-gray-400
+                                            w-full
+                                            py-2
+                                            focus:outline-none focus:border-blue-400"
+                                        :class="
+                                            {'border-red-500 focus:border-red-500': v$.username.$error,
+                                            'border-[#42d392] ': !v$.username.$invalid}"
+                                        placeholder="Enter your username"
+                                        @blur="v$.username.$touch"
+                                        v-model="v$.username.$model"
+                                    >
+                                </div>
+                            </div>
+                            <!-- Error Message -->
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.username.$errors"
+                                 :key="index">
+                                <div class="error-msg">{{ error.$message }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col mb-5">
+<!--                        <label for="firstName" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            First name:-->
+<!--                        </label>-->
+                        <div class="relative">
+                            <div :class="{ 'hasError': v$.firstName.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">First name</span>
+                                    <div class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        absolute
+                                        left-0
+                                        top-0
+                                        h-full
+                                        w-10
+                                        text-gray-400"
+                                    >
+                                        <i class="fas fa-user absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.firstName.$error,
                                         'text-blue-500': !v$.firstName.$invalid}">
-                                </i>
-                            </div>
-                            <div :class="{ 'hasError': v$.firstName.$error }">
-                                <input
-                                    id="firstName"
-                                    type="text"
-                                    name="firstName"
-                                    class="
-                                        text-sm
-                                        placeholder-gray-500
-                                        pl-10
-                                        pr-4
-                                        rounded-md
-                                        border border-gray-400
-                                        w-full
-                                        py-2
-                                        focus:outline-none focus:border-blue-400"
-                                    :class="
-                                        {'border-red-500 focus:border-red-500': v$.firstName.$error,
-                                        'border-[#42d392] ': !v$.firstName.$invalid}"
-                                    placeholder="Enter your first name"
-                                    @blur="v$.firstName.$touch"
-                                    v-model="v$.firstName.$model"
-                                >
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="firstName"
+                                        type="text"
+                                        name="firstName"
+                                        class="
+                                            text-sm
+                                            placeholder-gray-500
+                                            pl-10
+                                            pr-4
+                                            rounded-md
+                                            border border-gray-400
+                                            w-full
+                                            py-2
+                                            focus:outline-none focus:border-blue-400"
+                                        :class="
+                                            {'border-red-500 focus:border-red-500': v$.firstName.$error,
+                                            'border-[#42d392] ': !v$.firstName.$invalid}"
+                                        placeholder="Enter your first name"
+                                        @blur="v$.firstName.$touch"
+                                        v-model="v$.firstName.$model"
+                                    >
+                                </div>
                             </div>
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.firstName.$errors"
@@ -135,49 +208,49 @@ function register() {
                     </div>
 
                     <div class="flex flex-col mb-5">
-<!--                        <label-->
-<!--                            for="email"-->
-<!--                            class="mb-1 text-xs tracking-wide text-gray-600">-->
-<!--                            E-Mail Address:</label>-->
+<!--                        <label for="email" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Email:-->
+<!--                        </label>-->
                         <div class="relative">
-                            <div class="
-                                inline-flex
-                                items-center
-                                justify-center
-                                absolute
-                                left-0
-                                top-0
-                                h-full
-                                w-10
-                                text-gray-400"
-                            >
-                                <i class="fas fa-at absolute left-3.5 top-3"
-                                   :class="
-                                        {'text-red-500': v$.email.$error,
-                                        'text-blue-500': !v$.email.$invalid}"
-                                >
-                                </i>
-                            </div>
-
                             <div :class="{ 'hasError': v$.email.$error }">
-                                <input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    class="
-                                        text-sm
-                                        placeholder-gray-500
-                                        pl-10
-                                        pr-4
-                                        rounded-md
-                                        border border-gray-400
-                                        w-full
-                                        py-2
-                                        focus:outline-none focus:border-blue-400"
-                                    placeholder="Enter your email"
-                                    @blur="v$.email.$touch"
-                                    v-model="v$.email.$model"
-                                />
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Email</span>
+                                    <div class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        absolute
+                                        left-0
+                                        top-0
+                                        h-full
+                                        w-10
+                                        text-gray-400"
+                                    >
+                                        <i class="fas fa-at absolute left-3.5 top-3"
+                                           :class="
+                                        {'text-red-500': v$.email.$error,
+                                        'text-blue-500': !v$.email.$invalid}">
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        class="
+                                            text-sm
+                                            placeholder-gray-500
+                                            pl-10
+                                            pr-4
+                                            rounded-md
+                                            border border-gray-400
+                                            w-full
+                                            py-2
+                                            focus:outline-none focus:border-blue-400"
+                                        placeholder="Enter your email"
+                                        @blur="v$.email.$touch"
+                                        v-model="v$.email.$model"
+                                    />
+                                </div>
                             </div>
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.email.$errors"
@@ -188,48 +261,49 @@ function register() {
                     </div>
 
                     <div class="flex flex-col mb-6">
-<!--                        <label-->
-<!--                            for="password"-->
-<!--                            class="mb-1 text-xs sm:text-sm tracking-wide text-gray-600"-->
-<!--                        >Password:</label>-->
+<!--                        <label for="password" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Password:-->
+<!--                        </label>-->
                         <div class="relative">
-                            <div
-                                class="
-                                    inline-flex
-                                    items-center
-                                    justify-center
-                                    absolute
-                                    left-0
-                                    top-0
-                                    h-full
-                                    w-10
-                                    text-gray-400"
-                            >
-                                <i class="fas fa-lock absolute left-3.5 top-3"
-                                   :class="
+                            <div :class="{ 'hasError': v$.password.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Password</span>
+                                    <div class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        absolute
+                                        left-0
+                                        top-0
+                                        h-full
+                                        w-10
+                                        text-gray-400"
+                                    >
+                                        <i class="fas fa-lock absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.password.$error,
                                         'text-blue-500': !v$.password.$invalid}">
-                                </i>
-                            </div>
-                            <div :class="{ 'hasError': v$.password.$error }">
-                                <input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    class="
-                                        text-sm
-                                        placeholder-gray-500
-                                        pl-10
-                                        pr-4
-                                        rounded-md
-                                        border border-gray-400
-                                        w-full
-                                        py-2
-                                        focus:outline-none focus:border-blue-400"
-                                    placeholder="Enter your password"
-                                    @blur="v$.password.$touch"
-                                    v-model="v$.password.$model"
-                                />
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        class="
+                                            text-sm
+                                            placeholder-gray-500
+                                            pl-10
+                                            pr-4
+                                            rounded-md
+                                            border border-gray-400
+                                            w-full
+                                            py-2
+                                            focus:outline-none focus:border-blue-400"
+                                        placeholder="Enter your password"
+                                        @blur="v$.password.$touch"
+                                        v-model="v$.password.$model"
+                                    />
+                                </div>
                             </div>
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.password.$errors"
@@ -240,48 +314,49 @@ function register() {
                     </div>
 
                     <div class="flex flex-col mb-6">
-                        <!--                        <label-->
-                        <!--                            for="password"-->
-                        <!--                            class="mb-1 text-xs sm:text-sm tracking-wide text-gray-600"-->
-                        <!--                        >Confirm password:</label>-->
+<!--                        <label for="confirmPassword" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Confirm password:-->
+<!--                        </label>-->
                         <div class="relative">
-                            <div
-                                class="
-                                    inline-flex
-                                    items-center
-                                    justify-center
-                                    absolute
-                                    left-0
-                                    top-0
-                                    h-full
-                                    w-10
-                                    text-gray-400"
-                            >
-                                <i class="fas fa-lock absolute left-3.5 top-3"
-                                   :class="
+                            <div :class="{ 'hasError': v$.confirmPassword.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Password confirmation</span>
+                                    <div class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        absolute
+                                        left-0
+                                        top-0
+                                        h-full
+                                        w-10
+                                        text-gray-400"
+                                    >
+                                        <i class="fas fa-lock absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.confirmPassword.$error,
                                         'text-blue-500': !v$.confirmPassword.$invalid}">
-                                </i>
-                            </div>
-                            <div :class="{ 'hasError': v$.confirmPassword.$error }">
-                                <input
-                                    id="confirmPassword"
-                                    type="password"
-                                    name="password"
-                                    class="
-                                        text-sm
-                                        placeholder-gray-500
-                                        pl-10
-                                        pr-4
-                                        rounded-md
-                                        border border-gray-400
-                                        w-full
-                                        py-2
-                                        focus:outline-none focus:border-blue-400"
-                                    placeholder="Confirm password"
-                                    @blur="v$.confirmPassword.$touch"
-                                    v-model="v$.confirmPassword.$model"
-                                />
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="confirmPassword"
+                                        type="password"
+                                        name="password"
+                                        class="
+                                            text-sm
+                                            placeholder-gray-500
+                                            pl-10
+                                            pr-4
+                                            rounded-md
+                                            border border-gray-400
+                                            w-full
+                                            py-2
+                                            focus:outline-none focus:border-blue-400"
+                                        placeholder="Confirm password"
+                                        @blur="v$.confirmPassword.$touch"
+                                        v-model="v$.confirmPassword.$model"
+                                    />
+                                </div>
                             </div>
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.confirmPassword.$errors"
@@ -314,7 +389,7 @@ function register() {
                             :disabled="v$.$invalid"
                             @click="register"
                         >
-                            <span class="mr-2 uppercase">Sign Up</span>
+                            <span class="mr-2 uppercase font-bold">Sign Up</span>
                             <span>
                                 <svg
                                     class="h-6 w-6"
@@ -346,7 +421,7 @@ function register() {
                 font-medium
                 text-sm text-center"
             >
-                <span class="ml-2">You have an account?
+                <span class="ml-2">Already have an account?
                     <a
                         href="#"
                         class="text-sm ml-2 text-blue-500 font-semibold"
@@ -370,6 +445,44 @@ div.hasError input {
 .input-errors {
     color: red;
     font-size: small;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
 
 </style>
