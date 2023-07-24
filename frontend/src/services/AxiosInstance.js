@@ -3,7 +3,7 @@ import axios from "axios";
 // const API_URL = "http://localhost:9090/api/v1";
 const API_URL = process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + "/api/v1";
 
-const axiosInstance = axios.create({
+const apiClient = axios.create({
     baseURL: API_URL,
     headers: {
         "Content-Type": "application/json",
@@ -12,8 +12,10 @@ const axiosInstance = axios.create({
 });
 
 const token = localStorage.getItem("jwtToken");
+console.log("Token");
+console.log(token);
 
-axiosInstance.interceptors.request.use(
+apiClient.interceptors.request.use(
     (config) => {
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -26,4 +28,4 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-export default axiosInstance;
+export default apiClient;

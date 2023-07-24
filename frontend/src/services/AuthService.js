@@ -1,5 +1,6 @@
 import apiClient from "@/services/AxiosInstance";
-import router from "readable-stream/lib/internal/streams/readable";
+import {useRouter} from "vue-router";
+// import router from "readable-stream/lib/internal/streams/readable";
 
 
 
@@ -11,9 +12,10 @@ class AuthService {
         });
     }
 
-    logout() {
+    async logout() {
         window.localStorage.removeItem("jwtToken");
-        router.push("/login");
+        const router = useRouter();
+        await router.push("/login");
     }
 }
 

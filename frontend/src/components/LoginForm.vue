@@ -26,7 +26,8 @@
             </div>
 
             <div class="mt-10">
-                <form action="#">
+<!--                <form action="login" method="post">-->
+                <form>
                     <div class="flex flex-col mb-5">
                         <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
                         <!--                            Username:-->
@@ -138,7 +139,8 @@
 
                     <div class="flex w-full">
                         <button
-                            type="submit"
+                            @click="login"
+                            type="button"
                             class="
                                 flex
                                 mt-2
@@ -157,7 +159,6 @@
                                 ease-in
                                 disabled:opacity-50"
                             :disabled="v$.$invalid"
-                            @click="login"
                         >
                             <span class="mr-2 uppercase font-bold">Sign in</span>
                             <span>
@@ -210,6 +211,8 @@ import AuthService from "@/services/AuthService";
 import {ref} from "vue";
 import {required} from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
+// import {useRouter} from "vue-router";
+// import apiClient from "@/services/AxiosInstance";
 
 // let user = ref({
 //     username: "",
@@ -229,14 +232,22 @@ const rules = {
 
 const v$ = ref(useVuelidate(rules, user));
 
+// const router = useRouter();
+
 async function login() {
     AuthService.login(user.value).then((response) => {
         if (response.data.token) {
             window.localStorage.clear();
             window.localStorage.setItem("jwtToken", response.data.token);
         }
+        // this.$router.push("/books");
+
+        // router.push("/books");
+        // router.push("/books");
+        // window.location.href = "http://localhost:9090/api/v1/books";
         window.location.href = "/";
     });
+    // await apiClient.get("/books").then((response) => console.log(response));
 }
 </script>
 

@@ -16,6 +16,11 @@
                         <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2 " href="#">Home</a></li>
                         <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Tech Interviews</a></li>
                         <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Recent Questions</a></li>
+                        <li>
+                            <router-link to="/books" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
+                                Books
+                            </router-link>
+                        </li>
                         <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">About</a></li>
 
                     </ul>
@@ -35,7 +40,20 @@
         </div>
     </nav>
 
-    <router-view class="view one"></router-view>
+<!--    <router-view class="view one"></router-view>-->
+
+    <router-view v-slot="{ Component }">
+        <suspense>
+<!--        <suspense timeout="0">-->
+            <template #default>
+                <component :is="Component" :key="$route.path"></component>
+            </template>
+            <template #fallback>
+                <div>Loading...</div>
+            </template>
+        </suspense>
+    </router-view>
+
 
 
 

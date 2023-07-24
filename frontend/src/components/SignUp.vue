@@ -1,6 +1,6 @@
 <script setup>
 import useVuelidate from '@vuelidate/core'
-import {required, email, minLength, sameAs} from '@vuelidate/validators'
+import {required, email, minLength, sameAs, maxLength} from '@vuelidate/validators'
 import {computed, ref} from "vue";
 
 const form = ref({
@@ -12,46 +12,78 @@ const form = ref({
     }
 )
 
+// const isUsernameAvailable = (value) => fetch(`/api/v1/signup/available?username=${value}`).then(response => response.json());
+
 const rules = {
     username: {
         required, $autoDirty: true,
+        min: minLength(3),
+        max: maxLength(25),
         name_validation: {
-            $validator: validUsername,
+            $validator: validUsernamePattern,
             $message: 'Only letters and digits are allowed'
-        }
+        },
+        // unique_validation: {
+        //     // $validator: helpers.withAsync(async (value) => {
+        //     //     await new Promise((resolve) => setTimeout(resolve, 1000))
+        //     //     await uniqueUsername(value)
+        //     // }),
+        //     // $validator: helpers.withParams(helpers.withAsync(uniqueUsername)),
+        //     // $validator: await uniqueUsername,
+        //     $validator: helpers.withParams({
+        //             type: 'mustBeCool' },
+        //         (value) => helpers.withAsync(isUsernameAvailable(value))),
+        //     // $validator: helpers.withAsync(isUsernameAvailable),
+        //     $message: 'Username already exists'
+        //
+        // }
     },
     firstName: {
         required, $autoDirty: true,
+        min: minLength(3),
+        max: maxLength(50),
         name_validation: {
             $validator: validName,
             $message: 'Only letters, dashes and spaces are allowed'
         }
     },
-    email: {required, $autoDirty: true, email},
-    password: {required, $autoDirty: true,
+    email: {
+        required, $autoDirty: true, email,
+        // unique_validation: {
+        //     $validator: helpers.withAsync(async (value) => {
+        //         await new Promise((resolve) => setTimeout(resolve, 1000));
+        //         await uniqueEmail(value)
+        // }),
+        //     // $validator: helpers.withParams(helpers.withAsync(uniqueEmail)),
+        //     $message: 'Email already exists'
+        // }
+    },
+    password: {
+        required, $autoDirty: true,
         min: minLength(8),
         password_validation: {
             $validator: validPassword,
             $message: "At least one upper letter, one lower letter, one digit, one special symbol required"
         }
     },
-    confirmPassword: {required, $autoDirty: true,
+    confirmPassword: {
+        required, $autoDirty: true,
         sameAsPassword: sameAs(computed(()=> form.value.password), "password field")
     }
 }
 
 const v$ = ref(useVuelidate(rules, form));
+let uniqueUsernameError = ref('');
+let uniqueEmailError = ref('');
 
 function validName(name) {
     let validNamePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
     return validNamePattern.test(name);
-
 }
 
-function validUsername(username) {
+async function validUsernamePattern(username) {
     let validNamePattern = new RegExp("^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$");
     return validNamePattern.test(username);
-
 }
 
 function validPassword(password) {
@@ -62,14 +94,120 @@ function validPassword(password) {
     return containsUppercase && containsLowercase && containsNumber && containsSpecial
 }
 
-function register() {
+async function isUniqueUsername(username) {
+    let endpoint = `/api/v1/signup/available?username=${username}`;
+    // let body = {
+    //     username: username
+    // }
+    // body.username = username;
+    let response = await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + endpoint, {
+        method: "GET", // or 'PUT'
+        // headers: {
+        //     "Content-Type": "application/json",
+        // },
+        // body: JSON.stringify(body),
+    })
+        .catch(error => {
+            console.log(error.message)
+        });
+    let isUniqueStr = await response.text();
+    let isUnique = (isUniqueStr.toLowerCase() === "true");
+    console.log("Username response: " + isUnique);
+    if (!isUnique) {
+        uniqueUsernameError.value = "Username already exist. Please use another username";
+    }
+    return isUnique;
+    // return Boolean(isUnique);
+}
+
+async function isUniqueEmail(email) {
+    let endpoint = `/api/v1/signup/available?email=${email}`;
+    // let body = {
+    //     email: email
+    // }
+    // body.username = username;
+    let response = await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + endpoint, {
+        method: "GET", // or 'PUT'
+        // headers: {
+        //     "Content-Type": "application/json",
+        // },
+        // body: JSON.stringify(body),
+    })
+        .catch(error => {
+            console.log(error.message)
+        });
+    let isUniqueStr = await response.text();
+    let isUnique = (isUniqueStr.toLowerCase() === "true");
+    console.log("Email response text: " + isUnique);
+    if (!isUnique) {
+        uniqueEmailError.value = "Email already exist. Please use another email";
+    }
+    return isUnique;
+    // return Boolean(isUnique);
+}
+
+function resetUsernameError() {
+    uniqueUsernameError.value = '';
+}
+
+function resetEmailError() {
+    uniqueEmailError.value = '';
+}
+
+async function register() {
     v$.value.$touch();
     if (v$.value.$error) {
         alert("Invalid input in registration form");
         return
     }
 
-    console.log(v$)
+    // await isUniqueUsername(form.value.username);
+    let checkUsername = await isUniqueUsername(form.value.username);
+    // // if (!checkUsername) {
+    // //     uniqueUsernameError = "Username already exist. Please use another username";
+    // // }
+    // //
+    let checkEmail = await isUniqueEmail(form.value.email);
+    // await isUniqueEmail(form.value.email);
+    // // if (!checkEmail) {
+    // //     uniqueEmailError = "Email already exist. Please use another email";
+    // // }
+    //
+    if (checkUsername && checkEmail) {
+        console.log("is username unique: " + checkUsername);
+        console.log("is email unique: " + checkEmail);
+
+
+        let modifiedFormData = form.value;
+        modifiedFormData.rawPassword = Array.from(form.value.password);
+        delete modifiedFormData.password;
+        delete modifiedFormData.confirmPassword;
+
+        // try {
+        //     const response = await fetch()
+        await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + "/api/v1/signup", {
+            method: "POST", // or 'PUT'
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(modifiedFormData),
+        })
+            .catch(error => {
+                console.log(error.message)
+            });
+
+        document.getElementById("registrationForm").reset();
+
+        // const result = await response.json();
+        alert("Thank you for registering. Please confirm your email.");
+        // console.log("Success:", result);
+        // } catch (error) {
+        //     console.error("Error:", error);
+        // }
+
+        window.location.href = "/";
+    }
+    // console.log(v$)
 }
 
 </script>
@@ -95,7 +233,7 @@ function register() {
             </div>
 
             <div class="mt-10">
-                <form action="#">
+                <form id="registrationForm">
                     <div class="flex flex-col mb-5">
 <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
 <!--                            Username:-->
@@ -139,6 +277,7 @@ function register() {
                                             {'border-red-500 focus:border-red-500': v$.username.$error,
                                             'border-[#42d392] ': !v$.username.$invalid}"
                                         placeholder="Enter your username"
+                                        @keyup="resetUsernameError"
                                         @blur="v$.username.$touch"
                                         v-model="v$.username.$model"
                                     >
@@ -147,7 +286,10 @@ function register() {
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.username.$errors"
                                  :key="index">
-                                <div class="error-msg">{{ error.$message }}</div>
+                                <div class="error-msg">{{ error.$message }}{{ uniqueUsernameError }}</div>
+                            </div>
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
+                                <div class="error-msg">{{ uniqueUsernameError }}</div>
                             </div>
                         </div>
                     </div>
@@ -248,6 +390,7 @@ function register() {
                                             py-2
                                             focus:outline-none focus:border-blue-400"
                                         placeholder="Enter your email"
+                                        @keyup="resetEmailError"
                                         @blur="v$.email.$touch"
                                         v-model="v$.email.$model"
                                     />
@@ -256,7 +399,10 @@ function register() {
                             <!-- Error Message -->
                             <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.email.$errors"
                                  :key="index">
-                                <div class="error-msg">{{ error.$message }}</div>
+                                <div class="error-msg">{{ error.$message }}{{ uniqueEmailError }}</div>
+                            </div>
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
+                                <div class="error-msg">{{ uniqueEmailError }}</div>
                             </div>
                         </div>
                     </div>
@@ -369,7 +515,8 @@ function register() {
 
                     <div class="flex w-full">
                         <button
-                            type="submit"
+                            @click="register"
+                            type="button"
                             class="
                                 flex
                                 mt-2
@@ -388,7 +535,6 @@ function register() {
                                 ease-in
                                 disabled:opacity-50"
                             :disabled="v$.$invalid"
-                            @click="register"
                         >
                             <span class="mr-2 uppercase font-bold">Sign up</span>
                             <span>
