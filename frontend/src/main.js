@@ -1,14 +1,22 @@
 import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
+
 import App from './App.vue'
+import SignUp from "@/components/SignUp.vue";
+import LoginForm from "@/components/LoginForm.vue";
 
-// import Vue from 'vue'
-// import VueTailwind from 'vue-tailwind'
-//
-// const components = {
-//     //...
-// }
-//
-// Vue.use(VueTailwind, components)
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: '/signup', component: SignUp},
+        { path: '/login', component: LoginForm}
+    ]
+});
 
+const app= createApp(App)
 
-createApp(App).mount('#app')
+app.use(router)
+
+app.mount('#app')
+
+// createApp(App).mount('#app')
