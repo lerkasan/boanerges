@@ -194,12 +194,9 @@
                 text-sm text-center"
             >
                 <span class="ml-2">Don't have an account?
-                    <a
-                        href="#"
-                        class="text-sm ml-2 text-blue-500 font-bold"
-                    >
+                    <router-link class="text-sm ml-2 text-blue-500 font-bold" to="/signup">
                         Sign up
-                    </a>
+                    </router-link>
                 </span>
             </a>
         </div>
@@ -268,11 +265,11 @@ async function login() {
                 // window.location.href = "http://localhost:9090/api/v1/books";
                 window.location.href = "/";
             } else {
-                loginError.value = "Username or password is incorrect";
+                loginError.value = "User hasn't confirmed email or username/password is incorrect";
             }
         });
     } catch (error) {
-        loginError.value = "Username or password is incorrect";
+        loginError.value = "User hasn't confirmed email or username/password is incorrect";
         console.error(error);
     }
     // await apiClient.get("/books").then((response) => console.log(response));

@@ -3,8 +3,7 @@ import useVuelidate from '@vuelidate/core'
 import {required, email, minLength, sameAs, maxLength, helpers} from '@vuelidate/validators'
 import {computed, ref} from "vue";
 import apiClient from "@/services/AxiosInstance";
-import SignUpSuccess from "@/components/SignUpSuccess.vue";
-// import SignUpForm from "@/components/SignUpForm.vue";
+// import SignUpSuccess from "@/components/SignUpSuccess.vue";
 
 const form = ref({
         username: '',
@@ -296,12 +295,9 @@ async function register() {
 </script>
 
 <template>
-    <Transition>
-        <div v-if="!showPopup" class="popup-info">
-<!--            <SignUpForm/>-->
-            <div
-                 class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-                <div class="
+    <div v-show="!showPopup"
+        class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        <div class="
           flex flex-col
           bg-white
           shadow-md
@@ -313,21 +309,21 @@ async function register() {
           rounded-3xl
           w-96
           max-w-md">
-                    <div class="font-medium self-center text-2xl text-gray-800">
-                        Create an account
-                    </div>
+            <div class="font-medium self-center text-2xl text-gray-800">
+                Create an account
+            </div>
 
-                    <div class="mt-10">
-                        <form id="registrationForm" @change="resetSignupError">
-                            <div class="flex flex-col mb-5">
-                                <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Username:-->
-                                <!--                        </label>-->
-                                <div class="relative">
-                                    <div :class="{ 'hasError': v$.username.$error }">
-                                        <div class="tooltip w-full">
-                                            <span class="tooltiptext text-sm">Username</span>
-                                            <div class="
+            <div class="mt-10">
+                <form id="registrationForm" @change="resetSignupError">
+                    <div class="flex flex-col mb-5">
+<!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Username:-->
+<!--                        </label>-->
+                        <div class="relative">
+                            <div :class="{ 'hasError': v$.username.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Username</span>
+                                    <div class="
                                         inline-flex
                                         items-center
                                         justify-center
@@ -337,18 +333,18 @@ async function register() {
                                         h-full
                                         w-10
                                         text-gray-400"
-                                            >
-                                                <i class="fas fa-user absolute left-3.5 top-3"
-                                                   :class="
+                                    >
+                                        <i class="fas fa-user absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.username.$error,
                                         'text-blue-500': !v$.username.$invalid}">
-                                                </i>
-                                            </div>
-                                            <input
-                                                id="username"
-                                                type="text"
-                                                name="username"
-                                                class="
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="username"
+                                        type="text"
+                                        name="username"
+                                        class="
                                             text-sm
                                             placeholder-gray-500
                                             pl-10
@@ -358,35 +354,35 @@ async function register() {
                                             w-full
                                             py-2
                                             focus:outline-none focus:border-blue-400"
-                                                :class="
+                                        :class="
                                             {'border-red-500 focus:border-red-500': v$.username.$error,
                                             'border-[#42d392] ': !v$.username.$invalid}"
-                                                placeholder="Enter your username"
-                                                @blur="v$.username.$touch"
-                                                v-model="v$.username.$model"
-                                            >
-                                        </div>
-                                    </div>
-                                    <!-- Error Message -->
-                                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.username.$errors"
-                                         :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
-                                    </div>
-                                    <!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
-                                    <!--                                <div class="error-msg">{{ uniqueUsernameError }}</div>-->
-                                    <!--                            </div>-->
+                                        placeholder="Enter your username"
+                                        @blur="v$.username.$touch"
+                                        v-model="v$.username.$model"
+                                    >
                                 </div>
                             </div>
+                            <!-- Error Message -->
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.username.$errors"
+                                 :key="index">
+                                <div class="error-msg">{{ error.$message }}</div>
+                            </div>
+<!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
+<!--                                <div class="error-msg">{{ uniqueUsernameError }}</div>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
 
-                            <div class="flex flex-col mb-5">
-                                <!--                        <label for="firstName" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            First name:-->
-                                <!--                        </label>-->
-                                <div class="relative">
-                                    <div :class="{ 'hasError': v$.firstName.$error }">
-                                        <div class="tooltip w-full">
-                                            <span class="tooltiptext text-sm">First name</span>
-                                            <div class="
+                    <div class="flex flex-col mb-5">
+<!--                        <label for="firstName" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            First name:-->
+<!--                        </label>-->
+                        <div class="relative">
+                            <div :class="{ 'hasError': v$.firstName.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">First name</span>
+                                    <div class="
                                         inline-flex
                                         items-center
                                         justify-center
@@ -396,18 +392,18 @@ async function register() {
                                         h-full
                                         w-10
                                         text-gray-400"
-                                            >
-                                                <i class="fas fa-user absolute left-3.5 top-3"
-                                                   :class="
+                                    >
+                                        <i class="fas fa-user absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.firstName.$error,
                                         'text-blue-500': !v$.firstName.$invalid}">
-                                                </i>
-                                            </div>
-                                            <input
-                                                id="firstName"
-                                                type="text"
-                                                name="firstName"
-                                                class="
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="firstName"
+                                        type="text"
+                                        name="firstName"
+                                        class="
                                             text-sm
                                             placeholder-gray-500
                                             pl-10
@@ -417,32 +413,32 @@ async function register() {
                                             w-full
                                             py-2
                                             focus:outline-none focus:border-blue-400"
-                                                :class="
+                                        :class="
                                             {'border-red-500 focus:border-red-500': v$.firstName.$error,
                                             'border-[#42d392] ': !v$.firstName.$invalid}"
-                                                placeholder="Enter your first name"
-                                                @blur="v$.firstName.$touch"
-                                                v-model="v$.firstName.$model"
-                                            >
-                                        </div>
-                                    </div>
-                                    <!-- Error Message -->
-                                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.firstName.$errors"
-                                         :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
-                                    </div>
+                                        placeholder="Enter your first name"
+                                        @blur="v$.firstName.$touch"
+                                        v-model="v$.firstName.$model"
+                                    >
                                 </div>
                             </div>
+                            <!-- Error Message -->
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.firstName.$errors"
+                                 :key="index">
+                                <div class="error-msg">{{ error.$message }}</div>
+                            </div>
+                        </div>
+                    </div>
 
-                            <div class="flex flex-col mb-5">
-                                <!--                        <label for="email" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Email:-->
-                                <!--                        </label>-->
-                                <div class="relative">
-                                    <div :class="{ 'hasError': v$.email.$error }">
-                                        <div class="tooltip w-full">
-                                            <span class="tooltiptext text-sm">Email</span>
-                                            <div class="
+                    <div class="flex flex-col mb-5">
+<!--                        <label for="email" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Email:-->
+<!--                        </label>-->
+                        <div class="relative">
+                            <div :class="{ 'hasError': v$.email.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Email</span>
+                                    <div class="
                                         inline-flex
                                         items-center
                                         justify-center
@@ -452,18 +448,18 @@ async function register() {
                                         h-full
                                         w-10
                                         text-gray-400"
-                                            >
-                                                <i class="fas fa-at absolute left-3.5 top-3"
-                                                   :class="
+                                    >
+                                        <i class="fas fa-at absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.email.$error,
                                         'text-blue-500': !v$.email.$invalid}">
-                                                </i>
-                                            </div>
-                                            <input
-                                                id="email"
-                                                type="email"
-                                                name="email"
-                                                class="
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        class="
                                             text-sm
                                             placeholder-gray-500
                                             pl-10
@@ -473,32 +469,32 @@ async function register() {
                                             w-full
                                             py-2
                                             focus:outline-none focus:border-blue-400"
-                                                placeholder="Enter your email"
-                                                @blur="v$.email.$touch"
-                                                v-model="v$.email.$model"
-                                            />
-                                        </div>
-                                    </div>
-                                    <!-- Error Message -->
-                                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.email.$errors"
-                                         :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
-                                    </div>
-                                    <!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
-                                    <!--                                <div class="error-msg">{{ uniqueEmailError }}</div>-->
-                                    <!--                            </div>-->
+                                        placeholder="Enter your email"
+                                        @blur="v$.email.$touch"
+                                        v-model="v$.email.$model"
+                                    />
                                 </div>
                             </div>
+                            <!-- Error Message -->
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.email.$errors"
+                                 :key="index">
+                                <div class="error-msg">{{ error.$message }}</div>
+                            </div>
+<!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
+<!--                                <div class="error-msg">{{ uniqueEmailError }}</div>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
 
-                            <div class="flex flex-col mb-6">
-                                <!--                        <label for="password" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Password:-->
-                                <!--                        </label>-->
-                                <div class="relative">
-                                    <div :class="{ 'hasError': v$.password.$error }">
-                                        <div class="tooltip w-full">
-                                            <span class="tooltiptext text-sm">Password</span>
-                                            <div class="
+                    <div class="flex flex-col mb-6">
+<!--                        <label for="password" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Password:-->
+<!--                        </label>-->
+                        <div class="relative">
+                            <div :class="{ 'hasError': v$.password.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Password</span>
+                                    <div class="
                                         inline-flex
                                         items-center
                                         justify-center
@@ -508,18 +504,18 @@ async function register() {
                                         h-full
                                         w-10
                                         text-gray-400"
-                                            >
-                                                <i class="fas fa-lock absolute left-3.5 top-3"
-                                                   :class="
+                                    >
+                                        <i class="fas fa-lock absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.password.$error,
                                         'text-blue-500': !v$.password.$invalid}">
-                                                </i>
-                                            </div>
-                                            <input
-                                                id="password"
-                                                type="password"
-                                                name="password"
-                                                class="
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        class="
                                             text-sm
                                             placeholder-gray-500
                                             pl-10
@@ -529,29 +525,29 @@ async function register() {
                                             w-full
                                             py-2
                                             focus:outline-none focus:border-blue-400"
-                                                placeholder="Enter your password"
-                                                @blur="v$.password.$touch"
-                                                v-model="v$.password.$model"
-                                            />
-                                        </div>
-                                    </div>
-                                    <!-- Error Message -->
-                                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.password.$errors"
-                                         :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
-                                    </div>
+                                        placeholder="Enter your password"
+                                        @blur="v$.password.$touch"
+                                        v-model="v$.password.$model"
+                                    />
                                 </div>
                             </div>
+                            <!-- Error Message -->
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.password.$errors"
+                                 :key="index">
+                                <div class="error-msg">{{ error.$message }}</div>
+                            </div>
+                        </div>
+                    </div>
 
-                            <div class="flex flex-col mb-6">
-                                <!--                        <label for="confirmPassword" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Confirm password:-->
-                                <!--                        </label>-->
-                                <div class="relative">
-                                    <div :class="{ 'hasError': v$.confirmPassword.$error }">
-                                        <div class="tooltip w-full">
-                                            <span class="tooltiptext text-sm">Password confirmation</span>
-                                            <div class="
+                    <div class="flex flex-col mb-6">
+<!--                        <label for="confirmPassword" class="mb-1 text-sm tracking-wide text-gray-600">-->
+<!--                            Confirm password:-->
+<!--                        </label>-->
+                        <div class="relative">
+                            <div :class="{ 'hasError': v$.confirmPassword.$error }">
+                                <div class="tooltip w-full">
+                                    <span class="tooltiptext text-sm">Password confirmation</span>
+                                    <div class="
                                         inline-flex
                                         items-center
                                         justify-center
@@ -561,18 +557,18 @@ async function register() {
                                         h-full
                                         w-10
                                         text-gray-400"
-                                            >
-                                                <i class="fas fa-lock absolute left-3.5 top-3"
-                                                   :class="
+                                    >
+                                        <i class="fas fa-lock absolute left-3.5 top-3"
+                                           :class="
                                         {'text-red-500': v$.confirmPassword.$error,
                                         'text-blue-500': !v$.confirmPassword.$invalid}">
-                                                </i>
-                                            </div>
-                                            <input
-                                                id="confirmPassword"
-                                                type="password"
-                                                name="password"
-                                                class="
+                                        </i>
+                                    </div>
+                                    <input
+                                        id="confirmPassword"
+                                        type="password"
+                                        name="password"
+                                        class="
                                             text-sm
                                             placeholder-gray-500
                                             pl-10
@@ -582,25 +578,25 @@ async function register() {
                                             w-full
                                             py-2
                                             focus:outline-none focus:border-blue-400"
-                                                placeholder="Confirm password"
-                                                @blur="v$.confirmPassword.$touch"
-                                                v-model="v$.confirmPassword.$model"
-                                            />
-                                        </div>
-                                    </div>
-                                    <!-- Error Message -->
-                                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.confirmPassword.$errors"
-                                         :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
-                                    </div>
+                                        placeholder="Confirm password"
+                                        @blur="v$.confirmPassword.$touch"
+                                        v-model="v$.confirmPassword.$model"
+                                    />
                                 </div>
                             </div>
+                            <!-- Error Message -->
+                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600" v-for="(error, index) of v$.confirmPassword.$errors"
+                                 :key="index">
+                                <div class="error-msg">{{ error.$message }}</div>
+                            </div>
+                        </div>
+                    </div>
 
-                            <div class="flex w-full">
-                                <button
-                                    @click="register"
-                                    type="button"
-                                    class="
+                    <div class="flex w-full">
+                        <button
+                            @click="register"
+                            type="button"
+                            class="
                                 flex
                                 mt-2
                                 items-center
@@ -617,10 +613,10 @@ async function register() {
                                 duration-150
                                 ease-in
                                 disabled:opacity-50"
-                                    :disabled="v$.$invalid"
-                                >
-                                    <span class="mr-2 uppercase font-bold">Sign up</span>
-                                    <span>
+                            :disabled="v$.$invalid"
+                        >
+                            <span class="mr-2 uppercase font-bold">Sign up</span>
+                            <span>
                                 <svg
                                     class="h-6 w-6"
                                     fill="none"
@@ -635,40 +631,36 @@ async function register() {
                                     />
                                 </svg>
                             </span>
-                                </button>
-                            </div>
-
-                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
-                                <div class="error-msg">{{ signupError }}</div>
-                            </div>
-
-                        </form>
+                        </button>
                     </div>
-                </div>
-                <div class="flex justify-center items-center mt-6">
-                    <a
-                        href="#"
-                        target="_blank"
-                        class="
+
+                    <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">
+                        <div class="error-msg">{{ signupError }}</div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="flex justify-center items-center mt-6">
+            <a
+                href="#"
+                target="_blank"
+                class="
                 inline-flex
                 items-center
                 text-gray-700
                 font-medium
                 text-sm text-center"
-                    >
+            >
                 <span class="ml-2">Already have an account?
                     <router-link class="text-sm ml-2 text-blue-500 font-bold" to="/login">
                         Log in
                     </router-link>
                 </span>
-                    </a>
-                </div>
-            </div>
+            </a>
         </div>
-        <div v-else class="popup-info">
-            <SignUpSuccess/>
-        </div>
-    </Transition>
+    </div>
+
 </template>
 
 <style scoped lang="css">
@@ -721,16 +713,6 @@ div.hasError input {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
-}
-
-.v-enter-active,
-.v-leave-active {
-    transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-    opacity: 0;
 }
 
 </style>

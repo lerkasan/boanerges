@@ -5,11 +5,13 @@ import App from './App.vue'
 import SignUp from "@/components/SignUp.vue";
 import LoginForm from "@/components/LoginForm.vue";
 import HelloWorld from "@/components/HelloWorld.vue";
+// import SignUpSuccess from "@/components/SignUpSuccess.vue";
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/signup', component: SignUp},
+        // { path: '/signup-success', component: SignUpSuccess},
         { path: '/login', component: LoginForm},
         { path: '/books', component: HelloWorld}
     ]
