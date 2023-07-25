@@ -53,7 +53,7 @@ public class Interview {
     @JsonIgnore
     @ManyToOne
     @PrimaryKeyJoinColumn(name="user_id", referencedColumnName="id")
-    @JsonIgnoreProperties(value = {"interviews"})
+//    @JsonIgnoreProperties(value = {"interviews"})
     private User user;
 
     public Interview(Long id, @NonNull String name, Topic topic, Set<Question> questions) {

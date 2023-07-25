@@ -39,18 +39,19 @@ public class InterviewController {
     }
 
     @PostMapping
-    public ResponseEntity<Interview> createInterview(@RequestBody InterviewDto interviewDto, Authentication authentication) {
+    public ResponseEntity<InterviewDto> createInterview(@RequestBody(required = true) InterviewDto interviewDto, Authentication authentication) {
 //    public ResponseEntity<Interview> createInterview(@Valid @RequestBody Interview interview, Authentication authentication) {
         User currentUser = userService.findByUsername(authentication.getName());
         Interview interview = interviewDtoMapper.toInterview(interviewDto);
         interview.setUser(currentUser);
         Interview createdInterview = interviewService.create(interview);
+        InterviewDto createdInterviewDto = interviewDtoMapper.toInterviewDto(createdInterview);
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{id}")
                 .buildAndExpand(createdInterview.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(createdInterview);
+        return ResponseEntity.created(location).body(createdInterviewDto);
     }
 }

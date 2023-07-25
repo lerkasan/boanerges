@@ -13,6 +13,14 @@
             <div class="w-full md:w-3/5 h-full flex items-center bg-gray-100 rounded-lg">
                 <div class="p-12 md:pr-24 md:pl-16 md:py-12">
                     <p class="text-gray-900">{{ question }}</p>
+
+<!--                    <div v-if="questionAudioUrl" className="audio-player">-->
+<!--                        <audio id="question_audio">-->
+<!--&lt;!&ndash;                        <audio id="question_audio" controls autoplay>&ndash;&gt;-->
+<!--                            <source :src="questionAudioUrl" type="audio/mpeg">-->
+<!--                        </audio>-->
+<!--                    </div>-->
+
 <!--                    <a class="flex items-baseline mt-3 text-indigo-600 hover:text-indigo-900 focus:text-indigo-900" href="">-->
 <!--                        <span>Learn more about our users</span>-->
 <!--                        <span class="text-xs ml-1">&#x279c;</span>-->
@@ -22,10 +30,12 @@
                     <polygon points="50,0 100,0 50,100 0,100" />
                 </svg>
             </div>
-            <button class="absolute top-0 mt-32 left-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -ml-6 focus:outline-none focus:shadow-outline">
-                <span class="block" style="transform: scale(-1);">&#x279c;</span>
-            </button>
-            <button class="absolute top-0 mt-32 right-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -mr-6 focus:outline-none focus:shadow-outline">
+<!--            <button class="absolute top-0 mt-32 left-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -ml-6 focus:outline-none focus:shadow-outline">-->
+<!--                <span class="block" style="transform: scale(-1);">&#x279c;</span>-->
+<!--            </button>-->
+            <button
+                @click="getQuestion"
+                class="absolute top-0 mt-32 right-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -mr-6 focus:outline-none focus:shadow-outline">
                 <span class="block" style="transform: scale(1);">&#x279c;</span>
             </button>
         </div>
@@ -101,6 +111,9 @@ let audioMime = {
     audioBitsPerSecond: 16000,
 }
 
+const question = ref('');
+const questionAudioUrl = ref('');
+
 const mediaRecorder = ref();
 const permission = ref(false);
 const recordingStatus = ref(false);
@@ -117,7 +130,8 @@ let credentials;
 const region = process.env.VUE_APP_AWS_REGION;
 
 getTranscribeCredentials();
-createInterview();
+await createInterview();
+await getQuestion();
 
 // const credentials = await getTranscribeCredentials()
 //     .then(response => {return response.json()})
@@ -132,9 +146,11 @@ defineExpose({
 })
 
 async function createInterview() {
+    let topicId = 10;
+    window.localStorage.setItem('topicId', topicId);
     apiClient.post("/interviews", {
         name: "My awesome interview",
-        topicId: 10
+        topicId: topicId
     })
         .then(response => {
             window.localStorage.setItem("interviewId", response.data.id);
@@ -143,6 +159,31 @@ async function createInterview() {
         .catch(err => console.log("error " + err));
 }
 
+
+async function getQuestion() {
+    let topicId = window.localStorage.getItem('topicId');
+    if (topicId !== undefined) {
+        apiClient.get(`/questions?topicId=${topicId}`)
+            .then(response => {
+                question.value = response.data.text;
+                questionAudioUrl.value = response.data.audioUrl;
+                let oldQuestionAudio = document.getElementById("question_audio");
+                if (oldQuestionAudio !== undefined && oldQuestionAudio !== null) {
+                    oldQuestionAudio.remove();
+                }
+
+                let questionAudio = document.createElement('audio');
+                questionAudio.id = "question_audio";
+                questionAudio.src = response.data.audioUrl;
+                questionAudio.controls = false;
+                questionAudio.autoplay = false;
+                questionAudio.play();
+            })
+            // .then(response => console.log("api response: " + response))
+            .catch(err => console.log("error " + err));
+    }
+
+}
 
 
 // eslint-disable-next-line no-unused-vars
@@ -463,18 +504,30 @@ function stopRecording() {
     // }
 }
 
+// async function getTranscribeCredentials() {
+//     const getCredentialsUrl = process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + '/api/v1/sts';
+//     await fetch(getCredentialsUrl, {method: "POST"}).then(response => {
+//         if (!response.ok) {
+//             const message = `An error has occurred: ${response.status}`;
+//             throw new Error(message);
+//         }
+//         return response.json()
+//     }).then(data => {
+//         console.log("STS response: ", data);
+//         credentials = data;
+//         return data;
+//     });
+// }
+
 async function getTranscribeCredentials() {
-    const getCredentialsUrl = process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + '/api/v1/sts';
-    await fetch(getCredentialsUrl, {method: "POST"}).then(response => {
-        if (!response.ok) {
-            const message = `An error has occurred: ${response.status}`;
+    await apiClient.post('/sts').then(response => {
+        if (response.status !== 200) {
+            const message = `An error has occurred: ${response.statusText}`;
             throw new Error(message);
         }
-        return response.json()
-    }).then(data => {
-        console.log("STS response: ", data);
-        credentials = data;
-        return data;
+        console.log("STS response: ", response.data);
+        credentials = response.data;
+        return response.data;
     });
 }
 
