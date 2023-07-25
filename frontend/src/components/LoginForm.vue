@@ -212,6 +212,7 @@ import AuthService from "@/services/AuthService";
 import {ref} from "vue";
 import {required} from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
+// import jwt from "jsonwebtoken";
 // import {useRouter} from "vue-router";
 // import apiClient from "@/services/AxiosInstance";
 
@@ -237,6 +238,16 @@ const v$ = ref(useVuelidate(rules, user));
 
 // const router = useRouter();
 
+// decode the logged in user
+function parseJwt(token) {
+    if (!token) {
+        return;
+    }
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace("-", "+").replace("_", "/");
+    return JSON.parse(window.atob(base64));
+}
+
 async function login() {
     try {
         AuthService.login(user.value).then((response) => {
@@ -244,6 +255,11 @@ async function login() {
                 if (response.data.token) {
                     window.localStorage.clear();
                     window.localStorage.setItem("jwtToken", response.data.token);
+                    // loggedin user
+                    const decodedJwt = parseJwt(response.data.token);
+                    let user = decodedJwt.sub;
+                    console.log(user);
+                    window.localStorage.setItem("user", user);
                 }
                 // this.$router.push("/books");
 

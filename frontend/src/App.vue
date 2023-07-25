@@ -28,7 +28,31 @@
             </div>
 
             <div class="order-2 md:order-3 flex flex-wrap items-center justify-end mr-0 md:mr-4" id="nav-content">
-                <div class="auth flex items-center w-full md:w-full">
+                <div v-if="user">
+<!--                    <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">-->
+<!--                        <svg class="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20"-->
+<!--                             xmlns="http://www.w3.org/2000/svg">-->
+<!--                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd">-->
+<!--                            </path>-->
+<!--                        </svg>-->
+<!--                    </div>-->
+                    <div class="auth flex items-center w-full md:w-full">
+                        <button class="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
+                            <router-link to="/me">Welcome, {{ user }} </router-link>
+                        </button>
+                        <button class="
+                            bg-blue-600
+                            text-gray-200
+                            p-2 rounded
+                            hover:bg-blue-500
+                            hover:text-white-100"
+                            @click="logout"
+                        >
+                            Log out
+                        </button>
+                    </div>
+                </div>
+                <div v-else class="auth flex items-center w-full md:w-full">
                     <button class="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
                         <router-link to="/login">Sign in</router-link>
                     </button>
@@ -72,6 +96,21 @@
 <!--    </Suspense>-->
 </template>
 
+<script setup>
+
+import {ref} from "vue";
+import AuthService from "@/services/AuthService";
+
+let user = ref('');
+user.value = localStorage.getItem("user");
+console.log("user on home page " + user.value);
+
+async function logout() {
+    await AuthService.logout();
+}
+
+</script>
+
 <script>
 // export default {
 //     name: "App",
@@ -84,6 +123,8 @@
 // import RecordAudio from "@/components/RecordAudio.vue";
 
 // import {Navbar, NavbarLink} from 'flowbite-vue';
+
+
 
 export default {
     name: 'App',
