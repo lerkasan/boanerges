@@ -1,85 +1,7 @@
 <template>
-
-    <nav id="header" class="w-full z-30 top-10 py-1 bg-white shadow-lg border-b border-blue-400 mt-10">
-        <div class="w-full flex items-center justify-between mt-0 px-6 py-2">
-            <label for="menu-toggle" class="cursor-pointer md:hidden block">
-                <svg class="fill-current text-blue-600" xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 20 20">
-                    <title>menu</title>
-                    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-                </svg>
-            </label>
-            <input class="hidden" type="checkbox" id="menu-toggle">
-
-            <div class="hidden md:flex md:items-center md:w-auto w-full order-3 md:order-1" id="menu">
-                <nav>
-                    <ul class="md:flex items-center justify-between text-base text-blue-600 pt-4 md:pt-0">
-                        <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2 " href="#">Home</a></li>
-                        <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Tech Interviews</a></li>
-                        <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Recent Questions</a></li>
-                        <li>
-                            <router-link to="/books" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
-                                Books
-                            </router-link>
-                        </li>
-                        <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">About</a></li>
-
-                    </ul>
-                </nav>
-            </div>
-
-            <div class="order-2 md:order-3 flex flex-wrap items-center justify-end mr-0 md:mr-4" id="nav-content">
-                <div v-if="user">
-<!--                    <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">-->
-<!--                        <svg class="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20"-->
-<!--                             xmlns="http://www.w3.org/2000/svg">-->
-<!--                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd">-->
-<!--                            </path>-->
-<!--                        </svg>-->
-<!--                    </div>-->
-                    <div class="auth flex items-center w-full md:w-full">
-                        <button class="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
-                            <router-link to="/me">Welcome, {{ user }} </router-link>
-                        </button>
-                        <button class="
-                            bg-blue-600
-                            text-gray-200
-                            p-2 rounded
-                            hover:bg-blue-500
-                            hover:text-white-100"
-                            @click="logout"
-                        >
-                            Log out
-                        </button>
-                    </div>
-                </div>
-                <div v-else class="auth flex items-center w-full md:w-full">
-                    <button class="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
-                        <router-link to="/login">Sign in</router-link>
-                    </button>
-                    <button class="bg-blue-600 text-gray-200  p-2 rounded  hover:bg-blue-500 hover:text-white-100">
-                        <router-link to="/signup">Sign up</router-link>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-<!--    <router-view class="view one"></router-view>-->
-
-    <router-view v-slot="{ Component }">
-        <suspense>
-<!--        <suspense timeout="0">-->
-            <template #default>
-                <component :is="Component" :key="$route.path"></component>
-            </template>
-            <template #fallback>
-                <div>Loading...</div>
-            </template>
-        </suspense>
-    </router-view>
-
-
-
+<!--    <Suspense>-->
+        <HomePage/>
+<!--    </Suspense>-->
 
 <!--    <RecordAudio/>-->
 <!--    <SignUpNew/>-->
@@ -96,21 +18,6 @@
 <!--    </Suspense>-->
 </template>
 
-<script setup>
-
-import {ref} from "vue";
-import AuthService from "@/services/AuthService";
-
-let user = ref('');
-user.value = localStorage.getItem("user");
-console.log("user on home page " + user.value);
-
-async function logout() {
-    await AuthService.logout();
-}
-
-</script>
-
 <script>
 // export default {
 //     name: "App",
@@ -126,10 +33,14 @@ async function logout() {
 
 
 
+import HomePage from "@/components/HomePage.vue";
+
 export default {
     name: 'App',
     // components: {NavbarLink, Navbar},
-    // components: {
+    components: {
+        HomePage
+    }
     //     RecordAudio,
     //     // LoginForm
     //     // SignUpNew,
@@ -141,16 +52,3 @@ export default {
 </script>
 
 <style src="./app.css" lang="css"></style>
-
-<style scoped>
-ul {
-    display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-li:not(:last-of-type) {
-    margin-right: 1rem;
-}
-</style>

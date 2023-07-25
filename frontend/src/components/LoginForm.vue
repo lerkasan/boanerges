@@ -256,7 +256,7 @@ async function login() {
                     const decodedJwt = parseJwt(response.data.token);
                     let user = decodedJwt.sub;
                     console.log(user);
-                    window.localStorage.setItem("user", user);
+                    window.localStorage.setItem("username", user);
                 }
                 // this.$router.push("/books");
 

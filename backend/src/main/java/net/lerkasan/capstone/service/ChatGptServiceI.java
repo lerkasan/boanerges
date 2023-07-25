@@ -9,12 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 @Service
-public class ChatGptService implements ChatService {
+public class ChatGptServiceI implements ChatServiceI {
 
     @Qualifier("ChatGptWebClient")
     private final WebClient chatGptWebClient;
@@ -27,7 +26,7 @@ public class ChatGptService implements ChatService {
 //    private String model;
 
     @Autowired
-    public ChatGptService(WebClient chatGptWebClient, ObjectMapper objectMapper, ChatRequestBody requestBody) {
+    public ChatGptServiceI(WebClient chatGptWebClient, ObjectMapper objectMapper, ChatRequestBody requestBody) {
         this.chatGptWebClient = chatGptWebClient;
         this.objectMapper = objectMapper;
         this.requestBody = requestBody;

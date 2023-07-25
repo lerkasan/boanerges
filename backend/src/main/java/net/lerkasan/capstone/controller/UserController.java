@@ -4,13 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.model.User;
-import net.lerkasan.capstone.service.EmailService;
-import net.lerkasan.capstone.service.UserService;
-import net.lerkasan.capstone.service.HtmlRenderer;
+import net.lerkasan.capstone.service.*;
 import net.lerkasan.capstone.utils.EmailDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,11 +19,11 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceI userService;
 
     private final HtmlRenderer htmlRender;
 
-    private final EmailService emailService;
+    private final EmailServiceI emailService;
 
     @Autowired
     public UserController(final UserService userService, HtmlRenderer htmlRender, EmailService emailService) {
@@ -85,5 +84,11 @@ public class UserController {
     @GetMapping(path = "/signup/available", params = "username")
     public boolean isUsernameAvailable(@RequestParam String username) {
         return userService.isUsernameAvailable(username);
+    }
+
+    @GetMapping(path = "/me")
+    public User getCurrentUserInfo(Authentication authentication) {
+        String username = authentication.getName();
+        return userService.findByUsername(username);
     }
 }

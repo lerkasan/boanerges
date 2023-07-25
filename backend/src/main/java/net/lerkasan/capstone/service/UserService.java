@@ -99,11 +99,11 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
         return nonNull(username) && userRepo.isUsernameAvailable(username);
     }
 
-    public User getCurrentUser() {
-//        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return findByEmail(userPrincipal.getUsername());
-        return findByEmail("test@email.com");
-    }
+//    public User getCurrentUser() {
+////        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+////        return findByEmail(userPrincipal.getUsername());
+//        return findByEmail("test@email.com");
+//    }
 
     @Override
     public User update(User user) {

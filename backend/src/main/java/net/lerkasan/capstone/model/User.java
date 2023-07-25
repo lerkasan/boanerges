@@ -32,7 +32,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"username", "email", "createdAt"})
-@ToString
+@ToString(exclude = {"rawPassword", "password", "token", "interviews"})
 @Validated
 @JsonInclude(NON_NULL)
 public class User implements UserDetails {
@@ -79,7 +79,8 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+//    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonIgnore
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @JsonIgnore

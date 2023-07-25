@@ -20,6 +20,12 @@ public interface UserServiceI {
 
     void delete(User user);
 
+    User findById(long id);
+
+    User findByUsername(String username);
+
+    User findByEmail(String email);
+
     boolean isEmailAvailable(String email);
 
     boolean isUsernameAvailable(String username);

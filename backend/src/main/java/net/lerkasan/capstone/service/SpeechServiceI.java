@@ -5,6 +5,6 @@ import software.amazon.awssdk.services.polly.model.OutputFormat;
 
 import java.io.InputStream;
 
-public interface SpeechService {
+public interface SpeechServiceI {
     InputStream synthesizeSpeech(String text, String voiceId, OutputFormat format);
 }

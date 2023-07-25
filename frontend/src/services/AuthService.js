@@ -18,7 +18,7 @@ class AuthService {
 
     async logout() {
         window.localStorage.removeItem("jwtToken");
-        window.localStorage.removeItem("user");
+        window.localStorage.removeItem("username");
 
         window.location.href = "/login";
         // const router = useRouter();

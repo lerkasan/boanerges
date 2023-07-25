@@ -19,7 +19,7 @@ import static jakarta.persistence.CascadeType.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"id", "name"})
-@ToString
+@ToString(exclude = {"topics"})
 public class Category {
 
     @Id

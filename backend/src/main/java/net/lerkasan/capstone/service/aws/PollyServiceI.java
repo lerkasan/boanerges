@@ -1,7 +1,7 @@
 package net.lerkasan.capstone.service.aws;
 
 
-import net.lerkasan.capstone.service.SpeechService;
+import net.lerkasan.capstone.service.SpeechServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -15,13 +15,13 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.io.InputStream;
 
 @Service
-public class PollyService implements SpeechService {
+public class PollyServiceI implements SpeechServiceI {
 
     private final PollyClient pollyClient;
     private final S3Client s3Client;
 
     @Autowired
-    public PollyService(PollyClient pollyClient, S3Client s3Client) {
+    public PollyServiceI(PollyClient pollyClient, S3Client s3Client) {
         this.pollyClient = pollyClient;
         this.s3Client = s3Client;
     }

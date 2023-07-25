@@ -1,9 +1,9 @@
 package net.lerkasan.capstone.controller;
 
 import net.lerkasan.capstone.dto.chatgpt.ChatResponseWithAudio;
-import net.lerkasan.capstone.service.ChatService;
+import net.lerkasan.capstone.service.ChatServiceI;
 import net.lerkasan.capstone.service.aws.S3Service;
-import net.lerkasan.capstone.service.SpeechService;
+import net.lerkasan.capstone.service.SpeechServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +20,15 @@ import java.io.InputStream;
 public class ChatController {
 
     @Qualifier("ChatGptService")
-    private final ChatService chatGptService;
+    private final ChatServiceI chatGptService;
 
-    private final SpeechService pollySpeechService;
+    private final SpeechServiceI pollySpeechServiceI;
     private final S3Service s3Service;
 
     @Autowired
-    public ChatController(ChatService chatGptService, SpeechService pollySpeechService, S3Service s3Service) {
+    public ChatController(ChatServiceI chatGptService, SpeechServiceI pollySpeechServiceI, S3Service s3Service) {
         this.chatGptService = chatGptService;
-        this.pollySpeechService = pollySpeechService;
+        this.pollySpeechServiceI = pollySpeechServiceI;
         this.s3Service = s3Service;
     }
 
@@ -54,7 +54,7 @@ public class ChatController {
 //                e.printStackTrace();
 //            }
 //        });
-        try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, "Brian", OutputFormat.MP3)) {
+        try (InputStream speech = pollySpeechServiceI.synthesizeSpeech(textResponse, "Brian", OutputFormat.MP3)) {
             File file = new File("/tmp/polly-" + textResponse.hashCode() + ".mp3");
             s3Service.copyInputStreamToFile(speech, file);
             s3PresignedUrl = s3Service.uploadToS3(file, "boanerges-radio-voice", "chat-" + textResponse.hashCode() + ".mp3");
