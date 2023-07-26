@@ -25,7 +25,7 @@
                             <button type="button"
                                     @click="startRecording"
                                     v-if="!loading"
-                                    :disabled="loading || audioPlaying"
+                                    :disabled="loading || audioPlaying || recordingStatus || replayAlreadyClicked"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                 Reply
                             </button>
@@ -34,12 +34,21 @@
                             <button type="button"
                                     @click="stopRecording"
                                     v-if="!loading"
-                                    :disabled="loading || audioPlaying"
+                                    :disabled="loading || audioPlaying || !recordingStatus"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                 Stop
                             </button>
                         </div>
-                        <p v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}</p>
+                        <div>
+                            <button type="button"
+                                    @click="replayAnswer"
+                                    v-if="!loading"
+                                    :disabled="loading || audioPlaying || recordingStatus || replayPlaying || !replyAlreadyClicked"
+                                    class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                                Replay answer
+                            </button>
+                        </div>
+<!--                        <p v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}</p>-->
                     </div>
 
 <!--                    <div v-if="questionAudioUrl" className="audio-player">-->
@@ -62,7 +71,7 @@
 <!--                <span class="block" style="transform: scale(-1);">&#x279c;</span>-->
 <!--            </button>-->
             <button
-                :disabled="loading || audioPlaying"
+                :disabled="loading || audioPlaying || replayPlaying"
                 @click="getQuestion"
                 class="absolute top-0 mt-32 right-0 bg-white rounded-full disabled:opacity-25 shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -mr-6 focus:outline-none focus:shadow-outline">
                 <span class="block" style="transform: scale(1);">&#x279c;</span>
@@ -77,7 +86,31 @@
             <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/charity_water.svg" alt="" style="max-height: 60px;"></button>
             <button class="px-2 opacity-100 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/missguided.svg" alt="" style="max-height: 60px;"></button>
         </div>
+<!--    </div>-->
+
+<!--Terminal-->
+    <div class="w-full mx-auto">
+        <div class="w-full shadow-2xl subpixel-antialiased rounded h-80 bg-black border-black mx-auto">
+            <div class="flex items-center h-6 rounded-t bg-gray-100 border-b border-gray-500 text-center text-black" id="headerTerminal">
+                <div class="flex ml-2 items-center text-center border-red-900 bg-red-500 shadow-inner rounded-full w-3 h-3" id="closebtn">
+                </div>
+                <div class="ml-2 border-yellow-900 bg-yellow-500 shadow-inner rounded-full w-3 h-3" id="minbtn">
+                </div>
+                <div class="ml-2 border-green-900 bg-green-500 shadow-inner rounded-full w-3 h-3" id="maxbtn">
+                </div>
+                <div class="mx-auto pr-16" id="terminaltitle">
+                    <p class="text-center text-sm">Terminal</p>
+                </div>
+
+            </div>
+            <div class="pl-1 pt-1 h-auto w-full text-left text-green-200 font-mono text-sm bg-black" id="console">
+                <p class="pb-1">Last login: Wed Sep 25 09:11:04 on ttys002</p>
+                <p class="pb-1">boanerges$</p>
+                <span class="text-left text-sm" v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}&nbsp;</span>
+            </div>
+        </div>
     </div>
+</div>
 
 
 
@@ -151,6 +184,10 @@ const question = ref('');
 const questionAudioUrl = ref('');
 const loading = ref(true);
 const audioPlaying = ref(false);
+// const audioRecording = ref(false);
+const replayAlreadyClicked = ref(false);
+const replayPlaying = ref(false);
+const replyAlreadyClicked = ref(false);
 
 const mediaRecorder = ref();
 let socket;
@@ -218,6 +255,15 @@ async function createInterview() {
 
 
 async function getQuestion() {
+
+    transcripts.value = [];
+    audioPlaying.value = false;
+// audioRecording.value = false;
+    replayAlreadyClicked.value = false;
+    replyAlreadyClicked.value = false;
+
+    // let transcribedText = document.getElementById("question_audio");
+
     loading.value = true;
     question.value = '';
     questionAudioUrl.value = '';
@@ -317,13 +363,18 @@ async function startRecording() {
     //     credentials
     // });
 
+    // audioRecording.value = true;
+    recordingStatus.value = true;
+    replayAlreadyClicked.value = true;
+    replyAlreadyClicked.value = true;
+
     transcribeClient = new TranscribeClient({
         region,
         credentials
     });
 
     await openWebSocket();
-    recordingStatus.value = true;
+    // recordingStatus.value = true;
     // // const media = new MediaRecorder(stream, audioMime);
     // mediaRecorder.value = new MediaRecorder(stream, audioMime);
     // mediaRecorder.value.start(); // TODO
@@ -452,10 +503,14 @@ async function stopRecording() {
     //     credentials
     // });
 
+    // audioRecording.value = false;
+
     recordingStatus.value = false;
 
+    if (mediaRecorder.value.state === 'recording') {
+        mediaRecorder.value.stop();
+    }
 
-    // mediaRecorder.value.stop(); // TODO
 
     // s3PutCommand = new PutObjectCommand({
     //     Bucket: "boanerges-recorded-audio",
@@ -503,7 +558,7 @@ async function stopRecording() {
 
 
     const startTranscribingInput = { // StartTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91b",
+        TranscriptionJobName: "boanerges-transcribe91c",
         LanguageCode: "en-US",
         MediaSampleRateHertz: Number(48000),
         // MediaSampleRateHertz: Number(16000),
@@ -512,7 +567,7 @@ async function stopRecording() {
             MediaFileUri: "s3://boanerges-recorded-audio/recordedAudio.webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
         },
         OutputBucketName: "boanerges-recorded-audio",
-        OutputKey: "automatedresult91b.json",
+        OutputKey: "automatedresult91c.json",
     }
 
 
@@ -522,7 +577,7 @@ async function stopRecording() {
 
 
     const GetTranscriptionJobInput = { // GetTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91b", // required
+        TranscriptionJobName: "boanerges-transcribe91c", // required
     };
     const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
 
@@ -556,7 +611,7 @@ async function stopRecording() {
             try {
                 let s3GetCmd = new GetObjectCommand({
                     Bucket: "boanerges-recorded-audio",
-                    Key: "automatedresult91b.json"
+                    Key: "automatedresult91c.json"
                 });
 
                 let s3GetResponse = await s3Client.send(s3GetCmd);
@@ -782,7 +837,7 @@ async function created() {
 // eslint-disable-next-line no-unused-vars
 async function openWebSocket() {
     // await getMicrophonePermission();
-    const DG_URL = 'wss://api.deepgram.com/v1/listen';
+    const DG_URL = 'wss://api.deepgram.com/v1/listen?punctuate=true';
     await getDeepgramToken().then(() => {
         let token = window.localStorage.getItem('deepgramToken');
         socket = new WebSocket(DG_URL, ['token', token])
@@ -903,6 +958,16 @@ function handleResponse(message) {
 //             //console.dir(data.channel.alternatives[0].transcript, { depth: null });
 //         });
 //     }
+
+function replayAnswer() {
+    let recordedAnswer = document.getElementById("recorded_audio");
+    replayPlaying.value = true;
+    recordedAnswer.onended = () => {
+        replayPlaying.value = false;
+    }
+    recordedAnswer.play();
+
+}
 
 
 </script>
