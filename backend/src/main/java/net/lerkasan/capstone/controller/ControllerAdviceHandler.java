@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +114,13 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleInvalidDataAccessApiUsageException(final InvalidDataAccessApiUsageException e) {
+        return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    @ResponseStatus(BAD_REQUEST)
+    @ResponseBody
+    public Map<String, String> handleIOException(final Exception e) {
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage());
     }
 }

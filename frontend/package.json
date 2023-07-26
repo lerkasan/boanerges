@@ -16,6 +16,7 @@
     "@aws-sdk/client-transcribe-streaming": "~3.370.0",
     "@aws-sdk/lib-storage": "^3.370.0",
     "@aws-sdk/middleware-sdk-s3": "^3.370.0",
+    "@deepgram/sdk": "1.2.1",
     "@heroicons/vue": "^2.0.18",
     "@tailwindcss/forms": "^0.5.4",
     "@vuelidate/core": "^2.0.3",
@@ -29,6 +30,7 @@
     "flowbite-vue": "^0.0.16",
     "microphone-stream": "^6.0.1",
     "readable-stream": "^4.4.2",
+    "socket.io-client": "^4.7.1",
     "vue": "^3.2.13",
     "vue-router": "^4.2.4"
   },

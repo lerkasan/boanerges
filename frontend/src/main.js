@@ -6,6 +6,9 @@ import SignUp from "@/components/SignUp.vue";
 import LoginForm from "@/components/LoginForm.vue";
 import HelloWorld from "@/components/HelloWorld.vue";
 import InterviewMain from "@/components/InterviewMain.vue";
+// import {Deepgram} from "@deepgram/sdk";
+// import DeepgramStream from "@/components/DeepgramStream.vue";
+// import InterviewStream from "@/components/InterviewMain.vue";
 // import SignUpSuccess from "@/components/SignUpSuccess.vue";
 
 const router = createRouter({
@@ -14,6 +17,7 @@ const router = createRouter({
         { path: '/signup', component: SignUp},
         // { path: '/signup-success', component: SignUpSuccess},
         { path: '/login', component: LoginForm},
+        // { path: '/books', component: DeepgramStream},
         { path: '/books', component: HelloWorld},
         { path: '/interview', component: InterviewMain}
     ]

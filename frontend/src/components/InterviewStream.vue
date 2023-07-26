@@ -13,54 +13,43 @@
             <div class="w-full md:w-3/5 h-full flex items-center bg-gray-100 rounded-lg">
                 <div class="p-12 md:pr-24 md:pl-16 md:py-12">
                     <p class="text-gray-900 pb-4" >{{ question }}</p>
-<!--                    <div v-if="loading" class='flex items-center justify-center min-h-screen'>-->
-                        <button v-if="loading" type="button" class="bg-indigo-400 h-max w-max justify-center items-center rounded-lg text-white font-bold hover:bg-indigo-300 hover:cursor-not-allowed duration-[500ms,800ms]" disabled>
-                            <div class="flex items-center justify-center m-[10px]">
-                                <div class="h-5 w-5 border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
-                                <div class="ml-2"> Loading... </div>
-                            </div>
-                        </button>
+                    <!--                    <div v-if="loading" class='flex items-center justify-center min-h-screen'>-->
+                    <button v-if="loading" type="button" class="bg-indigo-400 h-max w-max justify-center items-center rounded-lg text-white font-bold hover:bg-indigo-300 hover:cursor-not-allowed duration-[500ms,800ms]" disabled>
+                        <div class="flex items-center justify-center m-[10px]">
+                            <div class="h-5 w-5 border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                            <div class="ml-2"> Loading... </div>
+                        </div>
+                    </button>
                     <div class="flex space-x-2 justify-center">
                         <div>
                             <button type="button"
-                                    @click="startRecording"
                                     v-if="!loading"
                                     :disabled="loading || audioPlaying"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                 Reply
                             </button>
                         </div>
-                        <div>
-                            <button type="button"
-                                    @click="stopRecording"
-                                    v-if="!loading"
-                                    :disabled="loading || audioPlaying"
-                                    class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                                Reply
-                            </button>
-                        </div>
-                        <p v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}</p>
                     </div>
 
-<!--                    <div v-if="questionAudioUrl" className="audio-player">-->
-<!--                        <audio id="question_audio">-->
-<!--&lt;!&ndash;                        <audio id="question_audio" controls autoplay>&ndash;&gt;-->
-<!--                            <source :src="questionAudioUrl" type="audio/mpeg">-->
-<!--                        </audio>-->
-<!--                    </div>-->
+                    <!--                    <div v-if="questionAudioUrl" className="audio-player">-->
+                    <!--                        <audio id="question_audio">-->
+                    <!--&lt;!&ndash;                        <audio id="question_audio" controls autoplay>&ndash;&gt;-->
+                    <!--                            <source :src="questionAudioUrl" type="audio/mpeg">-->
+                    <!--                        </audio>-->
+                    <!--                    </div>-->
 
-<!--                    <a class="flex items-baseline mt-3 text-indigo-600 hover:text-indigo-900 focus:text-indigo-900" href="">-->
-<!--                        <span>Learn more about our users</span>-->
-<!--                        <span class="text-xs ml-1">&#x279c;</span>-->
-<!--                    </a>-->
+                    <!--                    <a class="flex items-baseline mt-3 text-indigo-600 hover:text-indigo-900 focus:text-indigo-900" href="">-->
+                    <!--                        <span>Learn more about our users</span>-->
+                    <!--                        <span class="text-xs ml-1">&#x279c;</span>-->
+                    <!--                    </a>-->
                 </div>
                 <svg class="hidden md:block absolute inset-y-0 h-full w-24 fill-current text-gray-100 -ml-12" viewBox="0 0 100 100" preserveAspectRatio="none">
                     <polygon points="50,0 100,0 50,100 0,100" />
                 </svg>
             </div>
-<!--            <button class="absolute top-0 mt-32 left-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -ml-6 focus:outline-none focus:shadow-outline">-->
-<!--                <span class="block" style="transform: scale(-1);">&#x279c;</span>-->
-<!--            </button>-->
+            <!--            <button class="absolute top-0 mt-32 left-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -ml-6 focus:outline-none focus:shadow-outline">-->
+            <!--                <span class="block" style="transform: scale(-1);">&#x279c;</span>-->
+            <!--            </button>-->
             <button
                 :disabled="loading || audioPlaying"
                 @click="getQuestion"
@@ -91,8 +80,6 @@
                 <button v-if="!permission" @click=getMicrophonePermission() type="button">
                     Get Microphone
                 </button>
-<!--                <button v-if="permission && !recordingStatus" @click="openDeepgramWebSocket()" type="button">-->
-<!--                <button v-if="permission && !recordingStatus" @click="openDeepgramWebSocket()" type="button">-->
                 <button v-if="permission && !recordingStatus" @click="startRecording()" type="button">
                     Start Recording
                 </button>
@@ -101,7 +88,7 @@
                 </button>
             </div>
             <div v-if="audioUrl" className="audio-player">
-<!--            <div v-if="audioUrl" className="audio-player">-->
+                <!--            <div v-if="audioUrl" className="audio-player">-->
                 <audio id="recorded_audio" controls autoplay>
                     <source :src="audioUrl" :type="mimeType">
                 </audio>
@@ -131,12 +118,7 @@ import { TranscribeClient, StartTranscriptionJobCommand, GetTranscriptionJobComm
 // eslint-disable-next-line no-unused-vars
 import { S3Client, GetObjectCommand,  PutObjectCommand } from "@aws-sdk/client-s3";
 import apiClient from "@/services/AxiosInstance";
-// import {Deepgram} from "@deepgram/sdk";
 // import { Upload } from "@aws-sdk/lib-storage";
-
-// import { Deepgram } from "@deepgram/sdk/browser";
-
-// import { io } from "socket.io-client";
 
 let stream;
 let audioChunks = [];
@@ -153,7 +135,6 @@ const loading = ref(true);
 const audioPlaying = ref(false);
 
 const mediaRecorder = ref();
-let socket;
 const permission = ref(false);
 const recordingStatus = ref(false);
 const audioUrl = ref("");
@@ -165,28 +146,12 @@ let transcribingJobStatus = ref("");
 let transcribeClient;
 // let transcribeStreamClient;
 let credentials;
-let transcripts = ref([]);
 
 const region = process.env.VUE_APP_AWS_REGION;
 
 getTranscribeCredentials();
-await getMicrophonePermission();
-// await openDeepgramWebSocket();
 await createInterview();
 await getQuestion();
-
-created();
-
-// const DEEPGRAM_API_KEY = await getDeepgramToken();
-// const deepgram = new Deepgram(DEEPGRAM_API_KEY);
-//
-// const deepgramLive = deepgram.transcription.live({
-//     punctuate: true,
-//     // additional options
-// });
-// deepgramLive.addListener("transcriptReceived", (transcription) => {
-//     console.log(transcription.data);
-// });
 
 // const credentials = await getTranscribeCredentials()
 //     .then(response => {return response.json()})
@@ -209,10 +174,8 @@ async function createInterview() {
     })
         .then(response => {
             window.localStorage.setItem("interviewId", response.data.id);
-            let questions = [];
-            window.localStorage.setItem("question", JSON.stringify(questions));
         })
-    // .then(response => console.log("api response: " + response))
+        // .then(response => console.log("api response: " + response))
         .catch(err => console.log("error " + err));
 }
 
@@ -254,22 +217,14 @@ async function getQuestion() {
 
 async function saveQuestion(text, audioUrl) {
     let interviewId = window.localStorage.getItem('interviewId');
-    let question = {
+    apiClient.post(`/interviews/${interviewId}/questions`, {
         text: text,
         audioUrl: audioUrl
-    }
-    apiClient.post(`/interviews/${interviewId}/questions`, question)
+    })
         .then(response => {
             window.localStorage.setItem("questionId", response.data.id);
         })
         .catch(err => console.log("error " + err));
-
-    let questions = JSON.parse(localStorage.getItem('questions'));
-    if (questions === undefined || questions === null) {
-        questions = [];
-    }
-    questions.push(question);
-    localStorage.setItem('questions', JSON.stringify(questions));
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -310,7 +265,6 @@ async function getMicrophonePermission() {
 
 // eslint-disable-next-line no-unused-vars
 async function startRecording() {
-    // await getMicrophonePermission();
     console.log("credentials: ", credentials);
     // transcribeStreamingClient = new TranscribeStreamingClient({
     //     region,
@@ -322,41 +276,18 @@ async function startRecording() {
         credentials
     });
 
-    await openWebSocket();
     recordingStatus.value = true;
-    // // const media = new MediaRecorder(stream, audioMime);
-    // mediaRecorder.value = new MediaRecorder(stream, audioMime);
-    // mediaRecorder.value.start(); // TODO
-    // mediaRecorder.value.start(50); // TODO
+    // const media = new MediaRecorder(stream, audioMime);
+    mediaRecorder.value = new MediaRecorder(stream, audioMime);
+    mediaRecorder.value.start();
 
     // let localAudioChunks = [];
-
-    // function startStreaming() {
-    //     mediaRecorderdeep.start(250);
-    //     mediaRecorderdeep.addEventListener('dataavailable', event => {
-    //         if (event.data.size > 0 && socket.readyState == 1) {
-    //             socket.send(event.data);
-    //         }
-    //         // mediaRecorderdeep.start(250);
-    //     })
-    // }
-    
 
     mediaRecorder.value.ondataavailable = async (event) => {
         if (typeof event.data === "undefined") return;
         if (event.data.size === 0) return;
         // localAudioChunks.push(event.data);
         audioChunks.push(event.data);
-
-        // deepgramLive.send(event.data);
-
-        if (socket.readyState === 1 && event.data.size > 0) {
-            socket.send(event.data)
-        }
-
-        // Send data every 250ms (.25s)
-        // mediaRecorder.value.start(250)
-        // mediaRecorder.value.start(25);
 
         // const input = { // StartStreamTranscriptionRequest
         //     LanguageCode: "en-US",
@@ -389,55 +320,8 @@ async function startRecording() {
     // setAudioChunks(localAudioChunks);
 }
 
-
 // eslint-disable-next-line no-unused-vars
-async function openDeepgramWebSocket() {
-    const DG_URL = 'wss://api.deepgram.com/v1/listen'
-    const DG_KEY = 'd423237f91337fead616d3f01fb0ca41c4a7e2b2';
-    // const DG_KEY = await getDeepgramToken();
-    // await getDeepgramToken().then(response => {
-    //     this.socket = new WebSocket(DG_URL, ['token', response]);
-    //     this.socket.onmessage = async (message) => {
-    //         getDeepgramResponse(message);
-    //     }
-    // });
-    socket = new WebSocket(DG_URL, ['token', DG_KEY]);
-
-    // socket = new WebSocket('wss://api.deepgram.com/v1/listen', {
-    //     headers: {
-    //         // Remember to replace the YOUR_DEEPGRAM_API_KEY placeholder with your Deepgram API Key
-    //         Authorization: `Token ${DG_KEY}`,
-    //     },
-    // });
-
-    // socket.onmessage = async (message) => {
-    //     getDeepgramResponse(message);
-    // }
-    socket.onmessage = getDeepgramResponse;
-    // Run the startStreaming method when socket is opened
-    // this.socket.onopen = startStreaming();
-    // socket.onopen = startRecording();
-}
-
-// eslint-disable-next-line no-unused-vars
-async function getDeepgramToken() {
-    await apiClient.post('/deepgram/token').then(response => {
-        if (response.status !== 200) {
-            const message = `An error has occurred: ${response.statusText}`;
-            throw new Error(message);
-        }
-        // console.log("STS response: ", response.data);
-        let deepgramToken = response.data.key;
-        return deepgramToken;
-    // Run the startStreaming method when socket is opened
-    // this.socket.onopen = startStreaming();
-    })
-}
-
-
-
-// eslint-disable-next-line no-unused-vars
-async function stopRecording() {
+function stopRecording() {
     let s3PutCmd;
     let audioBlob;
 
@@ -452,9 +336,7 @@ async function stopRecording() {
     // });
 
     recordingStatus.value = false;
-
-
-    // mediaRecorder.value.stop(); // TODO
+    mediaRecorder.value.stop();
 
     // s3PutCommand = new PutObjectCommand({
     //     Bucket: "boanerges-recorded-audio",
@@ -472,131 +354,128 @@ async function stopRecording() {
     //     console.error(err);
     // }
 
-    socket.close();
+    mediaRecorder.value.onstop = async () => {
+        audioBlob = new Blob(audioChunks, audioMime);
+        audioUrl.value = URL.createObjectURL(audioBlob);
+        // + "." + audioMime.mimeType.substring(audioMime.mimeType.lastIndexOf("/") + 1);
+        console.log("audioURL: ", audioUrl.value);
+        // setAudio(audioUrl);
 
-    socket.onclose = async () => {
-    //  mediaRecorder.value.onstop = async () => {
-    audioBlob = new Blob(audioChunks, audioMime);
-    audioUrl.value = URL.createObjectURL(audioBlob);
-    // + "." + audioMime.mimeType.substring(audioMime.mimeType.lastIndexOf("/") + 1);
-    console.log("audioURL: ", audioUrl.value);
-    // setAudio(audioUrl);
+        audioChunks = [];
 
-    audioChunks = [];
+        s3PutCmd = new PutObjectCommand({
+            Bucket: "boanerges-recorded-audio",
+            Key: "recordedAudio.webm",
+            Body: audioBlob,
+        });
 
-    s3PutCmd = new PutObjectCommand({
-        Bucket: "boanerges-recorded-audio",
-        Key: "recordedAudio.webm",
-        Body: audioBlob,
-    });
+        console.log("S3PutCommand");
+        console.log(s3PutCmd);
 
-    console.log("S3PutCommand");
-    console.log(s3PutCmd);
-
-    try {
-        const response = await s3Client.send(s3PutCmd);
-        console.log(response);
-    } catch (err) {
-        console.error(err);
-    }
+        try {
+            const response = await s3Client.send(s3PutCmd);
+            console.log(response);
+        } catch (err) {
+            console.error(err);
+        }
 
 
-    const startTranscribingInput = { // StartTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91a",
-        LanguageCode: "en-US",
-        MediaSampleRateHertz: Number(48000),
-        // MediaSampleRateHertz: Number(16000),
-        MediaFormat: "webm", // "mp3" || "mp4" || "wav" || "flac" || "ogg" || "amr" || "webm",
-        Media: { // Media
-            MediaFileUri: "s3://boanerges-recorded-audio/recordedAudio.webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
-        },
-        OutputBucketName: "boanerges-recorded-audio",
-        OutputKey: "automatedresult91a.json",
-    }
+        const startTranscribingInput = { // StartTranscriptionJobRequest
+            TranscriptionJobName: "boanerges-transcribe9g",
+            LanguageCode: "en-US",
+            MediaSampleRateHertz: Number(48000),
+            // MediaSampleRateHertz: Number(16000),
+            MediaFormat: "webm", // "mp3" || "mp4" || "wav" || "flac" || "ogg" || "amr" || "webm",
+            Media: { // Media
+                MediaFileUri: "s3://boanerges-recorded-audio/recordedAudio.webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
+            },
+            OutputBucketName: "boanerges-recorded-audio",
+            OutputKey: "automatedresult9g.json",
+        }
 
 
-    // eslint-disable-next-line no-unused-vars
-    const startTranscribingCmd = new StartTranscriptionJobCommand(startTranscribingInput);
-    transcribingJob.value = await transcribeClient.send(startTranscribingCmd);
+        // eslint-disable-next-line no-unused-vars
+        const startTranscribingCmd = new StartTranscriptionJobCommand(startTranscribingInput);
+        transcribingJob.value = await transcribeClient.send(startTranscribingCmd);
 
 
-    const GetTranscriptionJobInput = { // GetTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91a", // required
-    };
-    const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
 
-    // let attempts = 0;
+        const GetTranscriptionJobInput = { // GetTranscriptionJobRequest
+            TranscriptionJobName: "boanerges-transcribe9g", // required
+        };
+        const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
 
-    // while (transcribingJobStatus.value !== "COMPLETED" || transcribingJobStatus.value !== "FAILED" || attempts < 20 ) {
-    //     attempts++;
-
-    setTimeout(() => {
-        console.log("World!");
-        getTranscribedText();
-    }, 150000);
-
-    async function getTranscribedText() {
         // let attempts = 0;
 
-        // while (transcribingJobStatus.value !== "COMPLETED" || transcribingJobStatus.value !== "FAILED" || attempts < 10 ) {
+        // while (transcribingJobStatus.value !== "COMPLETED" || transcribingJobStatus.value !== "FAILED" || attempts < 20 ) {
         //     attempts++;
-        for (let attempts = 0; attempts < 10; attempts++) {
-            let transcribeResponse = await transcribeClient.send(GetTranscriptionJobCmd);
-            transcribingJobStatus.value = transcribeResponse.TranscriptionJob.TranscriptionJobStatus;
-            // transcribedText.value = transcribeResponse.TranscriptionJob.transcript;
-            console.log("transcribingJobStatus attempt", attempts);
-            console.log(transcribingJobStatus.value)
-            // console.log(transcribedText.value)
-            // let responseBodyJson = JSON.parse(transcribeResponse).TranscriptionJobStatus;;
-        }
 
+        setTimeout(() => { console.log("World!"); getTranscribedText(); }, 150000);
 
-        if (transcribingJobStatus.value === "COMPLETED") {
-            try {
-                let s3GetCmd = new GetObjectCommand({
-                    Bucket: "boanerges-recorded-audio",
-                    Key: "automatedresult91a.json"
-                });
+        async function getTranscribedText() {
+            // let attempts = 0;
 
-                let s3GetResponse = await s3Client.send(s3GetCmd);
-                let responseBody = await s3GetResponse.Body.transformToString();
-                let responseBodyJson = JSON.parse(responseBody);
-                transcribedText.value = responseBodyJson.results.transcripts[0].transcript;
-                console.log(s3GetResponse);
-                console.log(responseBody);
-                console.log(responseBodyJson);
-                console.log(transcribedText.value);
-            } catch (err) {
-                console.error(err);
+            // while (transcribingJobStatus.value !== "COMPLETED" || transcribingJobStatus.value !== "FAILED" || attempts < 10 ) {
+            //     attempts++;
+            for (let attempts = 0; attempts < 10; attempts++) {
+                let transcribeResponse = await transcribeClient.send(GetTranscriptionJobCmd);
+                transcribingJobStatus.value = transcribeResponse.TranscriptionJob.TranscriptionJobStatus;
+                // transcribedText.value = transcribeResponse.TranscriptionJob.transcript;
+                console.log("transcribingJobStatus attempt", attempts);
+                console.log(transcribingJobStatus.value)
+                // console.log(transcribedText.value)
+                // let responseBodyJson = JSON.parse(transcribeResponse).TranscriptionJobStatus;;
             }
+
+
+            if (transcribingJobStatus.value === "COMPLETED") {
+                try {
+                    let s3GetCmd = new GetObjectCommand({
+                        Bucket: "boanerges-recorded-audio",
+                        Key: "automatedresult9g.json"
+                    });
+
+                    let s3GetResponse = await s3Client.send(s3GetCmd);
+                    let responseBody = await s3GetResponse.Body.transformToString();
+                    let responseBodyJson = JSON.parse(responseBody);
+                    transcribedText.value = responseBodyJson.results.transcripts[0].transcript;
+                    console.log(s3GetResponse);
+                    console.log(responseBody);
+                    console.log(responseBodyJson);
+                    console.log(transcribedText.value);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
         }
+
+
+
+
+        //
+        // file = {
+        //     Bucket: "boanerges-recorded-audio",
+        //     Key: "recordedAudio.webm",
+        //     Body: audioBlob,
+        // }
+
+        // try {
+        //     const response = await client.send(command);
+        //     console.log(response);
+        // } catch (err) {
+        //     console.error(err);
+        // }
+        //
+
+        // setAudioChunks([]);
+        // let recordedAudio = document.getElementById("recorded_audio");
+        // console.log("recorded audio :", recordedAudio);
+        // recordedAudio.play();
+
+        // console.log("transcribe response: ", transcribedText.value);
 
     }
-
-
-    //
-    // file = {
-    //     Bucket: "boanerges-recorded-audio",
-    //     Key: "recordedAudio.webm",
-    //     Body: audioBlob,
-    // }
-
-    // try {
-    //     const response = await client.send(command);
-    //     console.log(response);
-    // } catch (err) {
-    //     console.error(err);
-    // }
-    //
-
-    // setAudioChunks([]);
-    // let recordedAudio = document.getElementById("recorded_audio");
-    // console.log("recorded audio :", recordedAudio);
-    // recordedAudio.play();
-
-    // console.log("transcribe response: ", transcribedText.value);
-
-     } // mediarecorder.onstop ends here // TODO
 
     // console.log("S3PutCommand");
     // console.log(s3PutCommand);
@@ -693,14 +572,6 @@ async function getTranscribeCredentials() {
     });
 }
 
-function getDeepgramResponse(message) {
-    const received = JSON.parse(message.data);
-    const transcript = received.channel.alternatives[0].transcript;
-    if (transcript) {
-        transcripts.value.push(transcript);
-    }
-}
-
 // const AudioRecorder = () => {
 //   const [permission, setPermission] = useState(false);
 //
@@ -763,133 +634,6 @@ function getDeepgramResponse(message) {
 //     setAudioChunks([]);
 //   }
 // }
-
-// let mediaRecorderdeep;
-
-// eslint-disable-next-line no-unused-vars
-async function created() {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        .catch(error => alert(error))
-
-    if (!MediaRecorder.isTypeSupported('audio/webm')) return alert('Unsupported browser')
-    mediaRecorder.value = new MediaRecorder(stream, { mimeType: 'audio/webm' })
-}
-
-
-
-// eslint-disable-next-line no-unused-vars
-async function openWebSocket() {
-    // await getMicrophonePermission();
-    const DG_URL = 'wss://api.deepgram.com/v1/listen';
-    // const DG_KEY = await getDeepgramToken();
-    const DG_KEY = 'd423237f91337fead616d3f01fb0ca41c4a7e2b2';
-    // socket = new WebSocket('wss://api.deepgram.com/v1/listen', {
-    //     handshakeTimeout: 2000,
-    //     headers: {
-    //         // Remember to replace the YOUR_DEEPGRAM_API_KEY placeholder with your Deepgram API Key
-    //         Authorization: `Token ${DG_KEY}`,
-    //     }
-    // });
-    socket = new WebSocket(DG_URL, ['token', DG_KEY])
-    socket.onopen = startStreaming;
-    socket.onmessage = handleResponse;
-    // socket.onmessage = handleResponse;
-    socket.onerror = (error) => {
-        console.log("WebSocket error:", error);
-    };
-    socket.onclose = (event)  => {
-        console.log("WebSocket connection closed:", event.code, event.status, event.message);
-    };
-}
-
-// function end() {
-//     socket.close();
-// }
-
-// eslint-disable-next-line no-unused-vars
-function startStreaming() {
-    mediaRecorder.value.start(250);
-    // mediaRecorder.value.addEventListener('dataavailable', event => {
-    //     if (event.data.size > 0 && socket.readyState == 1) {
-    //         socket.send(event.data);
-    //     }
-    //     // mediaRecorderdeep.start(250);
-    // })
-
-
-    mediaRecorder.value.ondataavailable = async (event) => {
-        if (typeof event.data === "undefined") return;
-        if (event.data.size === 0) return;
-        // localAudioChunks.push(event.data);
-        audioChunks.push(event.data);
-
-        // deepgramLive.send(event.data);
-
-        if (socket.readyState === 1 && event.data.size > 0) {
-            socket.send(event.data)
-        }
-    }
-}
-
-function handleResponse(message) {
-    const received = JSON.parse(message.data)
-    const transcript = received.channel.alternatives[0].transcript
-    if (transcript) {
-        transcripts.value.push(transcript);
-    }
-}
-
-
-
-
-// eslint-disable-next-line no-unused-vars
-//     async function test() {
-//         // Outside the UK
-//         const url = "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service";
-// // Inside the UK
-// // const url = 'http://stream.live.vc.bbcmedia.co.uk/bbc_radio_fourfm';
-//
-// // Initialize the Deepgram SDK
-//         let deepgramApiKey = await getDeepgramToken();
-//         const deepgram = new Deepgram(deepgramApiKey);
-//
-// // Create a websocket connection to Deepgram
-// // In this example, punctuation is turned on, interim results are turned off, and language is set to UK English.
-//         const deepgramLive = deepgram.transcription.live({
-//             smart_format: true,
-//             interim_results: false,
-//             language: "en-US",
-//             model: "nova",
-//         });
-//
-// // Listen for the connection to open and send streaming audio from the URL to Deepgram
-//         fetch(url)
-//             .then((r) => r.body)
-//             .then((res) => {
-//                 res.on("readable", () => {
-//                     if (deepgramLive.getReadyState() == 1) {
-//                         deepgramLive.send(res.read());
-//                     }
-//                 });
-//             });
-//
-// // Listen for the connection to close
-//         deepgramLive.addListener("close", () => {
-//             console.log("Connection closed.");
-//         });
-//
-// // Listen for any transcripts received from Deepgram and write them to the console
-//         deepgramLive.addListener("transcriptReceived", (message) => {
-//             const data = JSON.parse(message);
-//
-//             // Write the entire response to the console
-//             console.dir(data.channel, {depth: null});
-//
-//             // Write only the transcript to the console
-//             //console.dir(data.channel.alternatives[0].transcript, { depth: null });
-//         });
-//     }
-
 
 </script>
 
