@@ -36,7 +36,7 @@
                                     v-if="!loading"
                                     :disabled="loading || audioPlaying"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                                Reply
+                                Stop
                             </button>
                         </div>
                         <p v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}</p>
@@ -102,7 +102,7 @@
             </div>
             <div v-if="audioUrl" className="audio-player">
 <!--            <div v-if="audioUrl" className="audio-player">-->
-                <audio id="recorded_audio" controls autoplay>
+                <audio id="recorded_audio" controls>
                     <source :src="audioUrl" :type="mimeType">
                 </audio>
                 <p>
@@ -391,33 +391,33 @@ async function startRecording() {
 
 
 // eslint-disable-next-line no-unused-vars
-async function openDeepgramWebSocket() {
-    const DG_URL = 'wss://api.deepgram.com/v1/listen'
-    const DG_KEY = 'd423237f91337fead616d3f01fb0ca41c4a7e2b2';
-    // const DG_KEY = await getDeepgramToken();
-    // await getDeepgramToken().then(response => {
-    //     this.socket = new WebSocket(DG_URL, ['token', response]);
-    //     this.socket.onmessage = async (message) => {
-    //         getDeepgramResponse(message);
-    //     }
-    // });
-    socket = new WebSocket(DG_URL, ['token', DG_KEY]);
-
-    // socket = new WebSocket('wss://api.deepgram.com/v1/listen', {
-    //     headers: {
-    //         // Remember to replace the YOUR_DEEPGRAM_API_KEY placeholder with your Deepgram API Key
-    //         Authorization: `Token ${DG_KEY}`,
-    //     },
-    // });
-
-    // socket.onmessage = async (message) => {
-    //     getDeepgramResponse(message);
-    // }
-    socket.onmessage = getDeepgramResponse;
-    // Run the startStreaming method when socket is opened
-    // this.socket.onopen = startStreaming();
-    // socket.onopen = startRecording();
-}
+// async function openDeepgramWebSocket() {
+//     const DG_URL = 'wss://api.deepgram.com/v1/listen'
+//     const DG_KEY = 'MY_SECRET_API_KEY';
+//     // const DG_KEY = await getDeepgramToken();
+//     // await getDeepgramToken().then(response => {
+//     //     this.socket = new WebSocket(DG_URL, ['token', response]);
+//     //     this.socket.onmessage = async (message) => {
+//     //         getDeepgramResponse(message);
+//     //     }
+//     // });
+//     socket = new WebSocket(DG_URL, ['token', DG_KEY]);
+//
+//     // socket = new WebSocket('wss://api.deepgram.com/v1/listen', {
+//     //     headers: {
+//     //         // Remember to replace the YOUR_DEEPGRAM_API_KEY placeholder with your Deepgram API Key
+//     //         Authorization: `Token ${DG_KEY}`,
+//     //     },
+//     // });
+//
+//     // socket.onmessage = async (message) => {
+//     //     getDeepgramResponse(message);
+//     // }
+//     socket.onmessage = getDeepgramResponse;
+//     // Run the startStreaming method when socket is opened
+//     // this.socket.onopen = startStreaming();
+//     // socket.onopen = startRecording();
+// }
 
 // eslint-disable-next-line no-unused-vars
 async function getDeepgramToken() {
@@ -428,6 +428,7 @@ async function getDeepgramToken() {
         }
         // console.log("STS response: ", response.data);
         let deepgramToken = response.data.key;
+        window.localStorage.setItem('deepgramToken', deepgramToken);
         return deepgramToken;
     // Run the startStreaming method when socket is opened
     // this.socket.onopen = startStreaming();
@@ -502,7 +503,7 @@ async function stopRecording() {
 
 
     const startTranscribingInput = { // StartTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91a",
+        TranscriptionJobName: "boanerges-transcribe91b",
         LanguageCode: "en-US",
         MediaSampleRateHertz: Number(48000),
         // MediaSampleRateHertz: Number(16000),
@@ -511,7 +512,7 @@ async function stopRecording() {
             MediaFileUri: "s3://boanerges-recorded-audio/recordedAudio.webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
         },
         OutputBucketName: "boanerges-recorded-audio",
-        OutputKey: "automatedresult91a.json",
+        OutputKey: "automatedresult91b.json",
     }
 
 
@@ -521,7 +522,7 @@ async function stopRecording() {
 
 
     const GetTranscriptionJobInput = { // GetTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91a", // required
+        TranscriptionJobName: "boanerges-transcribe91b", // required
     };
     const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
 
@@ -555,7 +556,7 @@ async function stopRecording() {
             try {
                 let s3GetCmd = new GetObjectCommand({
                     Bucket: "boanerges-recorded-audio",
-                    Key: "automatedresult91a.json"
+                    Key: "automatedresult91b.json"
                 });
 
                 let s3GetResponse = await s3Client.send(s3GetCmd);
@@ -693,6 +694,7 @@ async function getTranscribeCredentials() {
     });
 }
 
+// eslint-disable-next-line no-unused-vars
 function getDeepgramResponse(message) {
     const received = JSON.parse(message.data);
     const transcript = received.channel.alternatives[0].transcript;
@@ -781,8 +783,20 @@ async function created() {
 async function openWebSocket() {
     // await getMicrophonePermission();
     const DG_URL = 'wss://api.deepgram.com/v1/listen';
-    // const DG_KEY = await getDeepgramToken();
-    const DG_KEY = 'd423237f91337fead616d3f01fb0ca41c4a7e2b2';
+    await getDeepgramToken().then(() => {
+        let token = window.localStorage.getItem('deepgramToken');
+        socket = new WebSocket(DG_URL, ['token', token])
+        socket.onopen = startStreaming;
+        socket.onmessage = handleResponse;
+        // socket.onmessage = handleResponse;
+        socket.onerror = (error) => {
+            console.log("WebSocket error:", error);
+        };
+        socket.onclose = (event)  => {
+            console.log("WebSocket connection closed:", event.code, event.status, event.message);
+        };
+    });
+    // const DG_KEY = 'MY_SECRET_API_KEY';
     // socket = new WebSocket('wss://api.deepgram.com/v1/listen', {
     //     handshakeTimeout: 2000,
     //     headers: {
@@ -790,16 +804,16 @@ async function openWebSocket() {
     //         Authorization: `Token ${DG_KEY}`,
     //     }
     // });
-    socket = new WebSocket(DG_URL, ['token', DG_KEY])
-    socket.onopen = startStreaming;
-    socket.onmessage = handleResponse;
+    // socket = new WebSocket(DG_URL, ['token', DG_KEY])
+    // socket.onopen = startStreaming;
     // socket.onmessage = handleResponse;
-    socket.onerror = (error) => {
-        console.log("WebSocket error:", error);
-    };
-    socket.onclose = (event)  => {
-        console.log("WebSocket connection closed:", event.code, event.status, event.message);
-    };
+    // // socket.onmessage = handleResponse;
+    // socket.onerror = (error) => {
+    //     console.log("WebSocket error:", error);
+    // };
+    // socket.onclose = (event)  => {
+    //     console.log("WebSocket connection closed:", event.code, event.status, event.message);
+    // };
 }
 
 // function end() {
