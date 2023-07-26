@@ -86,9 +86,14 @@ public class UserController {
         return userService.isUsernameAvailable(username);
     }
 
+//    @GetMapping(path = "/me")
+//    public User getCurrentUserInfo(Authentication authentication) {
+//        String username = authentication.getName();
+//        return userService.findByUsername(username);
+//    }
+
     @GetMapping(path = "/me")
-    public User getCurrentUserInfo(Authentication authentication) {
-        String username = authentication.getName();
-        return userService.findByUsername(username);
+    public User getCurrentUserInfo() {
+        return userService.getCurrentUser();
     }
 }

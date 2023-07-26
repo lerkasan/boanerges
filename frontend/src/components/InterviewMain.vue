@@ -12,7 +12,24 @@
             </div>
             <div class="w-full md:w-3/5 h-full flex items-center bg-gray-100 rounded-lg">
                 <div class="p-12 md:pr-24 md:pl-16 md:py-12">
-                    <p class="text-gray-900">{{ question }}</p>
+                    <p class="text-gray-900 pb-4" >{{ question }}</p>
+<!--                    <div v-if="loading" class='flex items-center justify-center min-h-screen'>-->
+                        <button v-if="loading" type="button" class="bg-indigo-400 h-max w-max justify-center items-center rounded-lg text-white font-bold hover:bg-indigo-300 hover:cursor-not-allowed duration-[500ms,800ms]" disabled>
+                            <div class="flex items-center justify-center m-[10px]">
+                                <div class="h-5 w-5 border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                                <div class="ml-2"> Loading... </div>
+                            </div>
+                        </button>
+                    <div class="flex space-x-2 justify-center">
+                        <div>
+                            <button type="button"
+                                    v-if="!loading"
+                                    :disabled="loading || audioPlaying"
+                                    class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                                Reply
+                            </button>
+                        </div>
+                    </div>
 
 <!--                    <div v-if="questionAudioUrl" className="audio-player">-->
 <!--                        <audio id="question_audio">-->
@@ -34,8 +51,9 @@
 <!--                <span class="block" style="transform: scale(-1);">&#x279c;</span>-->
 <!--            </button>-->
             <button
+                :disabled="loading || audioPlaying"
                 @click="getQuestion"
-                class="absolute top-0 mt-32 right-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -mr-6 focus:outline-none focus:shadow-outline">
+                class="absolute top-0 mt-32 right-0 bg-white rounded-full disabled:opacity-25 shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -mr-6 focus:outline-none focus:shadow-outline">
                 <span class="block" style="transform: scale(1);">&#x279c;</span>
             </button>
         </div>
@@ -113,6 +131,8 @@ let audioMime = {
 
 const question = ref('');
 const questionAudioUrl = ref('');
+const loading = ref(true);
+const audioPlaying = ref(false);
 
 const mediaRecorder = ref();
 const permission = ref(false);
@@ -161,6 +181,9 @@ async function createInterview() {
 
 
 async function getQuestion() {
+    loading.value = true;
+    question.value = '';
+    questionAudioUrl.value = '';
     let topicId = window.localStorage.getItem('topicId');
     if (topicId !== undefined) {
         apiClient.get(`/questions?topicId=${topicId}`)
@@ -171,13 +194,20 @@ async function getQuestion() {
                 if (oldQuestionAudio !== undefined && oldQuestionAudio !== null) {
                     oldQuestionAudio.remove();
                 }
-
+                loading.value = false;
                 let questionAudio = document.createElement('audio');
                 questionAudio.id = "question_audio";
                 questionAudio.src = response.data.audioUrl;
                 questionAudio.controls = false;
                 questionAudio.autoplay = false;
+                audioPlaying.value = true;
+                questionAudio.addEventListener("ended", () => {
+                    audioPlaying.value = false;
+                });
+                audioPlaying.value = true;
                 questionAudio.play();
+
+                saveQuestion(response.data.text, response.data.audioUrl);
             })
             // .then(response => console.log("api response: " + response))
             .catch(err => console.log("error " + err));
@@ -185,6 +215,17 @@ async function getQuestion() {
 
 }
 
+async function saveQuestion(text, audioUrl) {
+    let interviewId = window.localStorage.getItem('interviewId');
+    apiClient.post(`/interviews/${interviewId}/questions`, {
+        text: text,
+        audioUrl: audioUrl
+    })
+        .then(response => {
+            window.localStorage.setItem("questionId", response.data.id);
+        })
+        .catch(err => console.log("error " + err));
+}
 
 // eslint-disable-next-line no-unused-vars
 async function getMicrophonePermission() {

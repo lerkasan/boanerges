@@ -23,4 +23,5 @@ public interface InterviewServiceI {
     void delete(final long id);
 
     void delete(Interview interview);
+
 }

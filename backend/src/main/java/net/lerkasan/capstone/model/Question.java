@@ -39,4 +39,16 @@ public class Question {
     @OneToOne(mappedBy = "question")
     private Answer answer;
 
+    public Question(Long id, @NonNull String text, @NonNull String audioUrl, Interview interview) {
+        this.id = id;
+        this.text = text;
+        this.audioUrl = audioUrl;
+        this.interview = interview;
+    }
+
+    public Question(Long id, String text, String audioUrl) {
+        this.id = id;
+        this.text = text;
+        this.audioUrl = audioUrl;
+    }
 }

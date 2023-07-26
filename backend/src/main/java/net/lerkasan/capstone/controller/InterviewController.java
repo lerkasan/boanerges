@@ -1,5 +1,6 @@
 package net.lerkasan.capstone.controller;
 
+import jakarta.validation.Valid;
 import net.lerkasan.capstone.dto.InterviewDto;
 import net.lerkasan.capstone.model.Interview;
 import net.lerkasan.capstone.model.User;
@@ -32,14 +33,14 @@ public class InterviewController {
     }
 
     @GetMapping("/{id}")
-    public Interview getInterview(@PathVariable long id, @AuthenticationPrincipal UserDetails currentUser) {
+    public Interview getInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
 //        return interviewService.findByIdAndUsername(id, currentUser.getUsername());
         User user = userService.findByUsername(currentUser.getUsername());
         return interviewService.findByIdAndUserId(id, user.getId());
     }
 
     @PostMapping
-    public ResponseEntity<InterviewDto> createInterview(@RequestBody(required = true) InterviewDto interviewDto, Authentication authentication) {
+    public ResponseEntity<InterviewDto> createInterview(@Valid @RequestBody(required = true) InterviewDto interviewDto, Authentication authentication) {
 //    public ResponseEntity<Interview> createInterview(@Valid @RequestBody Interview interview, Authentication authentication) {
         User currentUser = userService.findByUsername(authentication.getName());
         Interview interview = interviewDtoMapper.toInterview(interviewDto);

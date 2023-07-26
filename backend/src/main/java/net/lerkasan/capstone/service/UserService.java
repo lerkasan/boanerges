@@ -9,6 +9,7 @@ import net.lerkasan.capstone.repository.RoleRepository;
 import net.lerkasan.capstone.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.CharBuffer;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -143,5 +145,12 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException(String.format(USER_NOT_FOUND, username)));
+    }
+
+
+    @Override
+    public User getCurrentUser() {
+        Principal userPrincipal = SecurityContextHolder.getContext().getAuthentication();
+        return findByUsername(userPrincipal.getName());
     }
 }
