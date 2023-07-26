@@ -78,14 +78,14 @@
             </button>
         </div>
 
-        <!-- Carousel Tabs -->
-        <div class="flex items-center pt-5 justify-between">
-            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/kickstarter.svg" alt="" style="max-height: 60px;"></button>
-            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/slack.svg" alt="" style="max-height: 60px;"></button>
-            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/glossier.svg" alt="" style="max-height: 60px;"></button>
-            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/charity_water.svg" alt="" style="max-height: 60px;"></button>
-            <button class="px-2 opacity-100 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/missguided.svg" alt="" style="max-height: 60px;"></button>
-        </div>
+<!--        &lt;!&ndash; Carousel Tabs &ndash;&gt;-->
+<!--        <div class="flex items-center pt-5 justify-between">-->
+<!--            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/kickstarter.svg" alt="" style="max-height: 60px;"></button>-->
+<!--            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/slack.svg" alt="" style="max-height: 60px;"></button>-->
+<!--            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/glossier.svg" alt="" style="max-height: 60px;"></button>-->
+<!--            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/charity_water.svg" alt="" style="max-height: 60px;"></button>-->
+<!--            <button class="px-2 opacity-100 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/missguided.svg" alt="" style="max-height: 60px;"></button>-->
+<!--        </div>-->
 <!--    </div>-->
 
 <!--Terminal-->
@@ -104,7 +104,7 @@
 
             </div>
             <div class="pl-1 pt-1 h-auto w-full text-left text-green-200 font-mono text-sm bg-black" id="console">
-                <p class="pb-1">Last login: Wed Sep 25 09:11:04 on ttys002</p>
+                <p class="pb-1">Last login: Wed Jul 26 09:35:04 on ttys002</p>
                 <p class="pb-1">boanerges$</p>
                 <span class="text-left text-sm" v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}&nbsp;</span>
             </div>
@@ -133,24 +133,24 @@
                     Stop Recording
                 </button>
             </div>
-            <div v-if="audioUrl" className="audio-player">
 <!--            <div v-if="audioUrl" className="audio-player">-->
-                <audio id="recorded_audio" controls>
-                    <source :src="audioUrl" :type="mimeType">
-                </audio>
-                <p>
-                    <a download :href="audioUrl" :type="mimeType">
-                        Download Recording
-                    </a>
-                </p>
-                <p>Link: {{ audioUrl }}</p>
-                <p>mime-type: {{ mimeType }}</p>
+<!--&lt;!&ndash;            <div v-if="audioUrl" className="audio-player">&ndash;&gt;-->
+<!--                <audio id="recorded_audio">-->
+<!--                    <source :src="audioUrl" :type="mimeType">-->
+<!--                </audio>-->
+<!--                <p>-->
+<!--                    <a download :href="audioUrl" :type="mimeType">-->
+<!--                        Download Recording-->
+<!--                    </a>-->
+<!--                </p>-->
+<!--                <p>Link: {{ audioUrl }}</p>-->
+<!--                <p>mime-type: {{ mimeType }}</p>-->
 
-                <p>Transcribe Job: {{ transcribingJob }}</p>
-                <p>Transcribe Job Status: {{ transcribingJobStatus }}</p>
-                <p>Text: {{ transcribedText }}</p>
+<!--                <p>Transcribe Job: {{ transcribingJob }}</p>-->
+<!--                <p>Transcribe Job Status: {{ transcribingJobStatus }}</p>-->
+<!--                <p>Text: {{ transcribedText }}</p>-->
 
-            </div>
+<!--            </div>-->
         </main>
     </div>
 </template>
@@ -164,6 +164,7 @@ import { TranscribeClient, StartTranscriptionJobCommand, GetTranscriptionJobComm
 // eslint-disable-next-line no-unused-vars
 import { S3Client, GetObjectCommand,  PutObjectCommand } from "@aws-sdk/client-s3";
 import apiClient from "@/services/AxiosInstance";
+// import uuid from "uuidv4";
 // import {Deepgram} from "@deepgram/sdk";
 // import { Upload } from "@aws-sdk/lib-storage";
 
@@ -236,6 +237,15 @@ defineExpose({
     audioUrl,
     mimeType
 })
+
+function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+        .replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+}
 
 async function createInterview() {
     let topicId = 10;
@@ -540,9 +550,11 @@ async function stopRecording() {
 
     audioChunks = [];
 
+    let randomUuid = uuid();
+
     s3PutCmd = new PutObjectCommand({
         Bucket: "boanerges-recorded-audio",
-        Key: "recordedAudio.webm",
+        Key: "answerAudio-" + randomUuid + ".webm", // TODO TODO GENERATE UUID name
         Body: audioBlob,
     });
 
@@ -564,7 +576,7 @@ async function stopRecording() {
         // MediaSampleRateHertz: Number(16000),
         MediaFormat: "webm", // "mp3" || "mp4" || "wav" || "flac" || "ogg" || "amr" || "webm",
         Media: { // Media
-            MediaFileUri: "s3://boanerges-recorded-audio/recordedAudio.webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
+            MediaFileUri: "s3://boanerges-recorded-audio/answerAudio-" + randomUuid + ".webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
         },
         OutputBucketName: "boanerges-recorded-audio",
         OutputKey: "automatedresult91c.json",

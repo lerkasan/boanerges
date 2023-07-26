@@ -58,8 +58,8 @@ public class S3Service {
 
 
 
-//        return "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
         return presignS3Url(bucketName, fileName);
+//        return "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
     }
 
     public String presignS3Url(String bucketName, String fileName) {
