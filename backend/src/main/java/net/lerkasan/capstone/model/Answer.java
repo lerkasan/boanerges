@@ -36,6 +36,7 @@ public class Answer {
 //    @OneToOne
     @ManyToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name="question_id", referencedColumnName="id")
+//    @JoinColumn(name="question_id", referencedColumnName="id")
     private Question question;
 
     @OneToOne(mappedBy = "answer")

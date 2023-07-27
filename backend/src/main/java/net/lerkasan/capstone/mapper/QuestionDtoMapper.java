@@ -38,10 +38,8 @@ public class QuestionDtoMapper {
 
     public QuestionDto toQuestionDto(Question question) {
         String audioUrl = question.getAudioUrl();
-        URI uri = URI.create(audioUrl);
-        S3Uri s3Uri = s3Utilities.parseUri(uri);
-        String bucketName = s3Uri.bucket().orElse(""); // "myBucket"
-        String key = s3Uri.key().orElse("");
+        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
+        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");
         String presignedAudioUrl = s3Service.presignS3Url(bucketName, key);
         return new QuestionDto(
                 question.getId(),
@@ -51,15 +49,7 @@ public class QuestionDtoMapper {
 
     public Question toQuestion(QuestionDto questionDto) {
         String presignedAudioUrl = questionDto.getAudioUrl();
-        URI uri = URI.create(presignedAudioUrl);
-        S3Uri s3Uri = s3Utilities.parseUri(uri);
-        String bucketName = s3Uri.bucket().orElse(""); // "myBucket"
-        String key = s3Uri.key().orElse(""); // "resources/doc.txt"
-//        User user = userService.getCurrentUser();
-        String audioUrl = s3Client.utilities().getUrl(builder -> builder
-                .bucket(bucketName)
-                .key(key))
-                .toString();
+        String audioUrl = s3Service.convertPresignedS3UrlToS3Url(presignedAudioUrl);
         return new Question(
                 questionDto.getId(),
                 questionDto.getText(),

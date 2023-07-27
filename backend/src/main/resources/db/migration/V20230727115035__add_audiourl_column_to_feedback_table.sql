@@ -1,0 +1,3 @@
+ALTER TABLE feedbacks
+    ADD COLUMN audio_url VARCHAR(1500) NOT NULL;
+

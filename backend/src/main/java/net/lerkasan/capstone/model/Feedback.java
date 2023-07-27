@@ -26,12 +26,25 @@ public class Feedback {
     @Column(name = "text", nullable = false)
     private String text;
 
+    @NonNull
+    @NotBlank
+    @Column(name = "audio_url", nullable = false)
+    private String audioUrl;
+
     @Min(0)
     @Max(100)
     @Column(name = "score")
     private Integer score;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn(name="answer_id", referencedColumnName="id")
+    @JoinColumn(name="answer_id", referencedColumnName="id")
+//    @PrimaryKeyJoinColumn(name="answer_id", referencedColumnName="id")
     private Answer answer;
+
+    public Feedback(Long id, String text, String audioUrl, int score) {
+        this.id = id;
+        this.text = text;
+        this.audioUrl = audioUrl;
+        this.score = score;
+    }
 }
