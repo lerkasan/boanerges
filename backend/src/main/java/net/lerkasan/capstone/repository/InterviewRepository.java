@@ -23,8 +23,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 //    LEFT JOIN feedbacks f ON a.id = f.answer_id
 //    WHERE i.id = :id;
 
-    @Query(AVERAGE_SCORE_QUERY)
-    double calculateAverageScore(@Param("id") long id );
+//    @Query(AVERAGE_SCORE_QUERY)
+//    double calculateAverageScore(@Param("id") long id );
 
     Optional<Interview> findByIdAndUserId(@Param("id") long id, @Param("userId") long userId);
 //

@@ -9,7 +9,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 @Entity
-@Table(name = "questions")
+@Table(name = "answers")
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
@@ -33,7 +33,8 @@ public class Answer {
     @Column(name = "audio_url", nullable = false)
     private String audioUrl;
 
-    @OneToOne
+//    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name="question_id", referencedColumnName="id")
     private Question question;
 

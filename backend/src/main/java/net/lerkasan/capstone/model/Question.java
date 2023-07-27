@@ -39,11 +39,11 @@ public class Question {
     @JsonIgnoreProperties(value = {"questions"})
     private Interview interview;
 
-//    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY) //
-//    private Set<Answer> answers;
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY) //
+    private Set<Answer> answers;
 
-    @OneToOne(mappedBy = "question", fetch = FetchType.LAZY) //
-    private Answer answer;
+//    @OneToOne(mappedBy = "question") //
+//    private Answer answer;
 
     public Question(Long id, @NonNull String text, @NonNull String audioUrl, Interview interview) {
         this.id = id;
