@@ -10,7 +10,9 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.*;
@@ -24,7 +26,7 @@ import static jakarta.persistence.CascadeType.DETACH;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"id", "name"})
-@ToString
+@ToString(exclude = {"questions"})
 public class Interview {
 
     @Id

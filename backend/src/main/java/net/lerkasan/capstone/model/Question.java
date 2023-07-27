@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table(name = "questions")
 @Getter
@@ -14,7 +17,7 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"id", "text"})
-@ToString
+@ToString(exclude = {"interview", "answer"})
 public class Question {
 
     @Id
@@ -36,7 +39,10 @@ public class Question {
     @JsonIgnoreProperties(value = {"questions"})
     private Interview interview;
 
-    @OneToOne(mappedBy = "question")
+//    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY) //
+//    private Set<Answer> answers;
+
+    @OneToOne(mappedBy = "question", fetch = FetchType.LAZY) //
     private Answer answer;
 
     public Question(Long id, @NonNull String text, @NonNull String audioUrl, Interview interview) {

@@ -86,7 +86,7 @@
 <!--            <button class="px-2 opacity-50 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/charity_water.svg" alt="" style="max-height: 60px;"></button>-->
 <!--            <button class="px-2 opacity-100 hover:opacity-100 focus:opacity-100"><img class="w-full" src="https://stripe.com/img/v3/payments/overview/logos/missguided.svg" alt="" style="max-height: 60px;"></button>-->
 <!--        </div>-->
-<!--    </div>-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
 
 <!--Terminal-->
     <div class="w-full mx-auto">
@@ -104,7 +104,7 @@
 
             </div>
             <div class="pl-1 pt-1 h-auto w-full text-left text-green-200 font-mono text-sm bg-black" id="console">
-                <p class="pb-1">Last login: Wed Jul 26 09:35:04 on ttys002</p>
+                <p class="pb-1">Last login: Wed Sep 25 09:11:04 on ttys002</p>
                 <p class="pb-1">boanerges$</p>
                 <span class="text-left text-sm" v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}&nbsp;</span>
             </div>
@@ -116,28 +116,28 @@
 
 
     <div>
-        <h2>Audio Recorder</h2>
+<!--        <h2>Audio Recorder</h2>-->
         <main>
-            <div>Permission: {{ permission }}</div>
-            <div>Recording status: {{ recordingStatus }}</div>
-            <div className="audio-controls">
-                <button v-if="!permission" @click=getMicrophonePermission() type="button">
-                    Get Microphone
-                </button>
-<!--                <button v-if="permission && !recordingStatus" @click="openDeepgramWebSocket()" type="button">-->
-<!--                <button v-if="permission && !recordingStatus" @click="openDeepgramWebSocket()" type="button">-->
-                <button v-if="permission && !recordingStatus" @click="startRecording()" type="button">
-                    Start Recording
-                </button>
-                <button v-show="recordingStatus" @click="stopRecording()" type="button">
-                    Stop Recording
-                </button>
-            </div>
+<!--            <div>Permission: {{ permission }}</div>-->
+<!--            <div>Recording status: {{ recordingStatus }}</div>-->
+<!--            <div className="audio-controls">-->
+<!--                <button v-if="!permission" @click=getMicrophonePermission() type="button">-->
+<!--                    Get Microphone-->
+<!--                </button>-->
+<!--&lt;!&ndash;                <button v-if="permission && !recordingStatus" @click="openDeepgramWebSocket()" type="button">&ndash;&gt;-->
+<!--&lt;!&ndash;                <button v-if="permission && !recordingStatus" @click="openDeepgramWebSocket()" type="button">&ndash;&gt;-->
+<!--                <button v-if="permission && !recordingStatus" @click="startRecording()" type="button">-->
+<!--                    Start Recording-->
+<!--                </button>-->
+<!--                <button v-show="recordingStatus" @click="stopRecording()" type="button">-->
+<!--                    Stop Recording-->
+<!--                </button>-->
+<!--            </div>-->
+            <div v-if="audioUrl" className="audio-player">
 <!--            <div v-if="audioUrl" className="audio-player">-->
-<!--&lt;!&ndash;            <div v-if="audioUrl" className="audio-player">&ndash;&gt;-->
-<!--                <audio id="recorded_audio">-->
-<!--                    <source :src="audioUrl" :type="mimeType">-->
-<!--                </audio>-->
+                <audio id="recorded_audio">
+                    <source :src="audioUrl" :type="mimeType">
+                </audio>
 <!--                <p>-->
 <!--                    <a download :href="audioUrl" :type="mimeType">-->
 <!--                        Download Recording-->
@@ -150,7 +150,7 @@
 <!--                <p>Transcribe Job Status: {{ transcribingJobStatus }}</p>-->
 <!--                <p>Text: {{ transcribedText }}</p>-->
 
-<!--            </div>-->
+            </div>
         </main>
     </div>
 </template>
@@ -277,6 +277,7 @@ async function getQuestion() {
     loading.value = true;
     question.value = '';
     questionAudioUrl.value = '';
+    audioUrl.value = '';
     let topicId = window.localStorage.getItem('topicId');
     if (topicId !== undefined) {
         apiClient.get(`/questions?topicId=${topicId}`)
@@ -287,6 +288,12 @@ async function getQuestion() {
                 if (oldQuestionAudio !== undefined && oldQuestionAudio !== null) {
                     oldQuestionAudio.remove();
                 }
+
+                // let oldAnswerAudio = document.getElementById("recorded_audio");
+                // if (oldAnswerAudio !== undefined && oldAnswerAudio !== null) {
+                //     oldAnswerAudio.remove();
+                // }
+
                 loading.value = false;
                 let questionAudio = document.createElement('audio');
                 questionAudio.id = "question_audio";
@@ -320,12 +327,33 @@ async function saveQuestion(text, audioUrl) {
         })
         .catch(err => console.log("error " + err));
 
-    let questions = JSON.parse(localStorage.getItem('questions'));
-    if (questions === undefined || questions === null) {
-        questions = [];
+    // let questions = JSON.parse(localStorage.getItem('questions'));
+    // if (questions === undefined || questions === null) {
+    //     questions = [];
+    // }
+    // questions.push(question);
+    // localStorage.setItem('questions', JSON.stringify(questions));
+}
+
+async function saveAnswer(text, audioUrl) {
+    let interviewId = window.localStorage.getItem('interviewId');
+    let questionId = window.localStorage.getItem("questionId");
+    let answer = {
+        text: text,
+        audioUrl: audioUrl
     }
-    questions.push(question);
-    localStorage.setItem('questions', JSON.stringify(questions));
+    apiClient.post(`/interviews/${interviewId}/questions/${questionId}/answers`, answer)
+        .then(response => {
+            window.localStorage.setItem("answerId", response.data.id);
+        })
+        .catch(err => console.log("error " + err));
+
+    // let questions = JSON.parse(localStorage.getItem('questions'));
+    // if (questions === undefined || questions === null) {
+    //     questions = [];
+    // }
+    // questions.push(question);
+    // localStorage.setItem('questions', JSON.stringify(questions));
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -521,6 +549,15 @@ async function stopRecording() {
         mediaRecorder.value.stop();
     }
 
+    // let answerAudio = document.createElement('audio');
+    // answerAudio.id = "recorded_audio";
+    // answerAudio.controls = false;
+    // answerAudio.autoplay = false;
+    // // audioPlaying.value = true;
+    // answerAudio.onended = () => {
+    //     audioPlaying.value = false;
+    // };
+
 
     // s3PutCommand = new PutObjectCommand({
     //     Bucket: "boanerges-recorded-audio",
@@ -544,6 +581,15 @@ async function stopRecording() {
     //  mediaRecorder.value.onstop = async () => {
     audioBlob = new Blob(audioChunks, audioMime);
     audioUrl.value = URL.createObjectURL(audioBlob);
+    // answerAudio.src = audioUrl.value;
+
+
+    //TODOTODOTODO
+
+
+
+
+
     // + "." + audioMime.mimeType.substring(audioMime.mimeType.lastIndexOf("/") + 1);
     console.log("audioURL: ", audioUrl.value);
     // setAudio(audioUrl);
@@ -568,9 +614,13 @@ async function stopRecording() {
         console.error(err);
     }
 
+    let answerS3Url = "https://boanerges-recorded-audio.s3.amazonaws.com/answerAudio-" + randomUuid + ".webm";
+    let answerText = transcripts.value.join(' ');
+
+    await saveAnswer(answerText, answerS3Url);
 
     const startTranscribingInput = { // StartTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91c",
+        TranscriptionJobName: "boanerges-transcribe-" + randomUuid,
         LanguageCode: "en-US",
         MediaSampleRateHertz: Number(48000),
         // MediaSampleRateHertz: Number(16000),
@@ -579,7 +629,7 @@ async function stopRecording() {
             MediaFileUri: "s3://boanerges-recorded-audio/answerAudio-" + randomUuid + ".webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
         },
         OutputBucketName: "boanerges-recorded-audio",
-        OutputKey: "automatedresult91c.json",
+        OutputKey: "automatedresult-" + randomUuid +".json",
     }
 
 
@@ -589,7 +639,7 @@ async function stopRecording() {
 
 
     const GetTranscriptionJobInput = { // GetTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe91c", // required
+        TranscriptionJobName: "boanerges-transcribe-" + randomUuid, // required
     };
     const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
 
@@ -623,7 +673,7 @@ async function stopRecording() {
             try {
                 let s3GetCmd = new GetObjectCommand({
                     Bucket: "boanerges-recorded-audio",
-                    Key: "automatedresult91c.json"
+                    Key: "automatedresult-"+randomUuid+".json"
                 });
 
                 let s3GetResponse = await s3Client.send(s3GetCmd);

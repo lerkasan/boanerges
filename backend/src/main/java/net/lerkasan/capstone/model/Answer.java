@@ -39,4 +39,10 @@ public class Answer {
 
     @OneToOne(mappedBy = "answer")
     private Feedback feedback;
+
+    public Answer(Long id, @NonNull String text, @NonNull String audioUrl) {
+        this.id = id;
+        this.text = text;
+        this.audioUrl = audioUrl;
+    }
 }

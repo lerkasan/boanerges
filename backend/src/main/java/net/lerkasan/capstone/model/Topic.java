@@ -40,7 +40,7 @@ public class Topic {
     @JsonIgnoreProperties(value = {"topics"})
     private Category category;
 
-    @OneToMany(mappedBy = "topic", cascade = {PERSIST, MERGE, REFRESH, DETACH})
+    @OneToMany(mappedBy = "topic", cascade = {PERSIST, MERGE, REFRESH, DETACH}, fetch = FetchType.LAZY)
     @OrderBy(value = "id ASC")
     @JsonIgnore
     private Set<Interview> interviews = new HashSet<>();
