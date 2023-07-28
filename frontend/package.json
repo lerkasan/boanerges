@@ -29,6 +29,7 @@
     "flowbite": "^1.7.0",
     "flowbite-vue": "^0.0.16",
     "microphone-stream": "^6.0.1",
+    "preline": "^1.9.0",
     "readable-stream": "^4.4.2",
     "socket.io-client": "^4.7.1",
     "vue": "^3.2.13",

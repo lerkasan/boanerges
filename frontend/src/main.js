@@ -4,8 +4,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import SignUp from "@/components/SignUp.vue";
 import LoginForm from "@/components/LoginForm.vue";
-import HelloWorld from "@/components/HelloWorld.vue";
+// import HelloWorld from "@/components/HelloWorld.vue";
 import InterviewPage from "@/components/InterviewPage.vue";
+import SelectTopics from "@/components/SelectTopics.vue";
+import RecentQuestions from "@/components/RecentQuestions.vue";
 // import InterviewMain from "@/components/InterviewMainBad.vue";
 // import InterviewMainOld from "@/components/InterviewPage.vue";
 // import {Deepgram} from "@deepgram/sdk";
@@ -20,8 +22,9 @@ const router = createRouter({
         // { path: '/signup-success', component: SignUpSuccess},
         { path: '/login', component: LoginForm},
         // { path: '/books', component: DeepgramStream},
-        { path: '/books', component: HelloWorld},
-        { path: '/interview', component: InterviewPage}
+        { path: '/topics', component: SelectTopics},
+        { path: '/interview', component: InterviewPage},
+        { path: '/questions', component: RecentQuestions}
     ]
 });
 

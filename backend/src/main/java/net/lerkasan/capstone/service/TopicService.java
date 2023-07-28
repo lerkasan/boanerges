@@ -3,6 +3,7 @@ package net.lerkasan.capstone.service;
 import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.model.Book;
 import net.lerkasan.capstone.model.Topic;
+import net.lerkasan.capstone.repository.BookRepository;
 import net.lerkasan.capstone.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,5 +24,9 @@ public class TopicService implements TopicServiceI {
 
     public Topic findById(long id) {
         return topicRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format(TOPIC_NOT_FOUND_BY_ID, id)));
+    }
+
+    public List<Topic> getTopics() {
+        return topicRepository.findAll();
     }
 }

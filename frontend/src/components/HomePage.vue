@@ -19,15 +19,18 @@
                             </router-link>
                         </li>
                         <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Tech Interviews</a></li>
-                        <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Recent Questions</a></li>
                         <li>
-                            <router-link to="/books" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
-                                Books
+                            <router-link to="/questions" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Recent Questions
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link to="/topics" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
+                                Topics
                             </router-link>
                         </li>
                         <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">About</a></li>
                         <li v-if="username">
-                            <router-link to="/interview">
+                            <router-link to="/topics">
                                 <button class="btn group flex items-center bg-transparent p-2 px-6 text-xl font-bold tracking-widest text-blue-900">
                                     <span class="relative pr-4 pb-1 text-blue-900 after:transition-transform after:duration-500 after:ease-out after:absolute after:bottom-0 after:left-0 after:block after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-blue-500 after:content-[''] after:group-hover:origin-bottom-left after:group-hover:scale-x-100">Start an interview</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

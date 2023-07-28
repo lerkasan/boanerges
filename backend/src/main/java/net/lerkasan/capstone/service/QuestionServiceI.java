@@ -4,6 +4,8 @@ import net.lerkasan.capstone.dto.QuestionDto;
 import net.lerkasan.capstone.model.Question;
 import net.lerkasan.capstone.model.Topic;
 
+import java.util.List;
+
 public interface QuestionServiceI {
 
     String NULL_QUESTION_ERROR = "Question is null";
@@ -15,4 +17,6 @@ public interface QuestionServiceI {
     QuestionDto generateQuestion(Topic topic);
 
     Question findByIdAndInterviewId(Long questionId, Long interviewId);
+
+    List<Question> getQuestions();
 }

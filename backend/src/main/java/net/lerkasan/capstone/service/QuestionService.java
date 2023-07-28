@@ -8,13 +8,13 @@ import net.lerkasan.capstone.model.Topic;
 import net.lerkasan.capstone.repository.QuestionRepository;
 import net.lerkasan.capstone.service.aws.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -63,5 +63,10 @@ public class QuestionService implements QuestionServiceI {
     @Override
     public Question findByIdAndInterviewId(Long questionId, Long interviewId) {
         return questionRepo.findByIdAndInterviewId(questionId, interviewId).orElseThrow(() -> new NotFoundException(String.format(QUESTION_NOT_FOUND, questionId, interviewId)));
+    }
+
+    @Override
+    public List<Question> getQuestions() {
+        return questionRepo.findAll();
     }
 }

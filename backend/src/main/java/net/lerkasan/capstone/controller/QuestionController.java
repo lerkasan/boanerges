@@ -11,11 +11,13 @@ import net.lerkasan.capstone.service.InterviewServiceI;
 import net.lerkasan.capstone.service.QuestionServiceI;
 import net.lerkasan.capstone.service.TopicServiceI;
 import net.lerkasan.capstone.service.UserServiceI;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -41,7 +43,7 @@ public class QuestionController {
     }
 
 
-    @GetMapping("/api/v1/questions")
+    @PostMapping("/api/v1/questions")
 //    @GetMapping(path = "/chat")
     public QuestionDto generateQuestion(@RequestParam Long topicId) {
         Topic topic = topicService.findById(topicId);
@@ -64,5 +66,11 @@ public class QuestionController {
                 .buildAndExpand(createdQuestion.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdQuestionDto);
+    }
+
+    @GetMapping("/api/v1/questions")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getQuestions() {
+        return questionService.getQuestions().stream().map(Question::getText).toList();
     }
 }
