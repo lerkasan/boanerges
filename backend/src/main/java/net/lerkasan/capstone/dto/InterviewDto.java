@@ -47,9 +47,9 @@ public class InterviewDto {
     @JsonIgnore
     private LocalDate createdAt;
 
-    private Set<Question> questions;
+    private Set<QuestionDto> questions;
 
-    public InterviewDto(Long id, @NonNull String name, @NonNull Long topicId, Set<Question> questions) {
+    public InterviewDto(Long id, @NonNull String name, @NonNull Long topicId, Set<QuestionDto> questions) {
         this.id = id;
         this.name = name;
         this.topicId = topicId;

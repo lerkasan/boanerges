@@ -18,7 +18,11 @@
                                 Home
                             </router-link>
                         </li>
-                        <li><a class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Tech Interviews</a></li>
+                        <li>
+                            <router-link to="/interviews" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
+                                Tech Interviews
+                            </router-link>
+                        </li>
                         <li>
                             <router-link to="/questions" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Recent Questions
                             </router-link>

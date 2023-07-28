@@ -281,7 +281,7 @@ async function createInterview() {
     let topicId = 10;
     // window.localStorage.setItem('topicId', topicId);
     apiClient.post("/interviews", {
-        name: "My awesome interview",
+        name: "My awesome interview-" + uuid(),
         topicId: topicId
     })
         .then(response => {

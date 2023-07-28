@@ -47,6 +47,11 @@ public class InterviewService implements InterviewServiceI {
     }
 
     @Override
+    public List<Interview> findByUserId(long id) {
+        return interviewRepo.findByUserId(id);
+    }
+
+    @Override
     public Interview findByIdAndUserId(long id, long userId) {
         return interviewRepo.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException(String.format(INTERVIEW_NOT_FOUND, id)));
     }

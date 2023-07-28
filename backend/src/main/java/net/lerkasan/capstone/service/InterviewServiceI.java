@@ -24,4 +24,5 @@ public interface InterviewServiceI {
 
     void delete(Interview interview);
 
+    List<Interview> findByUserId(long id);
 }

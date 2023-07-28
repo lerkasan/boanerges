@@ -31,4 +31,6 @@ public class QuestionDto {
     @NonNull
     @NotBlank(message = "AudioUrl field is required.")
     private String audioUrl;
+
+//    private AnswerDto answer;
 }

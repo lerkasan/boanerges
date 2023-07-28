@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/interviews")
@@ -33,11 +35,21 @@ public class InterviewController {
     }
 
     @GetMapping("/{id}")
-    public Interview getInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
+    public InterviewDto getInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
 //        return interviewService.findByIdAndUsername(id, currentUser.getUsername());
         User user = userService.findByUsername(currentUser.getUsername());
-        return interviewService.findByIdAndUserId(id, user.getId());
+        Interview interview = interviewService.findByIdAndUserId(id, user.getId());
+        return interviewDtoMapper.toInterviewDto(interview);
     }
+
+    @GetMapping
+    public List<InterviewDto> getInterviews(@AuthenticationPrincipal UserDetails currentUser) {
+//        return interviewService.findByIdAndUsername(id, currentUser.getUsername());
+        User user = userService.findByUsername(currentUser.getUsername());
+        return interviewService.findByUserId(user.getId()).stream().map(interviewDtoMapper::toInterviewDto).collect(Collectors.toList());
+    }
+
+
 
     @PostMapping
     public ResponseEntity<InterviewDto> createInterview(@Valid @RequestBody(required = true) InterviewDto interviewDto, Authentication authentication) {

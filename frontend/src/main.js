@@ -8,6 +8,7 @@ import LoginForm from "@/components/LoginForm.vue";
 import InterviewPage from "@/components/InterviewPage.vue";
 import SelectTopics from "@/components/SelectTopics.vue";
 import RecentQuestions from "@/components/RecentQuestions.vue";
+import UserInterviews from "@/components/UserInterviews.vue";
 // import InterviewMain from "@/components/InterviewMainBad.vue";
 // import InterviewMainOld from "@/components/InterviewPage.vue";
 // import {Deepgram} from "@deepgram/sdk";
@@ -24,7 +25,9 @@ const router = createRouter({
         // { path: '/books', component: DeepgramStream},
         { path: '/topics', component: SelectTopics},
         { path: '/interview', component: InterviewPage},
-        { path: '/questions', component: RecentQuestions}
+        { path: '/questions', component: RecentQuestions},
+        { path: '/interviews', component: UserInterviews},
+
     ]
 });
 
