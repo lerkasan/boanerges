@@ -37,4 +37,10 @@ public class FeedbackDto {
         this.audioUrl = audioUrl;
         this.score = score;
     }
+
+    public FeedbackDto(@NonNull String textResponse, @NonNull String audioUrl, int score) {
+        this.text = textResponse;
+        this.audioUrl = audioUrl;
+        this.score = score;
+    }
 }

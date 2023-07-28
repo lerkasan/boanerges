@@ -35,6 +35,7 @@ public class ChatGptServiceI implements ChatServiceI {
 //    public Mono<ChatResponseBody> sendPrompt(String prompt) {
 //    public ChatResponseBody sendPrompt(String prompt) {
     public String sendPrompt(String prompt) {
+//    public String sendPrompt(String prompt, String model) {
 //    public Mono<String> sendPrompt(String prompt) {
 //    public Flux<String> sendPrompt(String prompt) {
 

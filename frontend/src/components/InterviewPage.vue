@@ -1,5 +1,5 @@
 <template>
-    <div class="m-10 mx-auto p-16 sm:p-24 lg:p-48">
+    <div class="m-4 mx-auto p-6 sm:p-6 lg:p-12">
 
         <!-- Carousel Body -->
         <div class="relative rounded-lg block md:flex items-center bg-gray-100 shadow-xl" style="min-height: 19rem;">
@@ -7,12 +7,15 @@
                 <img class="absolute inset-0 w-full h-full object-cover object-center" src="https://stripe.com/img/v3/payments/overview/photos/missguided.jpg" alt="">
                 <div class="absolute inset-0 w-full h-full bg-indigo-900 opacity-75"></div>
                 <div class="absolute inset-0 w-full h-full flex items-center justify-center fill-current text-white">
-                    <svg class="w-full h-24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 239 120"><path d="M4.21 86.4V33.31h8.94l4 28.85.86 9.52.87-9.52 4-28.85h9.02V86.4h-5.19V42.83l-.87 7.22-5.19 36.35h-5.19l-5.2-36.93-.57-6.64V86.4zm35.79 0h6V33.31h-6zm114.24 0h6.06V33.31h-6.06zm46.16-24h5.48v-6.01h-5.48v-17h9.23v-6.08h-15.31V86.4h15.29v-6.06h-9.23zm-60-29.14v44.19a2.89 2.89 0 1 1-5.77 0V33.31h-6.34v44.14a9.23 9.23 0 1 0 18.46 0V33.31zm40.11 44.14V42.55a2.9 2.9 0 0 0-2.89-2.89h-2.88v41h2.88a3.68 3.68 0 0 0 2.89-3.18zm-3.21-44.09a9.12 9.12 0 0 1 9.23 9.24v34.9a9.12 9.12 0 0 1-9.23 9.24h-9.23V33.31h9.23m51.64 44.14v-34.9a2.89 2.89 0 0 0-2.88-2.89h-2.89v41h2.89a3.67 3.67 0 0 0 2.88-3.18zm-2.88-44.14a9.06 9.06 0 0 1 8.94 9.24v34.9a9.12 9.12 0 0 1-9.23 9.24h-9.23V33.31h9.52M89.31 57.55c-2.88-2.6-5.19-4.91-5.19-9.23v-5.77A2.89 2.89 0 0 1 87 39.66a3.1 3.1 0 0 1 2.89 2.89v6.05H96v-6.05a9.24 9.24 0 1 0-18.47 0v6.05c.58 6.93 4.62 10.68 7.5 13.56 2.89 2.6 5.2 4.91 5.2 9.24v6a2.89 2.89 0 1 1-5.77 0v-8.89h-6.11v8.94a9.23 9.23 0 1 0 18.46 0v-6c-.57-7.22-4.32-10.68-7.5-13.85m-25.1 0C61.33 55 59 52.64 59 48.32v-5.77a2.89 2.89 0 1 1 5.77 0v6.05h6.06v-6.05a9.24 9.24 0 1 0-18.47 0v6.05c0 6.93 4 10.68 6.93 13.56 2.88 2.6 5.19 4.91 5.19 9.24v6a2.89 2.89 0 0 1-2.88 2.89 3.1 3.1 0 0 1-2.89-2.89v-8.89h-5.46v8.94a9.23 9.23 0 1 0 18.46 0v-6c-.28-7.22-4.32-10.68-7.5-13.85m56.84-9.23v-5.82a9.24 9.24 0 1 0-18.47 0v34.9a9.45 9.45 0 0 0 9 9.24 6.63 6.63 0 0 0 6.34-4l2.89 4V62.45h-9.23v6.06h2.88v8.94a2.73 2.73 0 0 1-2.88 2.89 2.89 2.89 0 0 1-2.89-2.89v-34.9a2.9 2.9 0 0 1 2.89-2.89 3.1 3.1 0 0 1 2.88 2.89v6.05h6.64z"></path></svg>
+<!--                    <svg class="w-full h-24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 239 120"><path d="M4.21 86.4V33.31h8.94l4 28.85.86 9.52.87-9.52 4-28.85h9.02V86.4h-5.19V42.83l-.87 7.22-5.19 36.35h-5.19l-5.2-36.93-.57-6.64V86.4zm35.79 0h6V33.31h-6zm114.24 0h6.06V33.31h-6.06zm46.16-24h5.48v-6.01h-5.48v-17h9.23v-6.08h-15.31V86.4h15.29v-6.06h-9.23zm-60-29.14v44.19a2.89 2.89 0 1 1-5.77 0V33.31h-6.34v44.14a9.23 9.23 0 1 0 18.46 0V33.31zm40.11 44.14V42.55a2.9 2.9 0 0 0-2.89-2.89h-2.88v41h2.88a3.68 3.68 0 0 0 2.89-3.18zm-3.21-44.09a9.12 9.12 0 0 1 9.23 9.24v34.9a9.12 9.12 0 0 1-9.23 9.24h-9.23V33.31h9.23m51.64 44.14v-34.9a2.89 2.89 0 0 0-2.88-2.89h-2.89v41h2.89a3.67 3.67 0 0 0 2.88-3.18zm-2.88-44.14a9.06 9.06 0 0 1 8.94 9.24v34.9a9.12 9.12 0 0 1-9.23 9.24h-9.23V33.31h9.52M89.31 57.55c-2.88-2.6-5.19-4.91-5.19-9.23v-5.77A2.89 2.89 0 0 1 87 39.66a3.1 3.1 0 0 1 2.89 2.89v6.05H96v-6.05a9.24 9.24 0 1 0-18.47 0v6.05c.58 6.93 4.62 10.68 7.5 13.56 2.89 2.6 5.2 4.91 5.2 9.24v6a2.89 2.89 0 1 1-5.77 0v-8.89h-6.11v8.94a9.23 9.23 0 1 0 18.46 0v-6c-.57-7.22-4.32-10.68-7.5-13.85m-25.1 0C61.33 55 59 52.64 59 48.32v-5.77a2.89 2.89 0 1 1 5.77 0v6.05h6.06v-6.05a9.24 9.24 0 1 0-18.47 0v6.05c0 6.93 4 10.68 6.93 13.56 2.88 2.6 5.19 4.91 5.19 9.24v6a2.89 2.89 0 0 1-2.88 2.89 3.1 3.1 0 0 1-2.89-2.89v-8.89h-5.46v8.94a9.23 9.23 0 1 0 18.46 0v-6c-.28-7.22-4.32-10.68-7.5-13.85m56.84-9.23v-5.82a9.24 9.24 0 1 0-18.47 0v34.9a9.45 9.45 0 0 0 9 9.24 6.63 6.63 0 0 0 6.34-4l2.89 4V62.45h-9.23v6.06h2.88v8.94a2.73 2.73 0 0 1-2.88 2.89 2.89 2.89 0 0 1-2.89-2.89v-34.9a2.9 2.9 0 0 1 2.89-2.89 3.1 3.1 0 0 1 2.88 2.89v6.05h6.64z"></path></svg>-->
+                <p v-if="feedbackAlreadyClicked" class="text-white p-8">{{ question }} </p>
+<!--                    <p v-if="feedbackAlreadyClicked" class="text-white pb-4">Your score:&nbsp;{{ feedbackScore }}</p>-->
                 </div>
             </div>
             <div class="w-full md:w-3/5 h-full flex items-center bg-gray-100 rounded-lg">
                 <div class="p-12 md:pr-24 md:pl-16 md:py-12">
-                    <p class="text-gray-900 pb-4" >{{ question }}</p>
+                    <p v-if="feedbackAlreadyClicked" class="text-gray-900 pb-4" >{{ feedbackText }}</p>
+                    <p v-else class="text-gray-900 pb-4" >{{ question }}</p>
 <!--                    <div v-if="loading" class='flex items-center justify-center min-h-screen'>-->
                         <button v-if="loading" type="button" class="bg-indigo-400 h-max w-max justify-center items-center rounded-lg text-white font-bold hover:bg-indigo-300 hover:cursor-not-allowed duration-[500ms,800ms]" disabled>
                             <div class="flex items-center justify-center m-[10px]">
@@ -25,16 +28,17 @@
                             <button type="button"
                                     @click="startRecording"
                                     v-if="!loading"
-                                    :disabled="loading || audioPlaying || recordingStatus || replayAlreadyClicked"
+                                    :disabled="loading || audioPlaying || recordingStatus || replayPlaying || feedbackAlreadyClicked"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                                Reply
+                                <span v-if="replayAlreadyClicked">Retry</span>
+                                <span v-else>Reply</span>
                             </button>
                         </div>
                         <div>
                             <button type="button"
                                     @click="stopRecording"
                                     v-if="!loading"
-                                    :disabled="loading || audioPlaying || !recordingStatus"
+                                    :disabled="loading || audioPlaying || !recordingStatus || feedbackAlreadyClicked"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                 Stop
                             </button>
@@ -43,9 +47,18 @@
                             <button type="button"
                                     @click="replayAnswer"
                                     v-if="!loading"
-                                    :disabled="loading || audioPlaying || recordingStatus || replayPlaying || !replyAlreadyClicked"
+                                    :disabled="loading || audioPlaying || recordingStatus || replayPlaying || !replyAlreadyClicked || feedbackAlreadyClicked"
                                     class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                 Replay answer
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button"
+                                    @click="getFeedback"
+                                    v-if="!loading"
+                                    :disabled="loading || audioPlaying || recordingStatus || replayPlaying || !replyAlreadyClicked || feedbackAlreadyClicked"
+                                    class="inline-block px-6 py-2 border-2 border-green-600 text-green-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                                Feedback
                             </button>
                         </div>
 <!--                        <p v-for="(transcript, i) in transcripts" :key="i">{{ transcript }}</p>-->
@@ -70,12 +83,16 @@
 <!--            <button class="absolute top-0 mt-32 left-0 bg-white rounded-full shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -ml-6 focus:outline-none focus:shadow-outline">-->
 <!--                <span class="block" style="transform: scale(-1);">&#x279c;</span>-->
 <!--            </button>-->
+
+<!--            :disabled="loading || audioPlaying || replayPlaying || !feedbackAlreadyClicked"&ndash;&gt;-->
             <button
                 :disabled="loading || audioPlaying || replayPlaying"
-                @click="getQuestion"
+                @click="nextQuestion"
                 class="absolute top-0 mt-32 right-0 bg-white rounded-full disabled:opacity-25 shadow-md h-12 w-12 text-2xl text-indigo-600 hover:text-indigo-400 focus:text-indigo-400 -mr-6 focus:outline-none focus:shadow-outline">
                 <span class="block" style="transform: scale(1);">&#x279c;</span>
             </button>
+
+
         </div>
 
 <!--        &lt;!&ndash; Carousel Tabs &ndash;&gt;-->
@@ -110,6 +127,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 
@@ -189,6 +207,7 @@ const audioPlaying = ref(false);
 const replayAlreadyClicked = ref(false);
 const replayPlaying = ref(false);
 const replyAlreadyClicked = ref(false);
+const feedbackAlreadyClicked = ref(false);
 
 const mediaRecorder = ref();
 let socket;
@@ -204,6 +223,11 @@ let transcribeClient;
 // let transcribeStreamClient;
 let credentials;
 let transcripts = ref([]);
+let randomUuid;
+
+let feedbackText = ref('');
+let feedbackAudioUrl = ref('');
+let feedbackScore = ref();
 
 const region = process.env.VUE_APP_AWS_REGION;
 
@@ -256,28 +280,113 @@ async function createInterview() {
     })
         .then(response => {
             window.localStorage.setItem("interviewId", response.data.id);
-            let questions = [];
-            window.localStorage.setItem("question", JSON.stringify(questions));
+            // let questions = [];
+            // window.localStorage.setItem("question", JSON.stringify(questions));
         })
     // .then(response => console.log("api response: " + response))
         .catch(err => console.log("error " + err));
 }
 
+async function getFeedback() {
+    feedbackAlreadyClicked.value = true;
+    loading.value = true;
 
-async function getQuestion() {
+    // let answerS3Url = "https://boanerges-recorded-audio.s3.amazonaws.com/answerAudio-" + randomUuid + ".webm";
+    // let answerText = transcripts.value.join(' ');
+    //
+    // let answerId = await saveAnswer(answerText, answerS3Url);
 
-    transcripts.value = [];
+    let interviewId = window.localStorage.getItem('interviewId');
+    let questionId = window.localStorage.getItem('questionId');
+    let answerId = window.localStorage.getItem('answerId');
+
+    if (interviewId !== null && questionId !== null && answerId !== null) {
+        apiClient.post(`/interviews/${interviewId}/questions/${questionId}/answers/${answerId}/feedback`)
+            .then(response => {
+                feedbackText.value = response.data.text;
+                feedbackAudioUrl.value = response.data.audioUrl;
+                feedbackScore.value = response.data.score;
+
+                let oldFeedbackAudio = document.getElementById("feedback_audio");
+                if (oldFeedbackAudio !== undefined && oldFeedbackAudio !== null) {
+                    oldFeedbackAudio.remove();
+                }
+
+                // let oldAnswerAudio = document.getElementById("recorded_audio");
+                // if (oldAnswerAudio !== undefined && oldAnswerAudio !== null) {
+                //     oldAnswerAudio.remove();
+                // }
+
+                loading.value = false;
+                let feedbackAudio = document.createElement('audio');
+                feedbackAudio.id = "feedback_audio";
+                feedbackAudio.src = response.data.audioUrl;
+                feedbackAudio.controls = false;
+                feedbackAudio.autoplay = false;
+                audioPlaying.value = true;
+                feedbackAudio.addEventListener("ended", () => {
+                    audioPlaying.value = false;
+                });
+                audioPlaying.value = true;
+                feedbackAudio.play();
+
+            })
+            .catch(err => console.log("error " + err));
+    }
+
+    // let interviewId = window.localStorage.getItem('interviewId');
+    // let questionId = window.localStorage.getItem('questionId');
+    // // let answerId = window.localStorage.getItem('answerId');
+    //
+    // if (interviewId !== null && questionId !== null && answerId !== null) {
+    //     apiClient.post(`/interviews/${interviewId}/questions/${questionId}/answers/${answerId}/feedback`)
+    //         .then(response => {
+    //             feedbackText.value = response.data.text;
+    //             feedbackAudioUrl.value = response.data.audioUrl;
+    //             feedbackScore.value = response.data.score;
+    //         })
+    //         .catch(err => console.log("error " + err));
+    // }
+}
+
+async function nextQuestion() {
+
     audioPlaying.value = false;
-// audioRecording.value = false;
     replayAlreadyClicked.value = false;
     replyAlreadyClicked.value = false;
-
-    // let transcribedText = document.getElementById("question_audio");
-
+    feedbackAlreadyClicked.value = false;
     loading.value = true;
     question.value = '';
     questionAudioUrl.value = '';
     audioUrl.value = '';
+    feedbackText.value = '';
+    feedbackAudioUrl.value = '';
+    feedbackScore.value = '';
+
+    // let questionText = window.localStorage.getItem('currentQuestion');
+    // let questionAudio = window.localStorage.getItem('currentQuestionAudio');
+    // await saveQuestion(questionText, questionAudio);
+
+    // let answerS3Url = "https://boanerges-recorded-audio.s3.amazonaws.com/answerAudio-" + randomUuid + ".webm";
+    // let answerText = transcripts.value.join(' ');
+    // await saveAnswer(answerText, answerS3Url);
+    transcripts.value = [];
+
+    await getQuestion();
+}
+
+async function getQuestion() {
+
+    // transcripts.value = [];
+    // audioPlaying.value = false;
+    // replayAlreadyClicked.value = false;
+    // replyAlreadyClicked.value = false;
+    // feedbackAlreadyClicked.value = false;
+    // loading.value = true;
+    // question.value = '';
+    // questionAudioUrl.value = '';
+    // audioUrl.value = '';
+
     let topicId = window.localStorage.getItem('topicId');
     if (topicId !== undefined) {
         apiClient.get(`/questions?topicId=${topicId}`)
@@ -306,6 +415,9 @@ async function getQuestion() {
                 });
                 audioPlaying.value = true;
                 questionAudio.play();
+
+                window.localStorage.setItem('currentQuestion', response.data.text);
+                window.localStorage.setItem('currentQuestionAudio', response.data.audioUrl);
 
                 saveQuestion(response.data.text, response.data.audioUrl);
             })
@@ -345,6 +457,7 @@ async function saveAnswer(text, audioUrl) {
     apiClient.post(`/interviews/${interviewId}/questions/${questionId}/answers`, answer)
         .then(response => {
             window.localStorage.setItem("answerId", response.data.id);
+            return response.data.id;
         })
         .catch(err => console.log("error " + err));
 
@@ -406,12 +519,17 @@ async function startRecording() {
     replayAlreadyClicked.value = true;
     replyAlreadyClicked.value = true;
 
+    transcripts.value = [];
+    audioPlaying.value = false;
+    audioUrl.value = '';
+
     transcribeClient = new TranscribeClient({
         region,
         credentials
     });
 
     await openWebSocket();
+
     // recordingStatus.value = true;
     // // const media = new MediaRecorder(stream, audioMime);
     // mediaRecorder.value = new MediaRecorder(stream, audioMime);
@@ -596,7 +714,7 @@ async function stopRecording() {
 
     audioChunks = [];
 
-    let randomUuid = uuid();
+    randomUuid = uuid();
 
     s3PutCmd = new PutObjectCommand({
         Bucket: "boanerges-recorded-audio",
@@ -1036,4 +1154,53 @@ function replayAnswer() {
 
 
 <style scoped lang="css">
+@property --hue {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 248deg;
+}
+
+@property --rotate-1 {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 45deg;
+}
+
+@property --rotate-2 {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 150deg;
+}
+
+@property --rotate-offset-1 {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 95deg;
+}
+
+@property --rotate-offset-2 {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 75deg;
+}
+
+.btn::after {
+    transition: --rotate-offset-1 0.5s, --rotate-offset-2 0.5s, --rotate-1 0.5s, --rotate-2 0.5s,--hue 0.5s;
+    background: conic-gradient(at 50% 0%, transparent, calc(var(--rotate-offset-1)), hsla(var(--hue), 50%, 32%, .9) calc(var(--rotate-offset-1)), hsla(var(--hue), 50%, 32%, .9) calc(var(--rotate-offset-1) + var(--rotate-1)), transparent calc(var(--rotate-offset-1) + var(--rotate-1))),
+    conic-gradient(at 50% 0%, transparent, calc(var(--rotate-offset-2)), hsla(var(--hue), 50%, 44%, 1) calc(var(--rotate-offset-2)), hsla(var(--hue), 50%, 44%, 1) calc(var(--rotate-offset-2) + var(--rotate-2)), transparent calc(var(--rotate-offset-2) + var(--rotate-2))),
+    linear-gradient(hsla(var(--hue), 50%, 50%,1),hsla(var(--hue), 50%, 50%,1))
+}
+
+/* modify values below to affect conic size with hover*/
+.btn:hover::after {
+    /* start angle */
+    --rotate-offset-1: 140deg;
+    --rotate-offset-2: 110deg;
+    /* angle increase from start angle */
+    --rotate-1: 110deg;
+    --rotate-2: 160deg;
+
+    --hue:220deg;
+}
+
 </style>

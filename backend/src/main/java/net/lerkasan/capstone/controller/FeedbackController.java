@@ -36,11 +36,13 @@ public class FeedbackController {
     }
 
     @PostMapping
-    public ResponseEntity<FeedbackDto> saveFeedback(@Valid @RequestBody FeedbackDto feedbackDto, @PathVariable Long interviewId, @PathVariable Long questionId, @PathVariable Long answerId) {
+    public ResponseEntity<FeedbackDto> generateFeedback(@PathVariable Long interviewId, @PathVariable Long questionId, @PathVariable Long answerId) {
         User user = userService.getCurrentUser();
         Interview interview = interviewService.findByIdAndUserId(interviewId, user.getId());
         Question question = questionService.findByIdAndInterviewId(questionId, interviewId);
         Answer answer = answerService.findByIdAndQuestionId(answerId, questionId);
+
+        FeedbackDto feedbackDto = feedbackService.generateFeedback(answer);
         Feedback feedback = feedbackDtoMapper.toFeedback(feedbackDto);
         feedback.setAnswer(answer);
         Feedback createdFeedback = feedbackService.create(feedback);

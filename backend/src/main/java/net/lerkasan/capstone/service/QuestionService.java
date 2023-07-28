@@ -23,7 +23,6 @@ public class QuestionService implements QuestionServiceI {
 
     private final QuestionRepository questionRepo;
 
-    @Qualifier("ChatGptService")
     private final ChatServiceI chatGptService;
 
     private final SpeechServiceI pollySpeechService;
@@ -48,7 +47,7 @@ public class QuestionService implements QuestionServiceI {
     @Override
     public QuestionDto generateQuestion(Topic topic) {
         String s3PresignedUrl = "";
-        String textResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Please ask exactly one question about " + topic.getName() + ". Please prioritize unconventional questions about theoretical fundamentals of the mentioned topic. Make your question longer, around 50 to 60 words. Do not repeat yourself. Do not ask any follow-up questions. Do not refer to the prompt.");
+        String textResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Please ask exactly one question about " + topic.getName() + ". Please prioritize unconventional questions about theoretical fundamentals of the mentioned topic. Make your question longer, around 50 to 60 words. Do not repeat yourself. Do not refer to the prompt.");
         try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, "Matthew", OutputFormat.MP3)) {
             UUID uuid = UUID.randomUUID();
             int hashCode = textResponse.hashCode();
