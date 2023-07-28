@@ -1,15 +1,10 @@
 package net.lerkasan.capstone.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import net.lerkasan.capstone.model.Interview;
+
+import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -32,5 +27,12 @@ public class QuestionDto {
     @NotBlank(message = "AudioUrl field is required.")
     private String audioUrl;
 
-//    private AnswerDto answer;
+    private List<AnswerDto> answers;
+
+//    public QuestionDto(Long id, String text, String presignedAudioUrl, List<AnswerDto> answerDtos) {
+//        this.id = id;
+//        this.text = text;
+//        this.audioUrl = presignedAudioUrl;
+//        this.answers = answerDtos;
+//    }
 }

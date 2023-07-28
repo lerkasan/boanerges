@@ -1,18 +1,24 @@
 package net.lerkasan.capstone.mapper;
 
+import net.lerkasan.capstone.dto.AnswerDto;
 import net.lerkasan.capstone.dto.QuestionDto;
+import net.lerkasan.capstone.model.Answer;
 import net.lerkasan.capstone.model.Question;
+import net.lerkasan.capstone.service.AnswerServiceI;
 import net.lerkasan.capstone.service.aws.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.S3Utilities;
 
-import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class QuestionDtoMapper {
+
+    private final AnswerServiceI answerService;
+    private final AnswerDtoMapper answerDtoMapper;
 
     private final S3Client s3Client;
 
@@ -21,7 +27,9 @@ public class QuestionDtoMapper {
     S3Utilities s3Utilities;
 
     @Autowired
-    public QuestionDtoMapper(S3Client s3Client, S3Service s3Service) {
+    public QuestionDtoMapper(AnswerServiceI answerService, AnswerDtoMapper answerDtoMapper, S3Client s3Client, S3Service s3Service) {
+        this.answerService = answerService;
+        this.answerDtoMapper = answerDtoMapper;
         this.s3Client = s3Client;
         this.s3Service = s3Service;
         this.s3Utilities = this.s3Client.utilities();
@@ -41,10 +49,13 @@ public class QuestionDtoMapper {
         String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
         String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");
         String presignedAudioUrl = s3Service.presignS3Url(bucketName, key);
+        List<Answer> answers = answerService.findByQuestionId(question.getId());
+        List<AnswerDto> answerDtos = toAnswerDtoList(answers);
         return new QuestionDto(
                 question.getId(),
                 question.getText(),
-                presignedAudioUrl);
+                presignedAudioUrl,
+                answerDtos);
     }
 
     public Question toQuestion(QuestionDto questionDto) {
@@ -56,5 +67,9 @@ public class QuestionDtoMapper {
                 audioUrl
 //                interviewService.findByIdAndUserId(questionDto.getInterviewId(), user.getId())
         );
+    }
+
+    public List<AnswerDto> toAnswerDtoList(List<Answer> answers) {
+        return answers.stream().map(answerDtoMapper::toAnswerDto).toList();
     }
 }

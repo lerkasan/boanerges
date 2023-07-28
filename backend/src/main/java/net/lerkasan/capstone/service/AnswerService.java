@@ -7,6 +7,7 @@ import net.lerkasan.capstone.repository.AnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -29,5 +30,10 @@ public class AnswerService implements AnswerServiceI {
     @Override
     public Answer findByIdAndQuestionId(Long answerId, Long questionId) {
         return answerRepo.findByIdAndQuestionId(answerId, questionId).orElseThrow(() -> new NotFoundException(String.format(ANSWER_NOT_FOUND, answerId, questionId)));
+    }
+
+    @Override
+    public List<Answer> findByQuestionId(Long questionId) {
+        return answerRepo.findByQuestionId(questionId);
     }
 }
