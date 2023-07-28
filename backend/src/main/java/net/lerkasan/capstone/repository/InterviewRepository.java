@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
-    final String AVERAGE_SCORE_QUERY = "SELECT avg(f.score) FROM Interview i LEFT JOIN i.questions q LEFT JOIN q.answer a LEFT JOIN a.feedback f WHERE i.id = :id";
+    final String AVERAGE_SCORE_QUERY = "SELECT avg(f.score) FROM Interview i LEFT JOIN i.questions q LEFT JOIN q.answers a LEFT JOIN a.feedback f WHERE i.id = :id";
 
 //    @Query("SELECT avg(f.score) FROM Interview i LEFT JOIN Question q ON i.id = q.interview_id LEFT JOIN Answer a ON q.id = a.question_id LEFT JOIN Feedback f ON a.id = f.answer_id WHERE i.id = :id")
 //    double calculateAverageScore(@Param("id") Long id );
@@ -23,8 +23,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 //    LEFT JOIN feedbacks f ON a.id = f.answer_id
 //    WHERE i.id = :id;
 
-//    @Query(AVERAGE_SCORE_QUERY)
-//    double calculateAverageScore(@Param("id") long id );
+    @Query(AVERAGE_SCORE_QUERY)
+    double calculateAverageScore(@Param("id") long id );
 
     Optional<Interview> findByIdAndUserId(@Param("id") long id, @Param("userId") long userId);
 //

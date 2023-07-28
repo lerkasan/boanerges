@@ -3,6 +3,7 @@ package net.lerkasan.capstone.controller;
 import jakarta.validation.Valid;
 import net.lerkasan.capstone.dto.AnswerDto;
 import net.lerkasan.capstone.dto.QuestionDto;
+import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.mapper.AnswerDtoMapper;
 import net.lerkasan.capstone.model.Answer;
 import net.lerkasan.capstone.model.Interview;
@@ -58,6 +59,10 @@ public class AnswerController {
                 .buildAndExpand(createdAnswer.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdAnswerDto);
+    }
 
+    @DeleteMapping("/{id}")
+    public void deleteAnswer(@PathVariable("id") Long id) {
+        answerService.findById(id);
     }
 }

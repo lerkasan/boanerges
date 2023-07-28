@@ -3,6 +3,7 @@ package net.lerkasan.capstone.controller;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ConstraintViolation;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.exception.NotFoundException;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.core.NestedRuntimeException;
@@ -28,6 +29,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpStatus.*;
 
+@Slf4j
 @ControllerAdvice
 public class ControllerAdviceHandler {
 
@@ -53,6 +55,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleJsonParseException(final Exception e) {
+        log.error("Received malformed JSON. " + e.getMessage());;
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, "Received malformed JSON.");
     }
 
@@ -60,6 +63,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleIllegalArgumentException(final Exception e) {
+        log.error("IllegalArgumentException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getMessage());
     }
 
@@ -71,6 +75,7 @@ public class ControllerAdviceHandler {
                 .stream()
                 .map(ConstraintViolation::getMessageTemplate)
                 .collect(joining(" "));
+        log.error("Contraint Violation exception occured. " + errorMessage);
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, errorMessage);
     }
 
@@ -78,6 +83,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleRuntimeException(final Exception e) {
+        log.error("RuntimeException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getMessage());
     }
 
@@ -86,6 +92,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(UNAUTHORIZED)
     @ResponseBody
     public Map<String, String> handleNotFoundException(final Exception e) {
+        log.error("NotFoundException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getMessage());
     }
 
@@ -93,6 +100,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleMethodArgumentTypeMismatchException(final Exception e) {
+        log.error("Received malformed URL - MethodArgumentTypeMismatchException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, "Received malformed URL.");
     }
 
@@ -100,6 +108,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleJpaObjectRetrievalFailureException(final JpaObjectRetrievalFailureException e) {
+        log.error("JpaObjectRetrievalFailureException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage().replace("net.lerkasan.capstone.model.",""));
     }
 
@@ -107,6 +116,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
+        log.error("DataIntegrityViolationException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, "Illegal id of related object.");
     }
 
@@ -114,6 +124,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleInvalidDataAccessApiUsageException(final InvalidDataAccessApiUsageException e) {
+        log.error("InvalidDataAccessApiUsageException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage());
     }
 
@@ -121,6 +132,7 @@ public class ControllerAdviceHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public Map<String, String> handleIOException(final Exception e) {
+        log.error("IOException: " + e.getMessage());
         return Collections.singletonMap(ERROR_MESSAGE_PROPERTY, e.getCause().getMessage());
     }
 }

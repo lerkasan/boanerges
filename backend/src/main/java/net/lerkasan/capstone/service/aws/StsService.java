@@ -1,5 +1,6 @@
 package net.lerkasan.capstone.service.aws;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 
+@Slf4j
 @Service
 public class StsService {
 
@@ -48,9 +50,9 @@ public class StsService {
                             .withLocale( Locale.US)
                             .withZone( ZoneId.systemDefault() );
             formatter.format( exTime );
-            System.out.println("The token "+tokenInfo + "  expires on " + exTime );
+            log.info("The token "+tokenInfo + "  expires on " + exTime );
         } catch (StsException e) {
-            System.err.println(e.getMessage());
+            log.error("Error assuming sts role: {}", e.getMessage());
         }
         return creds;
     }

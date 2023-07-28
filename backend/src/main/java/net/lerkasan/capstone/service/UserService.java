@@ -1,6 +1,7 @@
 package net.lerkasan.capstone.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.constraint.UniqueValidatable;
 import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.model.Role;
@@ -24,6 +25,7 @@ import java.util.*;
 import static java.util.Objects.nonNull;
 import static net.lerkasan.capstone.repository.RoleRepository.ROLE_USER;
 
+@Slf4j
 @Service
 public class UserService implements UserServiceI, UserDetailsService, UniqueValidatable {
 
@@ -138,7 +140,9 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
         return switch (fieldName) {
             case "username" -> isUsernameAvailable(fieldValue);
             case "email" -> isEmailAvailable(fieldValue);
-            default -> throw new IllegalArgumentException("Unexpected field was passed to isAvailable method.");
+            default -> { log.error("Unexpected field was passed to isAvailable method.");
+                throw new IllegalArgumentException("Unexpected field was passed to isAvailable method.");
+            }
         };
     }
 

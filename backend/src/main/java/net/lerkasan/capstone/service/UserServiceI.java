@@ -8,6 +8,9 @@ public interface UserServiceI {
 
     String USER_NOT_FOUND_BY_ID = "A user with the id %d not found%n";
     String USER_NOT_FOUND = "A user %s not found%n";
+
+    String INVALID_USER_ID = "User id must be greater than 0";
+
     User create(User user);
 
     List<User> findAll();

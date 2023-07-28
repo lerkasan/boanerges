@@ -1,6 +1,7 @@
 package net.lerkasan.capstone.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.dto.QuestionDto;
 import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.model.Question;
@@ -18,6 +19,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static net.lerkasan.capstone.service.InterviewServiceI.INVALID_INTERVIEW_ID_ERROR;
+import static net.lerkasan.capstone.service.TopicServiceI.NULL_TOPIC_ERROR;
+
+@Slf4j
 @Service
 public class QuestionService implements QuestionServiceI {
 
@@ -45,7 +50,31 @@ public class QuestionService implements QuestionServiceI {
     }
 
     @Override
+    @Transactional
+    public Question update(final Question question) {
+        Objects.requireNonNull(question, NULL_QUESTION_ERROR);
+        return questionRepo.saveAndFlush(question);
+    }
+
+    @Override
+    @Transactional
+    public void delete(final long id) {
+        if (id <= 0) {
+            log.error(String.format(INVALID_QUESTION_ID_ERROR, id));
+            throw new IllegalArgumentException(String.format(INVALID_QUESTION_ID_ERROR, id));
+        }
+        questionRepo.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Question question) {
+        questionRepo.delete(question);
+    }
+
+    @Override
     public QuestionDto generateQuestion(Topic topic) {
+        Objects.requireNonNull(topic, NULL_TOPIC_ERROR);
         String s3PresignedUrl = "";
         String textResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Please ask exactly one question about " + topic.getName() + ". Please prioritize unconventional questions about theoretical fundamentals of the mentioned topic. Make your question longer, around 50 to 60 words. Do not repeat yourself. Do not refer to the prompt.");
         try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, "Matthew", OutputFormat.MP3)) {
@@ -55,13 +84,21 @@ public class QuestionService implements QuestionServiceI {
             s3Service.copyInputStreamToFile(speech, file);
             s3PresignedUrl = s3Service.uploadToS3(file, "boanerges-radio-voice", "question-audio-" + uuid + hashCode + ".mp3");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error while generating question audio " + e.getMessage());
         }
         return new QuestionDto(textResponse, s3PresignedUrl);
     }
 
     @Override
     public Question findByIdAndInterviewId(Long questionId, Long interviewId) {
+        if (questionId <= 0) {
+            log.error(String.format(INVALID_QUESTION_ID_ERROR, questionId));
+            throw new IllegalArgumentException(String.format(INVALID_QUESTION_ID_ERROR, questionId));
+        }
+        if (interviewId <= 0) {
+            log.error(String.format(INVALID_INTERVIEW_ID_ERROR, interviewId));
+            throw new IllegalArgumentException(String.format(INVALID_INTERVIEW_ID_ERROR, interviewId));
+        }
         return questionRepo.findByIdAndInterviewId(questionId, interviewId).orElseThrow(() -> new NotFoundException(String.format(QUESTION_NOT_FOUND, questionId, interviewId)));
     }
 

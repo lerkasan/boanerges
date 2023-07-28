@@ -2,6 +2,7 @@ package net.lerkasan.capstone.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.model.User;
 import net.lerkasan.capstone.service.*;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
@@ -64,6 +66,7 @@ public class UserController {
         try {
             user = userService.findByToken(token);
         } catch (NotFoundException e) {
+            log.error("User not found with token: " + token);
 //            return ResponseEntity.ok().body(body);
             return body;
         }

@@ -1,7 +1,9 @@
 package net.lerkasan.capstone.service;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.dto.FeedbackDto;
-import net.lerkasan.capstone.dto.QuestionDto;
+import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.model.Answer;
 import net.lerkasan.capstone.model.Feedback;
 import net.lerkasan.capstone.model.Question;
@@ -17,6 +19,7 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class FeedbackService implements FeedbackServiceI {
 
@@ -43,6 +46,38 @@ public class FeedbackService implements FeedbackServiceI {
     }
 
     @Override
+    public Feedback update(Feedback feedback) {
+        Objects.requireNonNull(feedback, NULL_FEEDBACK_ERROR);
+        return feedbackRepo.saveAndFlush(feedback);
+    }
+
+
+    @Override
+    public void findById(final long id) {
+        if (id <= 0) {
+            log.error(String.format(INVALID_FEEDBACK_ID_ERROR, id));
+            throw new IllegalArgumentException(String.format(INVALID_FEEDBACK_ID_ERROR, id));
+        }
+        feedbackRepo.findById(id).orElseThrow(() -> new NotFoundException(String.format(FEEDBACK_NOT_FOUND, id)));
+    }
+
+    @Override
+    @Transactional
+    public void delete(final long id) {
+        if (id <= 0) {
+            log.error(String.format(INVALID_FEEDBACK_ID_ERROR, id));
+            throw new IllegalArgumentException(String.format(INVALID_FEEDBACK_ID_ERROR, id));
+        }
+        feedbackRepo.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Feedback feedback) {
+        feedbackRepo.delete(feedback);
+    }
+
+    @Override
     public FeedbackDto generateFeedback(Answer answer) {
         String s3PresignedUrl = "";
         int score = 100;
@@ -66,7 +101,7 @@ public class FeedbackService implements FeedbackServiceI {
             s3Service.copyInputStreamToFile(speech, file);
             s3PresignedUrl = s3Service.uploadToS3(file, "boanerges-radio-voice", "question-audio-" + uuid + hashCode + ".mp3");
         } catch (IOException e) {
-            e.printStackTrace();
+           log.error("Error while generating feedback audio file: " + e.getMessage());
         }
 
         String scoreResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Here is a question that you asked: "
@@ -78,7 +113,7 @@ public class FeedbackService implements FeedbackServiceI {
             score = Integer.parseInt(scoreResponse);
         }
         catch (NumberFormatException e) {
-            e.printStackTrace();
+            log.error("Error while parsing score: " + e.getMessage());
         }
         return new FeedbackDto(textResponse, s3PresignedUrl, score);
     }

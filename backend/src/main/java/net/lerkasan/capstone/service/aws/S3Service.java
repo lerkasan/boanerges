@@ -1,5 +1,6 @@
 package net.lerkasan.capstone.service.aws;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,6 +18,7 @@ import java.io.*;
 import java.net.URI;
 import java.time.Duration;
 
+@Slf4j
 @Service
 public class S3Service {
 
@@ -41,7 +43,7 @@ public class S3Service {
                             .build(),
                     RequestBody.fromInputStream(inputStream, inputStream.available()));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error uploading to S3: {}", e.getMessage());
         }
 //        s3Client.close();
         return "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
@@ -51,7 +53,7 @@ public class S3Service {
         try (OutputStream output = new FileOutputStream(file)) {
             input.transferTo(output);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error copying input stream to file: {}", e.getMessage());
         }
     }
 //    }
@@ -88,7 +90,7 @@ public class S3Service {
                 s3Presigner.presignGetObject(getObjectPresignRequest);
 
         // Log the presigned URL, for example.
-        System.out.println("Presigned URL: " + presignedGetObjectRequest.url());
+        log.info("Presigned URL: " + presignedGetObjectRequest.url());
         return presignedGetObjectRequest.url().toString();
     }
 

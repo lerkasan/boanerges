@@ -3,6 +3,7 @@ package net.lerkasan.capstone.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.utils.EmailDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class EmailService implements EmailServiceI {
 
@@ -41,7 +43,7 @@ public class EmailService implements EmailServiceI {
 //            mailMessage.setText(details.getMessageBody());
 
             mailSender.send(mailMessage);
-            System.out.println("Mail sent successfully...");
+            log.info("Mail sent successfully...");
             return "Mail Sent Successfully...";
         } catch (MessagingException | MailException e) {
             return "Error while sending mail!!!";

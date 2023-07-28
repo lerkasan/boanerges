@@ -2,6 +2,7 @@ package net.lerkasan.capstone.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.dto.chatgpt.ChatRequestBody;
 import net.lerkasan.capstone.dto.chatgpt.ChatResponseBody;
 import net.lerkasan.capstone.dto.chatgpt.Message;
@@ -12,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class ChatGptServiceI implements ChatServiceI {
 
@@ -48,7 +50,7 @@ public class ChatGptServiceI implements ChatServiceI {
             System.out.println("Request body:");
             System.out.println(requestBodyJson);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error("Error converting ChatRequestBody to JSON " + e.getMessage());
         }
         return chatGptWebClient
                 .post()
