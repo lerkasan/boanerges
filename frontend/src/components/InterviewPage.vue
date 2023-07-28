@@ -761,7 +761,8 @@ async function stopRecording() {
     randomUuid = uuid();
 
     s3PutCmd = new PutObjectCommand({
-        Bucket: "boanerges-recorded-audio",
+        // Bucket: "boanerges-recorded-audio",
+        Bucket: "boanerges-radio-voice",
         Key: "answerAudio-" + randomUuid + ".webm", // TODO TODO GENERATE UUID name
         Body: audioBlob,
     });
@@ -776,7 +777,8 @@ async function stopRecording() {
         console.error(err);
     }
 
-    let answerS3Url = "https://boanerges-recorded-audio.s3.amazonaws.com/answerAudio-" + randomUuid + ".webm";
+    let answerS3Url = "https://boanerges-radio-voice.s3.amazonaws.com/answerAudio-" + randomUuid + ".webm";
+    // let answerS3Url = "https://boanerges-recorded-audio.s3.amazonaws.com/answerAudio-" + randomUuid + ".webm";
     let answerText = transcripts.value.join(' ');
 
     await saveAnswer(answerText, answerS3Url);
@@ -788,9 +790,11 @@ async function stopRecording() {
         // MediaSampleRateHertz: Number(16000),
         MediaFormat: "webm", // "mp3" || "mp4" || "wav" || "flac" || "ogg" || "amr" || "webm",
         Media: { // Media
-            MediaFileUri: "s3://boanerges-recorded-audio/answerAudio-" + randomUuid + ".webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
+            MediaFileUri: "s3://boanerges-radio-voice/answerAudio-" + randomUuid + ".webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
+            // MediaFileUri: "s3://boanerges-recorded-audio/answerAudio-" + randomUuid + ".webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
         },
-        OutputBucketName: "boanerges-recorded-audio",
+        OutputBucketName: "boanerges-radio-voice",
+        // OutputBucketName: "boanerges-recorded-audio",
         OutputKey: "automatedresult-" + randomUuid +".json",
     }
 
@@ -834,7 +838,8 @@ async function stopRecording() {
         if (transcribingJobStatus.value === "COMPLETED") {
             try {
                 let s3GetCmd = new GetObjectCommand({
-                    Bucket: "boanerges-recorded-audio",
+                    Bucket: "boanerges-radio-voice",
+                    // Bucket: "boanerges-recorded-audio",
                     Key: "automatedresult-"+randomUuid+".json"
                 });
 

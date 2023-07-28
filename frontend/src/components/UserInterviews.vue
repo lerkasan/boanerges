@@ -37,10 +37,11 @@ async function getUserInterviews() {
 <!--                            </div>-->
 
 
-                            <div class="grid divide-y divide-neutral-200 max-w-xl mx-auto mt-8">
+<!--                            <div class="grid divide-y divide-neutral-200 max-w-xl mx-auto mt-8">-->
+                            <div>
                                 <div class="py-5">
                                     <details class="group">
-                                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
+                                        <summary class="flex justify-between items-center font-bold cursor-pointer list-none">
                                             <span> {{ interview.name }} </span>
                                             <span class="transition group-open:rotate-180">
                                                 <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path>
@@ -48,41 +49,47 @@ async function getUserInterviews() {
                                             </span>
                                         </summary>
                                         <div class="text-neutral-600 mt-3 group-open:animate-fadeIn">
-                                            <table class="w-1/6 text-sm text-left text-gray-500 dark:text-gray-400">
-                                                <tbody>
-                                                    <tr v-for="question in interview.questions" :key="question.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                        <td class="w-1/3 px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                                            {{ question.text }}
-                                                        </td>
-                                                        <td class="w-1/12 px-6 py-4">
-                                                            <audio controls>
-                                                                <source :src="question.audioUrl" type="audio/mpeg">
-                                                            </audio>
-                                                        </td>
-                                                        <td>
-                                                            <table class="text-sm text-left text-gray-500 dark:text-gray-400">
+<!--                                            <table class="w-1/6 text-sm text-left text-gray-500 dark:text-gray-400">-->
+<!--                                                <tbody>-->
+                                                    <div v-for="question in interview.questions" :key="question.id">
+                                                        <div class="text-left px-8 mr-2 mb-6 py-6 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white">
+                                                            <div class="wrapper question">
+                                                                <div class="px=2">
+                                                                    {{ question.text }}
+                                                                </div>
+                                                                <div>
+                                                                    <audio controls class="text-left">
+                                                                        <source :src="question.audioUrl" type="audio/mpeg">
+                                                                    </audio>
+                                                                </div>
+                                                            </div>
 
-                                                                <tbody>
-                                                                <tr v-for="answer in question.answers" :key="answer.id"
-                                                                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                                    <td class="w-1/3 px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                                                        {{ answer.text }}
-                                                                    </td>
-                                                                    <td class="w-1/12 px-6 py-4">
-                                                                        <audio controls>
-                                                                            <source :src="answer.audioUrl" type="audio/mpeg">
-                                                                        </audio>
-                                                                    </td>
-                                                                    <td class="w-1/12 px-6 py-4 text-right">
-                                                                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+<!--                                                            <audio controls class="text-left">-->
+<!--                                                                <source :src="question.audioUrl" type="audio/mpeg">-->
+
+                                                        </div>
+                                                                <div v-for="answer in question.answers" :key="answer.id">
+                                                                    <div class="text-left px-8 mr-2 mb-6 py-6 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white">
+                                                                        <div class="wrapper answer px=2">
+                                                                            <div class="px=2">
+                                                                                {{ answer.text }}
+                                                                            </div>
+                                                                            <div>
+                                                                                <audio controls class="text-left">
+                                                                                    <source :src="answer.audioUrl" type="audio/mpeg">
+                                                                                </audio>
+                                                                            </div>
+
+
+
+<!--                                                                        <audio controls class="text-right">-->
+<!--                                                                            <source :src="answer.audioUrl" type="audio/mpeg">-->
+<!--                                                                        </audio>-->
+<!--                                                                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                    </div>
                                         </div>
 
 
@@ -136,5 +143,10 @@ async function getUserInterviews() {
 </template>
 
 <style scoped lang="css">
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 6fr 1fr;
+}
 
 </style>
