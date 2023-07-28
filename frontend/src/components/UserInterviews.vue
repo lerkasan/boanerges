@@ -88,6 +88,20 @@ async function getUserInterviews() {
 <!--                                                                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
                                                                         </div>
                                                                     </div>
+
+                                                                    <div v-if="answer.feedback.text" class="text-left px-8 mr-2 mb-6 py-6 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white">
+                                                                        <div class="wrapper question">
+                                                                            <div class="px=2">
+                                                                                {{ answer.feedback.text }}
+                                                                            </div>
+                                                                            <div>
+                                                                                <audio controls class="text-left">
+                                                                                    <source :src="answer.feedback.audioUrl" type="audio/mpeg">
+                                                                                </audio>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
                                                                 </div>
                                                     </div>
                                         </div>

@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.S3Utilities;
 
 import java.net.URI;
+import java.util.Objects;
 
 @Component
 public class FeedbackDtoMapper {
@@ -31,6 +32,9 @@ public class FeedbackDtoMapper {
     }
 
     public FeedbackDto toFeedbackDto(Feedback feedback) {
+        if (Objects.isNull(feedback)) {
+            return new FeedbackDto();
+        }
         String audioUrl = feedback.getAudioUrl();
         String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
         String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");

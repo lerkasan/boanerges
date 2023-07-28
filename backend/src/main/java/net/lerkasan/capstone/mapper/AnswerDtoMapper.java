@@ -1,18 +1,19 @@
 package net.lerkasan.capstone.mapper;
 
 import net.lerkasan.capstone.dto.AnswerDto;
+import net.lerkasan.capstone.dto.FeedbackDto;
 import net.lerkasan.capstone.model.Answer;
+import net.lerkasan.capstone.model.Feedback;
 import net.lerkasan.capstone.service.aws.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.S3Utilities;
-
-import java.net.URI;
 
 @Component
 public class AnswerDtoMapper {
+
+    private final FeedbackDtoMapper feedbackDtoMapper;
 
     private final S3Client s3Client;
 
@@ -21,7 +22,8 @@ public class AnswerDtoMapper {
     S3Utilities s3Utilities;
 
     @Autowired
-    public AnswerDtoMapper(S3Client s3Client, S3Service s3Service) {
+    public AnswerDtoMapper(FeedbackDtoMapper feedbackDtoMapper, S3Client s3Client, S3Service s3Service) {
+        this.feedbackDtoMapper = feedbackDtoMapper;
         this.s3Client = s3Client;
         this.s3Service = s3Service;
         this.s3Utilities = this.s3Client.utilities();
@@ -32,10 +34,12 @@ public class AnswerDtoMapper {
         String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
         String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");
         String presignedAudioUrl = s3Service.presignS3Url(bucketName, key);
+        FeedbackDto feedbackDto = feedbackDtoMapper.toFeedbackDto(answer.getFeedback());
         return new AnswerDto(
                 answer.getId(),
                 answer.getText(),
-                presignedAudioUrl);
+                presignedAudioUrl,
+                feedbackDto);
     }
 
     public Answer toAnswer(AnswerDto answerDto) {
