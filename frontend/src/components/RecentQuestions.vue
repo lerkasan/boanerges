@@ -50,5 +50,9 @@ async function getQuestions() {
 </template>
 
 <style scoped lang="css">
-
+body {
+    background-image: url('../../public/images/background.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
 </style>

@@ -18,16 +18,16 @@
                                 Home
                             </router-link>
                         </li>
-                        <li>
+                        <li v-if="username">
                             <router-link to="/interviews" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
-                                Tech Interviews
+                                My Interviews
                             </router-link>
                         </li>
-                        <li>
+                        <li v-if="username">
                             <router-link to="/questions" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" href="#">Recent Questions
                             </router-link>
                         </li>
-                        <li>
+                        <li v-if="username">
                             <router-link to="/topics" class="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">
                                 Topics
                             </router-link>
@@ -71,9 +71,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                         </svg>
                         <button class="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
-                            <router-link to="/me">
+<!--                            <router-link to="/me">-->
                                 Welcome, {{ username }}
-                            </router-link>
+<!--                            </router-link>-->
                         </button>
                         <button class="
                             bg-blue-600
@@ -99,6 +99,10 @@
         </div>
     </nav>
 
+<!--    <img src="../../public/images/background.jpg" alt="Succeed at you interview and get hired">-->
+
+
+
     <router-view v-slot="{ Component }">
         <suspense>
             <!--        <suspense timeout="0">-->
@@ -110,6 +114,17 @@
             </template>
         </suspense>
     </router-view>
+
+
+
+
+<!--    <div class="container">-->
+<!--        <div class="centered capitalize">-->
+<!--            Succeed at you interview and get hired-->
+<!--        </div>-->
+<!--        <img src="../background.jpg" alt="Succeed at you interview and get hired">-->
+
+<!--    </div>-->
 
 
     <!--    <router-view class="view one"></router-view>-->
