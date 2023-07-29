@@ -51,6 +51,7 @@ jobs:
     name: Run Backend Unit Tests
     needs: build
     runs-on: ubuntu-latest
+    environment: Build
     permissions:
       checks: write
     steps:
@@ -81,6 +82,7 @@ jobs:
     needs: [ build, test ]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    environment: Build
     permissions:
       contents: read
       packages: write
