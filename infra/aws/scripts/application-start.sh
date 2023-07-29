@@ -36,6 +36,17 @@ BACKEND_TAG=$([ "$BACKEND_MANIFESTS_HTTP_CODE" == 200 ] && echo "sha-$COMMIT_SHA
 # FRONTEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-frontend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 # BACKEND_TAG=$([ $REPOSITORY == "lerkasan/boanerges-backend" ] && echo "sha-$COMMIT_SHA" || echo "latest")
 
+AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --region $REGION --name ACCESS_KEY_ID --with-decryption --query Parameter.Value --output text)
+AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --region $REGION --name SECRET_ACCESS_KEY --with-decryption --query Parameter.Value --output text)
+AWS_STS_ROLE_ARN=$(aws ssm get-parameter --region $REGION --name STS_ROLE_ARN --with-decryption --query Parameter.Value --output text)
+
+DEEPGRAM_API_KEY=$(aws ssm get-parameter --region $REGION --name DEEPGRAM_API_KEY --with-decryption --query Parameter.Value --output text)
+DEEPGRAM_PROJECT_ID=$(aws ssm get-parameter --region $REGION --name DEEPGRAM_PROJECT_ID --with-decryption --query Parameter.Value --output text)
+OPENAI_API_KEY=$(aws ssm get-parameter --region $REGION --name OPENAI_API_KEY --with-decryption --query Parameter.Value --output text)
+
+SMTP_USERNAME=$(aws ssm get-parameter --region $REGION --name SMTP_USERNAME --with-decryption --query Parameter.Value --output text)
+SMTP_PASSWORD=$(aws ssm get-parameter --region $REGION --name SMTP_PASSWORD --with-decryption --query Parameter.Value --output text)
+
 export DB_HOST=$DB_HOST
 export DB_NAME=$DB_NAME
 export DB_USERNAME=$DB_USERNAME
@@ -43,6 +54,15 @@ export DB_PASSWORD=$DB_PASSWORD
 export FRONTEND_TAG=$FRONTEND_TAG
 export BACKEND_TAG=$BACKEND_TAG
 export PRIVATE_IP=$PRIVATE_IP
+
+export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+export AWS_STS_ROLE_ARN=$AWS_STS_ROLE_ARN
+export DEEPGRAM_API_KEY=$DEEPGRAM_API_KEY
+export DEEPGRAM_PROJECT_ID=$DEEPGRAM_PROJECT_ID
+export OPENAI_API_KEY=$OPENAI_API_KEY
+export SMTP_USERNAME=$SMTP_USERNAME
+export SMTP_PASSWORD=$SMTP_PASSWORD
 
 echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
 
