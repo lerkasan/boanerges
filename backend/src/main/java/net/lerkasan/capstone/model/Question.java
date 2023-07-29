@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,9 +41,6 @@ public class Question {
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY) //
     private Set<Answer> answers;
-
-//    @OneToOne(mappedBy = "question") //
-//    private Answer answer;
 
     public Question(Long id, @NonNull String text, @NonNull String audioUrl, Interview interview) {
         this.id = id;

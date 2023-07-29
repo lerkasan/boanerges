@@ -1,9 +1,6 @@
 package net.lerkasan.capstone.service;
 
-import net.lerkasan.capstone.repository.AnswerRepository;
 import net.lerkasan.capstone.repository.FeedbackRepository;
-import net.lerkasan.capstone.service.AnswerService;
-import net.lerkasan.capstone.service.FeedbackService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

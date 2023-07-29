@@ -12,7 +12,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Utilities;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class QuestionDtoMapper {
@@ -21,7 +20,6 @@ public class QuestionDtoMapper {
     public static final String KEY = "key";
     private final AnswerServiceI answerService;
     private final AnswerDtoMapper answerDtoMapper;
-
     private final S3Client s3Client;
 
     private final S3Service s3Service;
@@ -36,15 +34,6 @@ public class QuestionDtoMapper {
         this.s3Service = s3Service;
         this.s3Utilities = this.s3Client.utilities();
     }
-
-//    private final InterviewServiceI interviewService;
-//    private final UserServiceI userService;
-
-//    @Autowired
-//    public QuestionDtoMapper(InterviewServiceI interviewService, UserServiceI userService) {
-//        this.interviewService = interviewService;
-//        this.userService = userService;
-//    }
 
     public QuestionDto toQuestionDto(Question question) {
         String audioUrl = question.getAudioUrl();
@@ -67,7 +56,6 @@ public class QuestionDtoMapper {
                 questionDto.getId(),
                 questionDto.getText(),
                 audioUrl
-//                interviewService.findByIdAndUserId(questionDto.getInterviewId(), user.getId())
         );
     }
 

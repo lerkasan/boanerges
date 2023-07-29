@@ -29,7 +29,6 @@ public class ChatResponseBody {
     public static class Choice {
         private int index;
         private Message message;
-//        private Delta delta;
 
         @JsonProperty(FINISH_REASON)
         private String finishReason;
@@ -49,11 +48,4 @@ public class ChatResponseBody {
         @JsonProperty(TOTAL_TOKENS)
         private int totalTokens;
     }
-
-//    @AllArgsConstructor
-//    @NoArgsConstructor
-//    @Data
-//    public class Delta {
-//        private String content;
-//    }
 }

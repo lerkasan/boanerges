@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class ChatGptServiceI implements ChatServiceI {
+public class ChatGptService implements ChatServiceI {
 
     public static final String USER = "user";
     public static final String REQUEST_BODY = "Request body:";
@@ -27,27 +27,15 @@ public class ChatGptServiceI implements ChatServiceI {
 
     private final ChatRequestBody requestBody;
 
-//    @Value("${openai.chatgpt.model}")
-//    private String model;
-
     @Autowired
-    public ChatGptServiceI(WebClient chatGptWebClient, ObjectMapper objectMapper, ChatRequestBody requestBody) {
+    public ChatGptService(WebClient chatGptWebClient, ObjectMapper objectMapper, ChatRequestBody requestBody) {
         this.chatGptWebClient = chatGptWebClient;
         this.objectMapper = objectMapper;
         this.requestBody = requestBody;
     }
 
-//    public Mono<ChatResponseBody> sendPrompt(String prompt) {
-//    public ChatResponseBody sendPrompt(String prompt) {
     public String sendPrompt(String prompt) {
-//    public String sendPrompt(String prompt, String model) {
-//    public Mono<String> sendPrompt(String prompt) {
-//    public Flux<String> sendPrompt(String prompt) {
-
-//        https://api.openai.com/v1/chat/co
-//        mpletions
         String requestBodyJson ="";
-//        ChatRequestBody requestBody = new ChatRequestBody(prompt);
         requestBody.setMessages(List.of(new Message(USER, prompt)));
         try {
             requestBodyJson = objectMapper.writeValueAsString(requestBody);
@@ -59,29 +47,9 @@ public class ChatGptServiceI implements ChatServiceI {
         return chatGptWebClient
                 .post()
                 .bodyValue(requestBodyJson)
-//                .accept(MediaType.TEXT_EVENT_STREAM)
                 .retrieve()
-//                .bodyToFlux(ChatResponseBody.class)
                 .bodyToMono(ChatResponseBody.class)
-//                .map(responseBody -> responseBody.getChoices().get(0).getDelta().getContent()
                 .map(responseBody -> responseBody.getChoices().get(0).getMessage().getContent()
-                )
-                .block();
-
-
-//        UriSpec<WebClient.RequestBodySpec> uriSpec = chatGptWebClient.method(HttpMethod.POST);
-//        WebClient.RequestHeadersSpec<?> headersSpec = bodySpec.body(
-//                Mono.just(requestBody), ChatRequestBody.class);
-//        Mono<String> responseBody = headersSpec.exchangeToMono(response -> {
-//            if (response.statusCode().equals(HttpStatus.OK)) {
-//                return response.bodyToMono(String.class);
-//            } else if (response.statusCode().is4xxClientError()) {
-//                return Mono.just("Error response");
-//            } else {
-//                return response.createException()
-//                        .flatMap(Mono::error);
-//            }
-//        });
-
+                ).block();
     }
 }

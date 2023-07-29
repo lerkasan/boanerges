@@ -29,13 +29,6 @@ public class EmailService implements EmailServiceI {
     }
 
     public String sendSimpleMail(EmailDetails details) {
-//        try {
-//            SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-//            MimeMessage message = new MimeMessage();
-//            MimeMessageHelper helper = new MimeMessageHelper(message);
-//            MimeMessage message = sender.createMimeMessage();
-//            MimeMessageHelper helper = new MimeMessageHelper(message);
         MimeMessage mailMessage = mailSender.createMimeMessage();
 
         try {
@@ -43,7 +36,6 @@ public class EmailService implements EmailServiceI {
             mailMessage.setRecipients(MimeMessage.RecipientType.TO, details.getRecipient());
             mailMessage.setSubject(details.getSubject());
             mailMessage.setContent(details.getMessageBody(), TEXT_HTML_CHARSET_UTF_8);
-//            mailMessage.setText(details.getMessageBody());
 
             mailSender.send(mailMessage);
             log.info(MAIL_SENT_SUCCESSFULLY);
@@ -52,25 +44,4 @@ public class EmailService implements EmailServiceI {
             return ERROR_WHILE_SENDING_MAIL;
         }
     }
-
-//    public String sendMailWithAttachment(EmailDetails details) {
-//        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-//        MimeMessageHelper mimeMessageHelper;
-//        try {
-//            mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-//            mimeMessageHelper.setFrom(sender);
-//            mimeMessageHelper.setTo(details.getRecipient());
-//            mimeMessageHelper.setText(details.getMessageBody());
-//            mimeMessageHelper.setSubject(
-//                    details.getSubject());
-//
-//            FileSystemResource file = new FileSystemResource(new File(details.getAttachment()));
-//            mimeMessageHelper.addAttachment(Objects.requireNonNull(file.getFilename()), file);
-//
-//            javaMailSender.send(mimeMessage);
-//            return "Mail sent Successfully";
-//        } catch (MailException | MessagingException e) {
-//            return "Error while sending mail!!!";
-//        }
-//    }
 }

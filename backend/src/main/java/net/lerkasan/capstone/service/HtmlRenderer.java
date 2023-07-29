@@ -7,14 +7,13 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.List;
-
 @Service
 public class HtmlRenderer {
 
     private static final String VERIFICATION_TEMPLATE = "verification";
     private static final String VERIFIED_TEMPLATE = "email-verified";
     public static final String USERNAME = "username";
+
     public static final String URL = "url";
     public static final String MESSAGE = "message";
     private final TemplateEngine templateEngine;

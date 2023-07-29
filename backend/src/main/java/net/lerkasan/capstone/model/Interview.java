@@ -1,22 +1,16 @@
 package net.lerkasan.capstone.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.CascadeType.DETACH;
 
 @Entity
 @Table(name = "interviews")
@@ -41,7 +35,6 @@ public class Interview {
     private String name;
 
     @JsonIgnore
-    //    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();
 
@@ -56,7 +49,6 @@ public class Interview {
     @JsonIgnore
     @ManyToOne
     @PrimaryKeyJoinColumn(name="user_id", referencedColumnName="id")
-//    @JsonIgnoreProperties(value = {"interviews"})
     private User user;
 
     public Interview(Long id, @NonNull String name, Topic topic, Set<Question> questions) {

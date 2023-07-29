@@ -3,7 +3,10 @@ package net.lerkasan.capstone.service.deepgram;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.dto.deepgram.DeepgramDto;
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +40,6 @@ public class DeepgramTokenService implements DeepgramTokenServiceI {
     public String generateTemporaryToken() throws IOException {
 
         DeepgramDto deepgramDto = new DeepgramDto(TEMPORARILY_GENERATED_TOKEN, new String[]{MEMBER}, ttlSeconds);
-//        DeepgramDto deepgramDto = new DeepgramDto("Temporarily generated token", new String[]{"project:read", "project:write"}, ttlSeconds);
         String json = new Gson().toJson(deepgramDto);
         RequestBody body = RequestBody.create(json, okhttp3.MediaType.parse(APPLICATION_JSON_CHARSET_UTF_8));
         OkHttpClient client = new OkHttpClient();
@@ -48,13 +50,6 @@ public class DeepgramTokenService implements DeepgramTokenServiceI {
                 .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                 .addHeader(AUTHORIZATION, TOKEN + apiKey)
                 .build();
-
-//        try (Response response = client.newCall(request).execute()) {
-//            return response.body();
-//        } catch (IOException e) {
-//            log.error("Error while generating temporary token for Deepgram: {}", e.getMessage());
-//        }
-//        return ResponseBody.;
 
         Response response = client.newCall(request).execute();
         return response.body().string();

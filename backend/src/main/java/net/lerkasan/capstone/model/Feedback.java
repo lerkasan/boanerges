@@ -39,7 +39,6 @@ public class Feedback {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="answer_id", referencedColumnName="id")
-//    @PrimaryKeyJoinColumn(name="answer_id", referencedColumnName="id")
     private Answer answer;
 
     public Feedback(Long id, String text, String audioUrl, int score) {

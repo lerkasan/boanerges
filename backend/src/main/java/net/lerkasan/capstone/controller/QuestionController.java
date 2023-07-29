@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping
-//@RequestMapping("/api/v1/questions")
 public class QuestionController {
 
     public static final String GENERATE_QUESTIONS_ENDPOINT = "/api/v1/questions";
@@ -45,9 +44,7 @@ public class QuestionController {
         this.userService = userService;
     }
 
-
     @PostMapping(GENERATE_QUESTIONS_ENDPOINT)
-//    @GetMapping(path = "/chat")
     public QuestionDto generateQuestion(@RequestParam Long topicId) {
         Topic topic = topicService.findById(topicId);
         return questionService.generateQuestion(topic);
@@ -55,7 +52,6 @@ public class QuestionController {
 
     @PostMapping(SAVE_QUESTIONS_ENDPOINT)
     public ResponseEntity<QuestionDto> saveQuestion(@PathVariable long interviewId, @Valid @RequestBody QuestionDto questionDto) {
-//        User currentUser = userService.findByUsername(authentication.getName());
         User currentUser = userService.getCurrentUser();
         Interview interview = interviewService.findByIdAndUserId(interviewId, currentUser.getId());
         Question question = questionDtoMapper.toQuestion(questionDto);

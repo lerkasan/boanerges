@@ -29,7 +29,6 @@ import static net.lerkasan.capstone.repository.RoleRepository.ROLE_USER;
 @Service
 public class UserService implements UserServiceI, UserDetailsService, UniqueValidatable {
 
-    //    private static final String ROLE_USER = "ROLE_USER";
     private static final int TOKEN_EXPIRE_IN_DAYS = 1;
     public static final String ROLE_WAS_NOT_FOUND = "The role was not found.";
     public static final String TOKEN_NOT_FOUND_IT_MAY_HAVE_EXPIRED = "Token not found. It may have expired.";
@@ -87,12 +86,6 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
         Arrays.fill(rawPassword, 'x');
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) {
-//        return userRepo.findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User with given user was not found."));
-//    }
-
     @Override
     public User findByToken(String token) {
         return userRepo.findByToken(token).orElseThrow(() -> new NotFoundException(TOKEN_NOT_FOUND_IT_MAY_HAVE_EXPIRED));
@@ -108,16 +101,9 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
         return nonNull(username) && userRepo.isUsernameAvailable(username);
     }
 
-//    public User getCurrentUser() {
-////        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-////        return findByEmail(userPrincipal.getUsername());
-//        return findByEmail("test@email.com");
-//    }
-
     @Override
     public User update(User user) {
         Objects.requireNonNull(user);
-//        Objects.requireNonNull(user.getAuthorities());
         return userRepo.saveAndFlush(user);
     }
 
@@ -155,7 +141,6 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException(String.format(USER_NOT_FOUND, username)));
     }
-
 
     @Override
     public User getCurrentUser() {

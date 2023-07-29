@@ -35,7 +35,6 @@ public class PollyServiceI implements SpeechServiceI {
                 .build();
 
         ResponseInputStream<SynthesizeSpeechResponse> synthRes = pollyClient.synthesizeSpeech(synthReq);
-//        pollyClient.close();
         return synthRes;
     }
 }

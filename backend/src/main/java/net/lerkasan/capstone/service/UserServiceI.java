@@ -27,7 +27,6 @@ public interface UserServiceI {
 
     User findByUsername(String username);
 
-
     User findByEmail(String email);
 
     User getCurrentUser();

@@ -13,7 +13,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode
-//@Validated
 @JsonInclude(NON_NULL)
 public class QuestionDto {
 
@@ -30,11 +29,4 @@ public class QuestionDto {
     private String audioUrl;
 
     private List<AnswerDto> answers;
-
-//    public QuestionDto(Long id, String text, String presignedAudioUrl, List<AnswerDto> answerDtos) {
-//        this.id = id;
-//        this.text = text;
-//        this.audioUrl = presignedAudioUrl;
-//        this.answers = answerDtos;
-//    }
 }

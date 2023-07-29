@@ -1,8 +1,6 @@
 package net.lerkasan.capstone.repository;
 
-import net.lerkasan.capstone.model.Answer;
 import net.lerkasan.capstone.model.Category;
-import net.lerkasan.capstone.model.Question;
 import net.lerkasan.capstone.model.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

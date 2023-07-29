@@ -3,7 +3,6 @@ package net.lerkasan.capstone.mapper;
 import net.lerkasan.capstone.dto.AnswerDto;
 import net.lerkasan.capstone.dto.FeedbackDto;
 import net.lerkasan.capstone.model.Answer;
-import net.lerkasan.capstone.model.Feedback;
 import net.lerkasan.capstone.service.aws.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,7 +50,6 @@ public class AnswerDtoMapper {
                 answerDto.getId(),
                 answerDto.getText(),
                 audioUrl
-//                interviewService.findByIdAndUserId(answerDto.getInterviewId(), user.getId())
         );
     }
 }

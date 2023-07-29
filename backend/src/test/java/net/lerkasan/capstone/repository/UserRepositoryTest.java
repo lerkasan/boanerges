@@ -2,7 +2,6 @@ package net.lerkasan.capstone.repository;
 
 import jakarta.transaction.Transactional;
 import net.lerkasan.capstone.model.User;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @Transactional
-//@Import(JpaConfig.class)
 public class UserRepositoryTest {
 
     public static final String DUMMY_FIRST_NAME = "dummyFirstName";
@@ -63,7 +61,4 @@ public class UserRepositoryTest {
         entityManager.persist(dummyUser);
         assertFalse(userRepositoryUnderTest.isEmailAvailable(email));
     }
-
-
-
 }

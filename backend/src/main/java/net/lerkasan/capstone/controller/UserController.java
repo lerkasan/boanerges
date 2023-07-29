@@ -80,7 +80,6 @@ public class UserController {
             user = userService.findByToken(token);
         } catch (NotFoundException e) {
             log.error(USER_NOT_FOUND_WITH_TOKEN + token);
-//            return ResponseEntity.ok().body(body);
             return body;
         }
         user.setEnabled(true);
@@ -89,7 +88,6 @@ public class UserController {
         userService.update(user);
         body = htmlRender.renderEmailRegistation(emailVerificationSuccess);
         return body;
-//        return ResponseEntity.ok().body(body);
     }
 
     @GetMapping(path = SIGNUP_AVAILABLE, params = EMAIL_PARAM)
@@ -101,12 +99,6 @@ public class UserController {
     public boolean isUsernameAvailable(@RequestParam String username) {
         return userService.isUsernameAvailable(username);
     }
-
-//    @GetMapping(path = "/me")
-//    public User getCurrentUserInfo(Authentication authentication) {
-//        String username = authentication.getName();
-//        return userService.findByUsername(username);
-//    }
 
     @GetMapping(path = ME)
     public User getCurrentUserInfo() {

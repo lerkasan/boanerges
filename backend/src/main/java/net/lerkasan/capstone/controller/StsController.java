@@ -3,7 +3,9 @@ package net.lerkasan.capstone.controller;
 import net.lerkasan.capstone.dto.aws.AwsCredentials;
 import net.lerkasan.capstone.service.aws.StsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import software.amazon.awssdk.services.sts.model.Credentials;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

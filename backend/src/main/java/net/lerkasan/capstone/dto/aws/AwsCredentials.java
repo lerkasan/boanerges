@@ -3,7 +3,6 @@ package net.lerkasan.capstone.dto.aws;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import software.amazon.awssdk.services.sts.model.Credentials;
 
 @Data
@@ -13,9 +12,6 @@ public class AwsCredentials {
     private String accessKeyId;
     private String secretAccessKey;
     private String sessionToken;
-
-//    @Value("${cloud.aws.region.static}")
-//    private String region;
 
     public AwsCredentials(Credentials credentials) {
         this.accessKeyId = credentials.accessKeyId();

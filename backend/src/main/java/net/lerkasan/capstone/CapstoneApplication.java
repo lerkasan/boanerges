@@ -33,7 +33,6 @@ public class CapstoneApplication {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // *** URL below needs to match the Vue client URL and port ***
         config.setAllowedOrigins(List.of(FRONTEND, HTTP_FRONTEND, LOCALHOST, HTTP_LOCALHOST, LOCALHOST_8080, HTTP_LOCALHOST_8080, HTTP_LERKASAN_NET, HTTPS_LERKASAN_NET));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));

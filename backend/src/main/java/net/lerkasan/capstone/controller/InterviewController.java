@@ -2,11 +2,11 @@ package net.lerkasan.capstone.controller;
 
 import jakarta.validation.Valid;
 import net.lerkasan.capstone.dto.InterviewDto;
+import net.lerkasan.capstone.mapper.InterviewDtoMapper;
 import net.lerkasan.capstone.model.Interview;
 import net.lerkasan.capstone.model.User;
 import net.lerkasan.capstone.service.InterviewServiceI;
 import net.lerkasan.capstone.service.UserServiceI;
-import net.lerkasan.capstone.mapper.InterviewDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,7 +38,6 @@ public class InterviewController {
 
     @GetMapping(ID)
     public InterviewDto getInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
-//        return interviewService.findByIdAndUsername(id, currentUser.getUsername());
         User user = userService.findByUsername(currentUser.getUsername());
         Interview interview = interviewService.findByIdAndUserId(id, user.getId());
         return interviewDtoMapper.toInterviewDto(interview);
@@ -46,16 +45,12 @@ public class InterviewController {
 
     @GetMapping
     public List<InterviewDto> getInterviews(@AuthenticationPrincipal UserDetails currentUser) {
-//        return interviewService.findByIdAndUsername(id, currentUser.getUsername());
         User user = userService.findByUsername(currentUser.getUsername());
         return interviewService.findByUserId(user.getId()).stream().map(interviewDtoMapper::toInterviewDto).collect(Collectors.toList());
     }
 
-
-
     @PostMapping
     public ResponseEntity<InterviewDto> createInterview(@Valid @RequestBody(required = true) InterviewDto interviewDto, Authentication authentication) {
-//    public ResponseEntity<Interview> createInterview(@Valid @RequestBody Interview interview, Authentication authentication) {
         User currentUser = userService.findByUsername(authentication.getName());
         Interview interview = interviewDtoMapper.toInterview(interviewDto);
         interview.setUser(currentUser);

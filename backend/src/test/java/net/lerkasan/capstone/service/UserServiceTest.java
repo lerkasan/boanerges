@@ -9,19 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.notNull;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -40,24 +32,17 @@ import static org.mockito.Mockito.when;
     @InjectMocks
     private UserService userServiceUnderTest;
 
-
-
     @Test
      void shouldReturnFalseIfEmailIsNotAvailable() throws Exception {
         final String email = DUMMY_EMAIL;
-//        when(userRepo.isEmailAvailable(email)).thenReturn(false);
-
         final boolean result = userServiceUnderTest.isEmailAvailable(email);
-
         assertFalse(result);
     }
 
     @Test
      void shouldReturnFalseIfEmailIsNull() throws Exception {
         final String email = null;
-
         final boolean result = userServiceUnderTest.isEmailAvailable(email);
-
         assertFalse(result);
     }
 
@@ -65,19 +50,14 @@ import static org.mockito.Mockito.when;
     @Test
      void shouldReturnFalseIfUsernameIsNotAvailable() throws Exception {
         final String username = DUMMY_USERNAME;
-//        when(userRepo.isUsernameAvailable(username)).thenReturn(false);
-
         final boolean result = userServiceUnderTest.isUsernameAvailable(username);
-
         assertFalse(result);
     }
 
     @Test
      void shouldReturnFalseIfUsernameIsNull() throws Exception {
         final String username = null;
-
         final boolean result = userServiceUnderTest.isUsernameAvailable(username);
-
         assertFalse(result);
     }
 

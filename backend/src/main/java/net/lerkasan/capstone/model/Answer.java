@@ -1,12 +1,8 @@
 package net.lerkasan.capstone.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
 @Entity
 @Table(name = "answers")
@@ -33,10 +29,8 @@ public class Answer {
     @Column(name = "audio_url", nullable = false)
     private String audioUrl;
 
-//    @OneToOne
     @ManyToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name="question_id", referencedColumnName="id")
-//    @JoinColumn(name="question_id", referencedColumnName="id")
     private Question question;
 
     @OneToOne(mappedBy = "answer")

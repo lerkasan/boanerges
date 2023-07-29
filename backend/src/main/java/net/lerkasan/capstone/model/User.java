@@ -1,11 +1,13 @@
 package net.lerkasan.capstone.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import net.lerkasan.capstone.constraint.Password;
 import net.lerkasan.capstone.constraint.Unique;
@@ -21,7 +23,6 @@ import java.util.UUID;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.CascadeType.DETACH;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -56,9 +57,7 @@ public class User implements UserDetails {
     @NonNull
     @NotBlank(message = USERNAME_FIELD_IS_REQUIRED)
     @Size(min = 3, max = USERNAME_MAX_LENGTH, message = USERNAME_MUST_BE_BETWEEN_3_AND_25_CHARACTERS_LONG)
-//    @Pattern(regexp = "^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$", message = "Username can include only upper and lower case latin letters and digits.")
     @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]*$", message = USERNAME_CHARACTERS)
-//    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]{2,24}$", message = "Username can include only upper and lower case latin letters and digits.")
     @Unique(field = "username", message = USERNAME_ALREADY_EXISTS)
     @Column(name = "username", nullable = false, unique = true, length = USERNAME_MAX_LENGTH)
     private String username;
@@ -67,9 +66,6 @@ public class User implements UserDetails {
     @NotBlank(message = NAME_FIELD_IS_REQUIRED)
     @Size(min = 3, max = 50, message = FIRST_NAME_MUST_BE_BETWEEN_3_AND_50_CHARACTERS_LONG)
     @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = FIRST_NAME_CHARACTERS)
-//    @Pattern(regexp = "^[A-Za-z][A-Za-z\\d.-]{2,49}$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
-//    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
-//    @Pattern(regexp = "[a-zA-Z]{3,50}$", message = "First name can include only upper and lower case latin letters.")
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
@@ -81,7 +77,6 @@ public class User implements UserDetails {
 
     @Transient
     @JsonProperty(access = WRITE_ONLY)
-//    @NotNull(message = "Password field is required.")
     @Size(min = 8, max = 32, message = PASSWORD_MUST_BE_BETWEEN_8_AND_32_CHARACTERS_LONG)
     @Password(message = "Password can include upper and lower case latin letters, numerals (0-9) and special symbols.")
     private char[] rawPassword;
@@ -91,7 +86,6 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-//    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     @JsonIgnore
     private LocalDateTime createdAt = LocalDateTime.now();
 

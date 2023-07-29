@@ -1,7 +1,6 @@
 package net.lerkasan.capstone.service;
 
 import net.lerkasan.capstone.exception.NotFoundException;
-import net.lerkasan.capstone.repository.FeedbackRepository;
 import net.lerkasan.capstone.repository.TopicRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

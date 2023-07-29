@@ -1,15 +1,14 @@
 package net.lerkasan.capstone.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.exception.NotFoundException;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.validation.FieldError;
@@ -27,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Slf4j
 @ControllerAdvice
@@ -101,7 +101,6 @@ public class ControllerAdviceHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-//    @ResponseStatus(NOT_FOUND)
     @ResponseStatus(UNAUTHORIZED)
     @ResponseBody
     public Map<String, String> handleNotFoundException(final Exception e) {

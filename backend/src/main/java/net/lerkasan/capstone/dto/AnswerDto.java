@@ -11,7 +11,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode
-//@Validated
 @JsonInclude(NON_NULL)
 public class AnswerDto {
 

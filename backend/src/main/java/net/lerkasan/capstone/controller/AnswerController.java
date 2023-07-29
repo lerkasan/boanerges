@@ -2,8 +2,6 @@ package net.lerkasan.capstone.controller;
 
 import jakarta.validation.Valid;
 import net.lerkasan.capstone.dto.AnswerDto;
-import net.lerkasan.capstone.dto.QuestionDto;
-import net.lerkasan.capstone.exception.NotFoundException;
 import net.lerkasan.capstone.mapper.AnswerDtoMapper;
 import net.lerkasan.capstone.model.Answer;
 import net.lerkasan.capstone.model.Interview;

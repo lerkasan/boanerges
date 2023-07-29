@@ -7,7 +7,6 @@ import net.lerkasan.capstone.model.Interview;
 import net.lerkasan.capstone.repository.InterviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import net.lerkasan.capstone.service.UserServiceI.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -76,11 +75,6 @@ public class InterviewService implements InterviewServiceI {
         }
         return interviewRepo.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException(String.format(INTERVIEW_NOT_FOUND, id)));
     }
-
-//    @Override
-//    public Interview findByIdAndUsername(long id, String username) {
-//        return interviewRepo.findByIdAndUsername(id, username).orElseThrow(() -> new NotFoundException(String.format(INTERVIEW_NOT_FOUND, id)));
-//    }
 
     public List<Interview> findAllByUserId(long id) {
         if (id <= 0) {

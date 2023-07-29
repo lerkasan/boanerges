@@ -1,16 +1,10 @@
 package net.lerkasan.capstone.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,9 +19,6 @@ import software.amazon.awssdk.services.polly.PollyClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sts.StsClient;
-
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 
 
 @Configuration
@@ -87,20 +78,10 @@ public class AppConfig {
     @Bean
     public S3Presigner s3Presigner() {
         return S3Presigner.builder()
-//                .credentialsProvider(AwsSessionCredentials.builder().accessKeyId().secretAccessKey().sessionToken().build())
-//                .credentialsProvider(stsService.assumeGivenRole("Role-Session-Name"))
                 .credentialsProvider(ProfileCredentialsProvider.create())
                 .region(Region.US_EAST_1)
                 .build();
     }
-
-
-//    @Bean
-//    public ResourceBundleMessageSource emailMessageSource() {
-//        final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-//        messageSource.setBasename("mail/MailMessages");
-//        return messageSource;
-//    }
 
     @Bean
     public ITemplateResolver thymeleafTemplateResolver() {
@@ -112,24 +93,10 @@ public class AppConfig {
         return templateResolver;
     }
 
-//    @Bean
-//    public ITemplateResolver htmlTemplateResolver() {
-//        final var templateResolver = new ClassLoaderTemplateResolver();
-//        templateResolver.setOrder(Integer.valueOf(2));
-//        templateResolver.setResolvablePatterns(Collections.singleton("html/*"));
-////        templateResolver.setPrefix("/mail/");
-////        templateResolver.setSuffix(".html");
-////        templateResolver.setTemplateMode(TemplateMode.HTML);
-////        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
-////        templateResolver.setCacheable(false);
-//        return templateResolver;
-//    }
-
     @Bean
     public SpringTemplateEngine thymeleafTemplateEngine(ITemplateResolver templateResolver) {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
-//        templateEngine.setTemplateEngineMessageSource(emailMessageSource());
         return templateEngine;
     }
 
@@ -137,26 +104,5 @@ public class AppConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-//    @Bean
-//    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-//
-//        return builder -> {
-//
-//            // formatter
-//            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//
-//            // deserializers
-//            builder.deserializers(new LocalDateDeserializer(dateFormatter));
-//            builder.deserializers(new LocalDateTimeDeserializer(dateTimeFormatter));
-//
-//            // serializers
-//            builder.serializers(new LocalDateSerializer(dateFormatter));
-//            builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
-//        };
-//
-//    }
 
 }

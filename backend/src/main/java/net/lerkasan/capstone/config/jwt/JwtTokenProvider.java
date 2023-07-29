@@ -1,6 +1,5 @@
 package net.lerkasan.capstone.config.jwt;
 
-import com.google.gson.stream.MalformedJsonException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -58,8 +57,6 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(key).parseClaimsJws(token);
             return true;
-//        } catch (MalformedJsonException ex) {
-//            log.error("Malformed json");
         } catch (MalformedJwtException ex) {
             log.error(INVALID_JWT_TOKEN);
         } catch (ExpiredJwtException ex) {

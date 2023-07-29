@@ -43,6 +43,7 @@ public class StsService {
 
             AssumeRoleResponse roleResponse = stsClient.assumeRole(roleRequest);
             creds = roleResponse.credentials();
+
             // Display the time when the temp creds expire.
             Instant exTime = creds.expiration();
             String tokenInfo = creds.sessionToken();
