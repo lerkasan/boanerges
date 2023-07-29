@@ -50,6 +50,14 @@ services:
       - DB_USERNAME
       - DB_PASSWORD
       - SPRING_SERVER_PORT=${SPRING_SERVER_PORT:-8080}
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_STS_ROLE_ARN
+      - DEEPGRAM_API_KEY
+      - DEEPGRAM_PROJECT_ID
+      - OPENAI_API_KEY
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
 #    volumes:
 #      - ./tomcat/logs:/var/lib/tomcat/logs
 #      - ./spring-boot/logs:/var/log/spring-boot/
