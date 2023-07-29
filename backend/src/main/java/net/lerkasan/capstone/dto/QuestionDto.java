@@ -17,14 +17,16 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class QuestionDto {
 
+    public static final String TEXT_FIELD_IS_REQUIRED = "Text field is required.";
+    public static final String AUDIO_URL_FIELD_IS_REQUIRED = "AudioUrl field is required.";
     private Long id;
 
     @NonNull
-    @NotBlank(message = "Text field is required.")
+    @NotBlank(message = TEXT_FIELD_IS_REQUIRED)
     private String text;
 
     @NonNull
-    @NotBlank(message = "AudioUrl field is required.")
+    @NotBlank(message = AUDIO_URL_FIELD_IS_REQUIRED)
     private String audioUrl;
 
     private List<AnswerDto> answers;

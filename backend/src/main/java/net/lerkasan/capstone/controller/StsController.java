@@ -9,9 +9,11 @@ import software.amazon.awssdk.services.sts.model.Credentials;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/api/v1/sts")
+@RequestMapping(StsController.STS_ENDPOINT)
 public class StsController {
 
+    public static final String STS_ENDPOINT = "/api/v1/sts";
+    public static final String ROLE_SESSION_NAME = "Role-Session-Name";
     private final StsService stsService;
 
     @Autowired
@@ -21,7 +23,7 @@ public class StsController {
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public AwsCredentials getChatResponse() {
-        Credentials creds = stsService.assumeGivenRole("Role-Session-Name");
+        Credentials creds = stsService.assumeGivenRole(ROLE_SESSION_NAME);
         return new AwsCredentials(creds);
     }
 

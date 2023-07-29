@@ -26,6 +26,14 @@ import static net.lerkasan.capstone.service.TopicServiceI.NULL_TOPIC_ERROR;
 @Service
 public class QuestionService implements QuestionServiceI {
 
+    public static final String ERROR_WHILE_GENERATING_QUESTION_AUDIO = "Error while generating question audio ";
+    public static final String BOANERGES_RADIO_VOICE_BUCKET = "boanerges-radio-voice";
+    public static final String QUESTION_AUDIO = "question-audio-";
+    public static final String MP_3 = ".mp3";
+    public static final String TMP_POLLY = "/tmp/polly-";
+    public static final String VOICE_ID = "Matthew";
+    public static final String CHATGPT_GENERATE_QUESTION_PROMPT_PART_ONE = "You are interviewing a candidate for a Software Developer job. Please ask exactly one question about ";
+    public static final String CHATGPT_GENERATE_QUESTION_PROMPT_PART_TWO = ". Please prioritize unconventional questions about theoretical fundamentals of the mentioned topic. Make your question longer, around 50 to 60 words. Do not repeat yourself. Do not refer to the prompt.";
     private final QuestionRepository questionRepo;
 
     private final ChatServiceI chatGptService;
@@ -76,15 +84,15 @@ public class QuestionService implements QuestionServiceI {
     public QuestionDto generateQuestion(Topic topic) {
         Objects.requireNonNull(topic, NULL_TOPIC_ERROR);
         String s3PresignedUrl = "";
-        String textResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Please ask exactly one question about " + topic.getName() + ". Please prioritize unconventional questions about theoretical fundamentals of the mentioned topic. Make your question longer, around 50 to 60 words. Do not repeat yourself. Do not refer to the prompt.");
-        try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, "Matthew", OutputFormat.MP3)) {
+        String textResponse = chatGptService.sendPrompt(CHATGPT_GENERATE_QUESTION_PROMPT_PART_ONE + topic.getName() + CHATGPT_GENERATE_QUESTION_PROMPT_PART_TWO);
+        try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, VOICE_ID, OutputFormat.MP3)) {
             UUID uuid = UUID.randomUUID();
             int hashCode = textResponse.hashCode();
-            File file = new File("/tmp/polly-" + uuid + hashCode + ".mp3");
+            File file = new File(TMP_POLLY + uuid + hashCode + MP_3);
             s3Service.copyInputStreamToFile(speech, file);
-            s3PresignedUrl = s3Service.uploadToS3(file, "boanerges-radio-voice", "question-audio-" + uuid + hashCode + ".mp3");
+            s3PresignedUrl = s3Service.uploadToS3(file, BOANERGES_RADIO_VOICE_BUCKET, QUESTION_AUDIO + uuid + hashCode + MP_3);
         } catch (IOException e) {
-            log.error("Error while generating question audio " + e.getMessage());
+            log.error(ERROR_WHILE_GENERATING_QUESTION_AUDIO + e.getMessage());
         }
         return new QuestionDto(textResponse, s3PresignedUrl);
     }

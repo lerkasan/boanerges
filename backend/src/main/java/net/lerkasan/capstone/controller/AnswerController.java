@@ -21,9 +21,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/v1/interviews/{interviewId}/questions/{questionId}/answers")
+@RequestMapping(AnswerController.ANSWER_CONTROLLER_ENDPOINT)
 public class AnswerController {
 
+    public static final String ANSWER_CONTROLLER_ENDPOINT = "/api/v1/interviews/{interviewId}/questions/{questionId}/answers";
+    public static final String ID = "/{id}";
     private final InterviewServiceI interviewService;
 
     private final QuestionServiceI questionService;
@@ -55,13 +57,13 @@ public class AnswerController {
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
-                .path("/{id}")
+                .path(ID)
                 .buildAndExpand(createdAnswer.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdAnswerDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ID)
     public void deleteAnswer(@PathVariable("id") Long id) {
         answerService.findById(id);
     }

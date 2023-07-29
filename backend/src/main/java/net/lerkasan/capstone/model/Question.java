@@ -20,17 +20,19 @@ import java.util.Set;
 @ToString(exclude = {"interview", "answer"})
 public class Question {
 
+    public static final String TEXT_FIELD_IS_REQUIRED = "Text field is required.";
+    public static final String AUDIO_URL_FIELD_IS_REQUIRED = "Audio_url field is required.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
-    @NotBlank(message = "Text field is required.")
+    @NotBlank(message = TEXT_FIELD_IS_REQUIRED)
     @Column(name = "text", nullable = false)
     private String text;
 
     @NonNull
-    @NotBlank(message = "Audio_url field is required.")
+    @NotBlank(message = AUDIO_URL_FIELD_IS_REQUIRED)
     @Column(name = "audio_url", nullable = false)
     private String audioUrl;
 

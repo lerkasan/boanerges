@@ -17,6 +17,9 @@ import java.util.List;
 @Service
 public class ChatGptServiceI implements ChatServiceI {
 
+    public static final String USER = "user";
+    public static final String REQUEST_BODY = "Request body:";
+    public static final String ERROR_CONVERTING_CHAT_REQUEST_BODY_TO_JSON = "Error converting ChatRequestBody to JSON ";
     @Qualifier("ChatGptWebClient")
     private final WebClient chatGptWebClient;
 
@@ -41,16 +44,17 @@ public class ChatGptServiceI implements ChatServiceI {
 //    public Mono<String> sendPrompt(String prompt) {
 //    public Flux<String> sendPrompt(String prompt) {
 
-//        https://api.openai.com/v1/chat/completions
+//        https://api.openai.com/v1/chat/co
+//        mpletions
         String requestBodyJson ="";
 //        ChatRequestBody requestBody = new ChatRequestBody(prompt);
-        requestBody.setMessages(List.of(new Message("user", prompt)));
+        requestBody.setMessages(List.of(new Message(USER, prompt)));
         try {
             requestBodyJson = objectMapper.writeValueAsString(requestBody);
-            System.out.println("Request body:");
-            System.out.println(requestBodyJson);
+            log.info(REQUEST_BODY);
+            log.info(requestBodyJson);
         } catch (JsonProcessingException e) {
-            log.error("Error converting ChatRequestBody to JSON " + e.getMessage());
+            log.error(ERROR_CONVERTING_CHAT_REQUEST_BODY_TO_JSON + e.getMessage());
         }
         return chatGptWebClient
                 .post()

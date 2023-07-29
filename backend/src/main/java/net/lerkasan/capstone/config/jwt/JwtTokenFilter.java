@@ -23,6 +23,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
+    public static final String MALFORMED_JSON = "Malformed JSON";
     private JwtTokenProvider jwtTokenProvider;
     private UserDetailsService userDetailsService;
 
@@ -45,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (MalformedJsonException ex) {
-            log.error("Malformed JSON");
+            log.error(MALFORMED_JSON);
         }
     }
 }

@@ -18,6 +18,8 @@ import java.util.Objects;
 @Component
 public class FeedbackDtoMapper {
 
+    public static final String BUCKET = "bucket";
+    public static final String KEY = "key";
     private final S3Client s3Client;
 
     private final S3Service s3Service;
@@ -36,8 +38,8 @@ public class FeedbackDtoMapper {
             return new FeedbackDto();
         }
         String audioUrl = feedback.getAudioUrl();
-        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
-        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");
+        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get(BUCKET);
+        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get(KEY);
         String presignedAudioUrl = s3Service.presignS3Url(bucketName, key);
         return new FeedbackDto(
                 feedback.getId(),

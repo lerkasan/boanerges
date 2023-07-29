@@ -13,7 +13,9 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = PasswordValidator.class)
 public @interface Password {
 
-    String message() default "Password can include upper and lower case latin letters, numerals (0-9) and special symbols.";
+    String PASSWORD_SYMBOLS = "Password can include upper and lower case latin letters, numerals (0-9) and special symbols.";
+
+    String message() default PASSWORD_SYMBOLS;
 
     Class<?>[] groups() default {};
 

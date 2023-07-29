@@ -20,6 +20,9 @@ import java.util.Locale;
 @Service
 public class StsService {
 
+    public static final String THE_TOKEN = "The token ";
+    public static final String EXPIRES_ON = "  expires on ";
+    public static final String ERROR_ASSUMING_STS_ROLE = "Error assuming sts role: {}";
     private final StsClient stsClient;
 
     @Value("${aws.sts.roleArn}")
@@ -50,9 +53,9 @@ public class StsService {
                             .withLocale( Locale.US)
                             .withZone( ZoneId.systemDefault() );
             formatter.format( exTime );
-            log.info("The token "+tokenInfo + "  expires on " + exTime );
+            log.info(THE_TOKEN + tokenInfo + EXPIRES_ON + exTime );
         } catch (StsException e) {
-            log.error("Error assuming sts role: {}", e.getMessage());
+            log.error(ERROR_ASSUMING_STS_ROLE, e.getMessage());
         }
         return creds;
     }

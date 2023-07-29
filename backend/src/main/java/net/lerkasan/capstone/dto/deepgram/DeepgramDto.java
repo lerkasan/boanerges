@@ -11,11 +11,12 @@ import lombok.*;
 @EqualsAndHashCode
 public class DeepgramDto {
 
+    public static final String TIME_TO_LIVE_IN_SECONDS = "time_to_live_in_seconds";
     private String comment;
 
     private String[] scopes;
 
-    @JsonProperty("time_to_live_in_seconds")
-    @SerializedName(value = "time_to_live_in_seconds")
+    @JsonProperty(TIME_TO_LIVE_IN_SECONDS)
+    @SerializedName(value = TIME_TO_LIVE_IN_SECONDS)
     private int timeToLiveInSeconds;
 }

@@ -12,6 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class ChatResponseBody {
+    public static final String FINISH_REASON = "finish_reason";
+    public static final String PROMPT_TOKENS = "prompt_tokens";
+    public static final String COMPLETION_TOKENS = "completion_tokens";
+    public static final String TOTAL_TOKENS = "total_tokens";
     private String id;
     private String object;
     private long created;
@@ -27,7 +31,7 @@ public class ChatResponseBody {
         private Message message;
 //        private Delta delta;
 
-        @JsonProperty("finish_reason")
+        @JsonProperty(FINISH_REASON)
         private String finishReason;
     }
 
@@ -36,13 +40,13 @@ public class ChatResponseBody {
     @Data
     public static class Usage {
 
-        @JsonProperty("prompt_tokens")
+        @JsonProperty(PROMPT_TOKENS)
         private int promptTokens;
 
-        @JsonProperty("completion_tokens")
+        @JsonProperty(COMPLETION_TOKENS)
         private int completionTokens;
 
-        @JsonProperty("total_tokens")
+        @JsonProperty(TOTAL_TOKENS)
         private int totalTokens;
     }
 

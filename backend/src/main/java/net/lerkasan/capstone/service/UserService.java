@@ -29,8 +29,13 @@ import static net.lerkasan.capstone.repository.RoleRepository.ROLE_USER;
 @Service
 public class UserService implements UserServiceI, UserDetailsService, UniqueValidatable {
 
-//    private static final String ROLE_USER = "ROLE_USER";
+    //    private static final String ROLE_USER = "ROLE_USER";
     private static final int TOKEN_EXPIRE_IN_DAYS = 1;
+    public static final String ROLE_WAS_NOT_FOUND = "The role was not found.";
+    public static final String TOKEN_NOT_FOUND_IT_MAY_HAVE_EXPIRED = "Token not found. It may have expired.";
+    public static final String USERNAME = "username";
+    public static final String EMAIL = "email";
+    public static final String UNEXPECTED_FIELD_WAS_PASSED_TO_IS_AVAILABLE_METHOD = "Unexpected field was passed to isAvailable method.";
     private final UserRepository userRepo;
 
     private final RoleRepository roleRepo;
@@ -66,7 +71,7 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
         final Set<Role> authorities = user.getAuthorities();
         if (authorities == null || authorities.isEmpty()) {
             final Role userRole = roleRepo.findByTitle(ROLE_USER)
-                    .orElseThrow(() -> new NotFoundException("The role was not found."));
+                    .orElseThrow(() -> new NotFoundException(ROLE_WAS_NOT_FOUND));
             user.setAuthorities(Collections.singleton(userRole));
         }
         encodePassword(user);
@@ -90,7 +95,7 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
 
     @Override
     public User findByToken(String token) {
-        return userRepo.findByToken(token).orElseThrow(() -> new NotFoundException("Token not found. It may have expired."));
+        return userRepo.findByToken(token).orElseThrow(() -> new NotFoundException(TOKEN_NOT_FOUND_IT_MAY_HAVE_EXPIRED));
     }
 
     @Override
@@ -138,10 +143,10 @@ public class UserService implements UserServiceI, UserDetailsService, UniqueVali
     @Override
     public boolean isAvailable(String fieldName, String fieldValue) {
         return switch (fieldName) {
-            case "username" -> isUsernameAvailable(fieldValue);
-            case "email" -> isEmailAvailable(fieldValue);
-            default -> { log.error("Unexpected field was passed to isAvailable method.");
-                throw new IllegalArgumentException("Unexpected field was passed to isAvailable method.");
+            case USERNAME -> isUsernameAvailable(fieldValue);
+            case EMAIL -> isEmailAvailable(fieldValue);
+            default -> { log.error(UNEXPECTED_FIELD_WAS_PASSED_TO_IS_AVAILABLE_METHOD);
+                throw new IllegalArgumentException(UNEXPECTED_FIELD_WAS_PASSED_TO_IS_AVAILABLE_METHOD);
             }
         };
     }

@@ -12,9 +12,10 @@ import java.io.IOException;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/api/v1/deepgram/token")
+@RequestMapping(DeepgramTokenController.DEEPGRAM_TOKEN_ENDPOINT)
 public class DeepgramTokenController {
 
+    public static final String DEEPGRAM_TOKEN_ENDPOINT = "/api/v1/deepgram/token";
     private final DeepgramTokenServiceI deepgramTokenService;
 
     @Autowired

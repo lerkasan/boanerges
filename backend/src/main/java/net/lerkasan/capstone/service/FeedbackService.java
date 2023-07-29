@@ -23,6 +23,25 @@ import java.util.UUID;
 @Service
 public class FeedbackService implements FeedbackServiceI {
 
+    public static final String VOICE_ID = "Matthew";
+    public static final String MP_3 = ".mp3";
+    public static final String TMP_POLLY = "/tmp/polly-";
+    public static final String BOANERGES_RADIO_VOICE_BUCKET = "boanerges-radio-voice";
+    public static final String QUESTION_AUDIO = "question-audio-";
+    public static final String ERROR_WHILE_GENERATING_FEEDBACK_AUDIO_FILE = "Error while generating feedback audio file: ";
+    public static final String ERROR_WHILE_PARSING_SCORE = "Error while parsing score: ";
+    public static final String GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_ONE = "You are interviewing a candidate for a Software Developer job. Here is a question that you asked: ";
+    public static final String GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_TWO = "And here is the text that was transcribed from candidate's spoken response: ";
+    public static final String GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_THREE = " Transcribed text might contain minor mistakes like several of wrong words. " +
+            "For example some words from candidate's speech might be accidentally transcribed as other words with similar pronunciations. Please ignore minor mistakes. " +
+            "Please provide extensive feedback about candidate's answer. Emphasize the ways how the candidate can improve their answer. " +
+            "Refer to the candidate as 'you' as if you were telling this response to the candidate directly. " +
+            "Do not refer to this prompt and do not repeat any part of this prompt in your response. Do not repeat yourself.";
+    public static final String CHATGPT_GENERATE_SCORE_PART_TWO = "And here is the candidate's response: ";
+    public static final String CHATGPT_GENERATE_SCORE_PART_THREE = " Please provide a numerical score for the candidate's answer. The score should be between 0 and 100. " +
+            "0 means that the candidate's answer was very poor. 100 means that the candidate's answer was excellent. " +
+            "Your answer should be limited only to one number that would represent the score. Do not refer to this prompt and do not repeat any part of this prompt in your response. " +
+            "Do not repeat yourself.";
     private final FeedbackRepository feedbackRepo;
 
     private final ChatServiceI chatGptService;
@@ -82,38 +101,32 @@ public class FeedbackService implements FeedbackServiceI {
         String s3PresignedUrl = "";
         int score = 100;
         Question question = answer.getQuestion();
-        String textResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Here is a question that you asked: "
-                + question.getText() + "And here is the text that was transcribed from candidate's spoken response: " + answer.getText() +
-                " Transcribed text might contain minor mistakes like several of wrong words. " +
-                "For example some words from candidate's speech might be accidentally transcribed as other words with similar pronunciations. " +
-                "Please ignore minor mistakes. Please provide extensive feedback about candidate's answer. Emphasize the ways how the candidate can improve their answer. " +
-                "Refer to the candidate as 'you' as if you were telling this response to the candidate directly. " +
-                "Do not refer to this prompt and do not repeat any part of this prompt in your response. Do not repeat yourself.");
+        String textResponse = chatGptService.sendPrompt(GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_ONE
+                + question.getText() + GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_TWO + answer.getText() +
+                GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_THREE);
 
         if (textResponse.length() >= 3000) {
             textResponse = textResponse.substring(0, 2990);
         }
 
-        try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, "Matthew", OutputFormat.MP3)) {
+        try (InputStream speech = pollySpeechService.synthesizeSpeech(textResponse, VOICE_ID, OutputFormat.MP3)) {
             UUID uuid = UUID.randomUUID();
             int hashCode = textResponse.hashCode();
-            File file = new File("/tmp/polly-" + uuid + hashCode + ".mp3");
+            File file = new File(TMP_POLLY + uuid + hashCode + MP_3);
             s3Service.copyInputStreamToFile(speech, file);
-            s3PresignedUrl = s3Service.uploadToS3(file, "boanerges-radio-voice", "question-audio-" + uuid + hashCode + ".mp3");
+            s3PresignedUrl = s3Service.uploadToS3(file, BOANERGES_RADIO_VOICE_BUCKET, QUESTION_AUDIO + uuid + hashCode + MP_3);
         } catch (IOException e) {
-           log.error("Error while generating feedback audio file: " + e.getMessage());
+           log.error(ERROR_WHILE_GENERATING_FEEDBACK_AUDIO_FILE + e.getMessage());
         }
 
-        String scoreResponse = chatGptService.sendPrompt("You are interviewing a candidate for a Software Developer job. Here is a question that you asked: "
-                + question.getText() + "And here is the candidate's response: " + answer.getText() + " Please provide a numerical score for the candidate's answer. " +
-                "The score should be between 0 and 100. 0 means that the candidate's answer was very poor. 100 means that the candidate's answer was excellent. " +
-                "Your answer should be limited only to one number that would represent the score. Do not refer to this prompt and do not repeat any part of this prompt in your response. Do not repeat yourself.");
+        String scoreResponse = chatGptService.sendPrompt(GHATGPT_GENERATE_FEEDBACK_PROMPT_PART_ONE
+                + question.getText() + CHATGPT_GENERATE_SCORE_PART_TWO + answer.getText() + CHATGPT_GENERATE_SCORE_PART_THREE);
 
         try {
             score = Integer.parseInt(scoreResponse);
         }
         catch (NumberFormatException e) {
-            log.error("Error while parsing score: " + e.getMessage());
+            log.error(ERROR_WHILE_PARSING_SCORE + e.getMessage());
         }
         return new FeedbackDto(textResponse, s3PresignedUrl, score);
     }

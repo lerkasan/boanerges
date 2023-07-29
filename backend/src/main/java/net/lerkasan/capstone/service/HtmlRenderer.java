@@ -14,6 +14,9 @@ public class HtmlRenderer {
 
     private static final String VERIFICATION_TEMPLATE = "verification";
     private static final String VERIFIED_TEMPLATE = "email-verified";
+    public static final String USERNAME = "username";
+    public static final String URL = "url";
+    public static final String MESSAGE = "message";
     private final TemplateEngine templateEngine;
 
     @Autowired
@@ -23,14 +26,14 @@ public class HtmlRenderer {
 
     public String renderVerificationEmail(User user, String url) {
         final Context context = new Context();
-        context.setVariable("username", user.getUsername());
-        context.setVariable("url", url);
+        context.setVariable(USERNAME, user.getUsername());
+        context.setVariable(URL, url);
         return templateEngine.process(VERIFICATION_TEMPLATE, context);
     }
 
     public String renderEmailRegistation(String message) {
         final Context context = new Context();
-        context.setVariable("message", message);
+        context.setVariable(MESSAGE, message);
         return templateEngine.process(VERIFIED_TEMPLATE, context);
     }
 }

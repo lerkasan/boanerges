@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Component
 public class QuestionDtoMapper {
 
+    public static final String BUCKET = "bucket";
+    public static final String KEY = "key";
     private final AnswerServiceI answerService;
     private final AnswerDtoMapper answerDtoMapper;
 
@@ -46,8 +48,8 @@ public class QuestionDtoMapper {
 
     public QuestionDto toQuestionDto(Question question) {
         String audioUrl = question.getAudioUrl();
-        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
-        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");
+        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get(BUCKET);
+        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get(KEY);
         String presignedAudioUrl = s3Service.presignS3Url(bucketName, key);
         List<Answer> answers = answerService.findByQuestionId(question.getId());
         List<AnswerDto> answerDtos = toAnswerDtoList(answers);

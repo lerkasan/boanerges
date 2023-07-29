@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService implements EmailServiceI {
 
+    public static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
+    public static final String MAIL_SENT_SUCCESSFULLY = "Mail sent successfully.";
+    public static final String ERROR_WHILE_SENDING_MAIL = "Error while sending mail.";
     private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
@@ -39,14 +42,14 @@ public class EmailService implements EmailServiceI {
             mailMessage.setFrom(new InternetAddress(sender));
             mailMessage.setRecipients(MimeMessage.RecipientType.TO, details.getRecipient());
             mailMessage.setSubject(details.getSubject());
-            mailMessage.setContent(details.getMessageBody(), "text/html; charset=utf-8");
+            mailMessage.setContent(details.getMessageBody(), TEXT_HTML_CHARSET_UTF_8);
 //            mailMessage.setText(details.getMessageBody());
 
             mailSender.send(mailMessage);
-            log.info("Mail sent successfully...");
-            return "Mail Sent Successfully...";
+            log.info(MAIL_SENT_SUCCESSFULLY);
+            return MAIL_SENT_SUCCESSFULLY;
         } catch (MessagingException | MailException e) {
-            return "Error while sending mail!!!";
+            return ERROR_WHILE_SENDING_MAIL;
         }
     }
 

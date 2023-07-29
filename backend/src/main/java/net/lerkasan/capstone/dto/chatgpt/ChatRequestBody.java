@@ -24,6 +24,8 @@ import java.util.List;
 @JsonIncludeProperties({ "model", "messages", "temperature", "n", "stream", "presence_penalty", "frequency_penalty" })
 public class ChatRequestBody {
 
+    public static final String PRESENCE_PENALTY = "presence_penalty";
+    public static final String FREQUENCY_PENALTY = "frequency_penalty";
     private String model;
     private List<Message> messages;
 
@@ -42,12 +44,12 @@ public class ChatRequestBody {
 
     @Min(-2)
     @Max(2)
-    @JsonProperty("presence_penalty")
+    @JsonProperty(PRESENCE_PENALTY)
     private double presencePenalty;
 
     @Min(-2)
     @Max(2)
-    @JsonProperty("frequency_penalty")
+    @JsonProperty(FREQUENCY_PENALTY)
     private double frequencyPenalty;
 
     @Autowired

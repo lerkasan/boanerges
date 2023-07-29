@@ -33,6 +33,12 @@ import java.util.Collections;
 @Configuration
 public class AppConfig {
 
+    public static final String CHAT_GPT_WEB_CLIENT = "ChatGptWebClient";
+    public static final String BEARER = "Bearer ";
+    public static final String TEMPLATES = "/templates/";
+    public static final String HTML = ".html";
+    public static final String UTF_8 = "UTF-8";
+
     @Value("${openai.chatgpt.url}")
     private String apiUrl;
 
@@ -45,11 +51,11 @@ public class AppConfig {
     }
 
     @Bean
-    @Qualifier("ChatGptWebClient")
+    @Qualifier(CHAT_GPT_WEB_CLIENT)
     public WebClient chatGptWebClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder
                 .baseUrl(apiUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, BEARER + apiKey)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
@@ -99,10 +105,10 @@ public class AppConfig {
     @Bean
     public ITemplateResolver thymeleafTemplateResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("/templates/");
-        templateResolver.setSuffix(".html");
+        templateResolver.setPrefix(TEMPLATES);
+        templateResolver.setSuffix(HTML);
         templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding("UTF-8");
+        templateResolver.setCharacterEncoding(UTF_8);
         return templateResolver;
     }
 

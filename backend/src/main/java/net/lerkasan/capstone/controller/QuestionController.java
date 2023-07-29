@@ -24,6 +24,9 @@ import java.util.List;
 //@RequestMapping("/api/v1/questions")
 public class QuestionController {
 
+    public static final String GENERATE_QUESTIONS_ENDPOINT = "/api/v1/questions";
+    public static final String SAVE_QUESTIONS_ENDPOINT = "/api/v1/interviews/{interviewId}/questions";
+    public static final String ID = "/{id}";
     private final TopicServiceI topicService;
 
     private final QuestionDtoMapper questionDtoMapper;
@@ -43,14 +46,14 @@ public class QuestionController {
     }
 
 
-    @PostMapping("/api/v1/questions")
+    @PostMapping(GENERATE_QUESTIONS_ENDPOINT)
 //    @GetMapping(path = "/chat")
     public QuestionDto generateQuestion(@RequestParam Long topicId) {
         Topic topic = topicService.findById(topicId);
         return questionService.generateQuestion(topic);
     }
 
-    @PostMapping("/api/v1/interviews/{interviewId}/questions")
+    @PostMapping(SAVE_QUESTIONS_ENDPOINT)
     public ResponseEntity<QuestionDto> saveQuestion(@PathVariable long interviewId, @Valid @RequestBody QuestionDto questionDto) {
 //        User currentUser = userService.findByUsername(authentication.getName());
         User currentUser = userService.getCurrentUser();
@@ -62,13 +65,13 @@ public class QuestionController {
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
-                .path("/{id}")
+                .path(ID)
                 .buildAndExpand(createdQuestion.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdQuestionDto);
     }
 
-    @GetMapping("/api/v1/questions")
+    @GetMapping(GENERATE_QUESTIONS_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
     public List<String> getQuestions() {
         return questionService.getQuestions().stream().map(Question::getText).toList();

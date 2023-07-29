@@ -28,6 +28,10 @@ import static org.mockito.Mockito.when;
  class UserServiceTest {
 
     private static final Role ROLE_USER = new Role(1L, "USER");
+    public static final String DUMMY_EMAIL = "dummyEmail";
+    public static final String DUMMY_USERNAME = "dummyUsername";
+    public static final String DUMMY_EMAIL_COM = "dummy@email.com";
+    public static final String DUMMY_PASSWORD = "dummyPassword";
 
     @Mock
     private UserRepository userRepo;
@@ -40,7 +44,7 @@ import static org.mockito.Mockito.when;
 
     @Test
      void shouldReturnFalseIfEmailIsNotAvailable() throws Exception {
-        final String email = "dummyEmail";
+        final String email = DUMMY_EMAIL;
 //        when(userRepo.isEmailAvailable(email)).thenReturn(false);
 
         final boolean result = userServiceUnderTest.isEmailAvailable(email);
@@ -60,7 +64,7 @@ import static org.mockito.Mockito.when;
 
     @Test
      void shouldReturnFalseIfUsernameIsNotAvailable() throws Exception {
-        final String username = "dummyUsername";
+        final String username = DUMMY_USERNAME;
 //        when(userRepo.isUsernameAvailable(username)).thenReturn(false);
 
         final boolean result = userServiceUnderTest.isUsernameAvailable(username);
@@ -78,15 +82,15 @@ import static org.mockito.Mockito.when;
     }
 
     private User createUser() {
-        return createUser("dummyUsername");
+        return createUser(DUMMY_USERNAME);
     }
 
     private User createUser(final String username) {
         User user = new User();
         user.setUsername(username);
-        user.setEmail("dummy@email.com");
-        user.setPassword("dummyPassword");
-        user.setRawPassword("dummyPassword".toCharArray());
+        user.setEmail(DUMMY_EMAIL_COM);
+        user.setPassword(DUMMY_PASSWORD);
+        user.setRawPassword(DUMMY_PASSWORD.toCharArray());
         user.setAuthorities(Collections.singleton(ROLE_USER));
         return user;
     }

@@ -1,6 +1,5 @@
 package net.lerkasan.capstone.controller;
 
-import jakarta.validation.Valid;
 import net.lerkasan.capstone.dto.FeedbackDto;
 import net.lerkasan.capstone.model.*;
 import net.lerkasan.capstone.service.AnswerServiceI;
@@ -16,9 +15,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/v1/interviews/{interviewId}/questions/{questionId}/answers/{answerId}/feedback")
+@RequestMapping(FeedbackController.FEEDBACK_ENDPOINT)
 public class FeedbackController {
 
+    public static final String ID = "/{id}";
+    public static final String FEEDBACK_ENDPOINT = "/api/v1/interviews/{interviewId}/questions/{questionId}/answers/{answerId}/feedback";
     private final UserServiceI userService;
     private final InterviewServiceI interviewService;
     private final QuestionServiceI questionService;
@@ -50,7 +51,7 @@ public class FeedbackController {
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
-                .path("/{id}")
+                .path(ID)
                 .buildAndExpand(createdFeedback.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdFeedbackDto);

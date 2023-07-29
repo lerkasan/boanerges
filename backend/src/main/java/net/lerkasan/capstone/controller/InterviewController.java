@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/interviews")
+@RequestMapping(InterviewController.INTERVIEWS_ENDPOINT)
 public class InterviewController {
 
+    public static final String INTERVIEWS_ENDPOINT = "/api/v1/interviews";
+    public static final String ID = "/{id}";
     private final InterviewDtoMapper interviewDtoMapper;
     private final InterviewServiceI interviewService;
     private final UserServiceI userService;
@@ -34,7 +36,7 @@ public class InterviewController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ID)
     public InterviewDto getInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
 //        return interviewService.findByIdAndUsername(id, currentUser.getUsername());
         User user = userService.findByUsername(currentUser.getUsername());
@@ -62,7 +64,7 @@ public class InterviewController {
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
-                .path("/{id}")
+                .path(ID)
                 .buildAndExpand(createdInterview.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdInterviewDto);

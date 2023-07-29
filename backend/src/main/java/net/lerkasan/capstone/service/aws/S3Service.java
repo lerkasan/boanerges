@@ -22,6 +22,13 @@ import java.time.Duration;
 @Service
 public class S3Service {
 
+    public static final String ERROR_UPLOADING_TO_S3 = "Error uploading to S3: {}";
+    public static final String HTTPS = "https://";
+    public static final String S3_AMAZONAWS_COM = ".s3.amazonaws.com/";
+    public static final String ERROR_COPYING_INPUT_STREAM_TO_FILE = "Error copying input stream to file: {}";
+    public static final String PRESIGNED_URL = "Presigned URL: ";
+    public static final String BUCKET = "bucket";
+    public static final String KEY = "key";
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
 
@@ -43,17 +50,17 @@ public class S3Service {
                             .build(),
                     RequestBody.fromInputStream(inputStream, inputStream.available()));
         } catch (IOException e) {
-            log.error("Error uploading to S3: {}", e.getMessage());
+            log.error(ERROR_UPLOADING_TO_S3, e.getMessage());
         }
 //        s3Client.close();
-        return "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
+        return HTTPS + bucketName + S3_AMAZONAWS_COM + fileName;
     }
 
     public void copyInputStreamToFile(InputStream input, File file) {
         try (OutputStream output = new FileOutputStream(file)) {
             input.transferTo(output);
         } catch (IOException e) {
-            log.error("Error copying input stream to file: {}", e.getMessage());
+            log.error(ERROR_COPYING_INPUT_STREAM_TO_FILE, e.getMessage());
         }
     }
 //    }
@@ -90,7 +97,7 @@ public class S3Service {
                 s3Presigner.presignGetObject(getObjectPresignRequest);
 
         // Log the presigned URL, for example.
-        log.info("Presigned URL: " + presignedGetObjectRequest.url());
+        log.info(PRESIGNED_URL + presignedGetObjectRequest.url());
         return presignedGetObjectRequest.url().toString();
     }
 
@@ -110,6 +117,6 @@ public class S3Service {
         S3Uri s3Uri = s3Utilities.parseUri(uri);
         String bucketName = s3Uri.bucket().orElse(""); // "myBucket"
         String key = s3Uri.key().orElse("");
-        return ImmutableMap.of("bucket", bucketName, "key", key);
+        return ImmutableMap.of(BUCKET, bucketName, KEY, key);
     }
 }

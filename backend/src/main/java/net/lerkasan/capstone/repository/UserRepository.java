@@ -15,6 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     final String EMAIL_AVAILABILITY_QUERY = "SELECT count(u) = 0 FROM User u WHERE LOWER(u.email) = LOWER(:email)";
     final String USERNAME_AVAILABILITY_QUERY = "SELECT count(u) = 0 FROM User u WHERE LOWER(u.username) = LOWER(:username)";
+    String DELETE_NON_CONFORMED_USERS_WITH_EXPIRED_EMAIL_VALIDATION = "DELETE FROM User u WHERE u.token != '' AND u.createdAt < ?1";
+
     Optional<User> findByUsername(String username);
 
     Optional<User> findByEmail(String email);
@@ -30,6 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean isUsernameAvailable(@Param("username") String username);
 
     @Modifying
-    @Query("DELETE FROM User u WHERE u.token != '' AND u.createdAt < ?1")
+    @Query(DELETE_NON_CONFORMED_USERS_WITH_EXPIRED_EMAIL_VALIDATION)
     void deleteNotVerifiedExpiredUsers(LocalDateTime timestamp);
 }

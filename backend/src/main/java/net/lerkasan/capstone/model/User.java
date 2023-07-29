@@ -36,41 +36,53 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Validated
 @JsonInclude(NON_NULL)
 public class User implements UserDetails {
+    public static final String USERNAME_FIELD_IS_REQUIRED = "Username field is required.";
+    public static final String USERNAME_MUST_BE_BETWEEN_3_AND_25_CHARACTERS_LONG = "Username must be between 3 and 25 characters long.";
+    public static final String USERNAME_CHARACTERS = "Username can include only upper and lower case latin letters and digits and start with a letter.";
+    public static final int USERNAME_MAX_LENGTH = 25;
+    public static final String USERNAME_ALREADY_EXISTS = "Username already exists.";
+    public static final String NAME_FIELD_IS_REQUIRED = "First name field is required.";
+    public static final String FIRST_NAME_MUST_BE_BETWEEN_3_AND_50_CHARACTERS_LONG = "First name must be between 3 and 50 characters long.";
+    public static final String FIRST_NAME_CHARACTERS = "First name can include only upper and lower case latin letters, dashes and spaces.";
+    public static final String E_MAIL_FIELD_IS_REQUIRED = "E-mail field is required.";
+    public static final String INCORRECT_FORMAT_OF_E_MAIL = "Incorrect format of e-mail.";
+    public static final String EMAIL_ALREADY_EXISTS = "Email already exists.";
+    public static final String PASSWORD_MUST_BE_BETWEEN_8_AND_32_CHARACTERS_LONG = "Password must be between 8 and 32 characters long.";
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @NonNull
-    @NotBlank(message = "Username field is required.")
-    @Size(min = 3, max = 25, message = "Username must be between 3 and 25 characters long.")
+    @NotBlank(message = USERNAME_FIELD_IS_REQUIRED)
+    @Size(min = 3, max = USERNAME_MAX_LENGTH, message = USERNAME_MUST_BE_BETWEEN_3_AND_25_CHARACTERS_LONG)
 //    @Pattern(regexp = "^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$", message = "Username can include only upper and lower case latin letters and digits.")
-    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]*$", message = "Username can include only upper and lower case latin letters and digits and start with a letter.")
+    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]*$", message = USERNAME_CHARACTERS)
 //    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]{2,24}$", message = "Username can include only upper and lower case latin letters and digits.")
-    @Unique(field = "username", message = "Username already exists.")
-    @Column(name = "username", nullable = false, unique = true, length = 25)
+    @Unique(field = "username", message = USERNAME_ALREADY_EXISTS)
+    @Column(name = "username", nullable = false, unique = true, length = USERNAME_MAX_LENGTH)
     private String username;
 
     @NonNull
-    @NotBlank(message = "First name field is required.")
-    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters long.")
-    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
+    @NotBlank(message = NAME_FIELD_IS_REQUIRED)
+    @Size(min = 3, max = 50, message = FIRST_NAME_MUST_BE_BETWEEN_3_AND_50_CHARACTERS_LONG)
+    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = FIRST_NAME_CHARACTERS)
 //    @Pattern(regexp = "^[A-Za-z][A-Za-z\\d.-]{2,49}$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
 //    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = "First name can include only upper and lower case latin letters, dashes and spaces.")
 //    @Pattern(regexp = "[a-zA-Z]{3,50}$", message = "First name can include only upper and lower case latin letters.")
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
-    @NotBlank(message = "E-mail field is required.")
-    @Email(message = "Incorrect format of e-mail.")
-    @Unique(field = "email", message = "Email already exists.")
+    @NotBlank(message = E_MAIL_FIELD_IS_REQUIRED)
+    @Email(message = INCORRECT_FORMAT_OF_E_MAIL)
+    @Unique(field = "email", message = EMAIL_ALREADY_EXISTS)
     @Column(name = "email", unique = true, nullable = false, length = 50)
     private String email;
 
     @Transient
     @JsonProperty(access = WRITE_ONLY)
 //    @NotNull(message = "Password field is required.")
-    @Size(min = 8, max = 32, message = "Password must be between 8 and 32 characters long.")
+    @Size(min = 8, max = 32, message = PASSWORD_MUST_BE_BETWEEN_8_AND_32_CHARACTERS_LONG)
     @Password(message = "Password can include upper and lower case latin letters, numerals (0-9) and special symbols.")
     private char[] rawPassword;
 

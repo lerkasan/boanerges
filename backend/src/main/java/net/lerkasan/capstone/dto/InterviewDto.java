@@ -31,15 +31,17 @@ import static jakarta.persistence.CascadeType.DETACH;
 @JsonInclude(NON_NULL)
 public class InterviewDto {
 
+    public static final String NAME_FIELD_IS_REQUIRED = "Name field is required.";
+    public static final String TOPIC_ID_MUST_BE_POSITIVE = "TopicId must be positive.";
     private Long id;
 
     @NonNull
-    @NotBlank(message = "Name field is required.")
+    @NotBlank(message = NAME_FIELD_IS_REQUIRED)
     @Size(min = 3, max = 500)
     private String name;
 
     @NonNull
-    @Positive(message = "TopicId must be positive.")
+    @Positive(message = TOPIC_ID_MUST_BE_POSITIVE)
     private Long topicId;
 
 //    @JsonProperty(access = READ_ONLY)

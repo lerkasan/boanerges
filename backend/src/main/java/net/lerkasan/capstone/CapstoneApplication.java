@@ -15,6 +15,15 @@ import java.util.List;
 @SpringBootApplication
 public class CapstoneApplication {
 
+    public static final String FRONTEND = "frontend";
+    public static final String HTTP_FRONTEND = "http://frontend";
+    public static final String LOCALHOST = "localhost";
+    public static final String HTTP_LOCALHOST = "http://localhost";
+    public static final String LOCALHOST_8080 = "localhost:8080";
+    public static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
+    public static final String HTTP_LERKASAN_NET = "http://lerkasan.net";
+    public static final String HTTPS_LERKASAN_NET = "https://lerkasan.net";
+
     public static void main(String[] args) {
         SpringApplication.run(CapstoneApplication.class, args);
     }
@@ -25,7 +34,7 @@ public class CapstoneApplication {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         // *** URL below needs to match the Vue client URL and port ***
-        config.setAllowedOrigins(List.of("frontend", "http://frontend", "localhost", "http://localhost", "localhost:8080", "http://localhost:8080", "http://lerkasan.net", "https://lerkasan.net"));
+        config.setAllowedOrigins(List.of(FRONTEND, HTTP_FRONTEND, LOCALHOST, HTTP_LOCALHOST, LOCALHOST_8080, HTTP_LOCALHOST_8080, HTTP_LERKASAN_NET, HTTPS_LERKASAN_NET));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);

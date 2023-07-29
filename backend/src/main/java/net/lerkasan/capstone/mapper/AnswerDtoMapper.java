@@ -13,6 +13,8 @@ import software.amazon.awssdk.services.s3.S3Utilities;
 @Component
 public class AnswerDtoMapper {
 
+    public static final String BUCKET = "bucket";
+    public static final String KEY = "key";
     private final FeedbackDtoMapper feedbackDtoMapper;
 
     private final S3Client s3Client;
@@ -31,8 +33,8 @@ public class AnswerDtoMapper {
 
     public AnswerDto toAnswerDto(Answer answer) {
         String audioUrl = answer.getAudioUrl();
-        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("bucket");
-        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get("key");
+        String bucketName = s3Service.convertS3UrlToBucketAndKey(audioUrl).get(BUCKET);
+        String key = s3Service.convertS3UrlToBucketAndKey(audioUrl).get(KEY);
         String presignedAudioUrl = s3Service.presignS3Url(bucketName, key);
         FeedbackDto feedbackDto = feedbackDtoMapper.toFeedbackDto(answer.getFeedback());
         return new AnswerDto(

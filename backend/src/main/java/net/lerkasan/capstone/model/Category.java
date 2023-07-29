@@ -22,12 +22,13 @@ import static jakarta.persistence.CascadeType.*;
 @ToString(exclude = {"topics"})
 public class Category {
 
+    public static final String NAME_FIELD_IS_REQUIRED = "Name field is required.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
-    @NotBlank(message = "Name field is required.")
+    @NotBlank(message = NAME_FIELD_IS_REQUIRED)
     @Size(min = 3, max = 500)
     @Column(name = "name", nullable = false, length = 500)
     private String name;

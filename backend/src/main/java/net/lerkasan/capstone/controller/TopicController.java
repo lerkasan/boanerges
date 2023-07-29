@@ -1,6 +1,5 @@
 package net.lerkasan.capstone.controller;
 
-import net.lerkasan.capstone.model.Book;
 import net.lerkasan.capstone.model.Topic;
 import net.lerkasan.capstone.service.TopicServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/topics")
+@RequestMapping(TopicController.TOPICS_ENDPOINT)
 public class TopicController {
 
+    public static final String ID = "/{id}";
+    public static final String TOPICS_ENDPOINT = "/api/v1/topics";
     private final TopicServiceI topicService;
 
     @Autowired
@@ -26,7 +27,7 @@ public class TopicController {
         return topicService.getTopics();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ID)
     public Topic getTopic(@PathVariable Long id) {
         return topicService.findById(id);
     }

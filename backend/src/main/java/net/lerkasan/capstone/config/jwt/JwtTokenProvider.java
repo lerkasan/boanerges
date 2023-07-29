@@ -19,12 +19,20 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
 
+    public static final int TOKEN_EXPIRATION = 3600000;
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
+    public static final String INVALID_JWT_TOKEN = "Invalid JWT token";
+    public static final String EXPIRED_JWT_TOKEN = "Expired JWT token";
+    public static final String UNSUPPORTED_JWT_TOKEN = "Unsupported JWT token";
+    public static final String JWT_CLAIMS_STRING_IS_EMPTY = "JWT claims string is empty";
+    public static final String ERROR_WITH_THE_SIGNATURE_OF_TOKEN = "there is an error with the signature of you token ";
     Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String createToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 3600000);
+        Date expiryDate = new Date(now.getTime() + TOKEN_EXPIRATION);
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -37,8 +45,8 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest request) {
 
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+        String bearerToken = request.getHeader(AUTHORIZATION);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
             return bearerToken.substring(7);
         }
         return null;
@@ -53,15 +61,15 @@ public class JwtTokenProvider {
 //        } catch (MalformedJsonException ex) {
 //            log.error("Malformed json");
         } catch (MalformedJwtException ex) {
-            log.error("Invalid JWT token");
+            log.error(INVALID_JWT_TOKEN);
         } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");
+            log.error(EXPIRED_JWT_TOKEN);
         } catch (UnsupportedJwtException ex) {
-            log.error("Unsupported JWT token");
+            log.error(UNSUPPORTED_JWT_TOKEN);
         } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty");
+            log.error(JWT_CLAIMS_STRING_IS_EMPTY);
         } catch (SignatureException e) {
-            log.error("there is an error with the signature of you token ");
+            log.error(ERROR_WITH_THE_SIGNATURE_OF_TOKEN);
         }
         return false;
     }

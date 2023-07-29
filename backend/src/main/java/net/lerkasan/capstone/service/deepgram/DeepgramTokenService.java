@@ -13,6 +13,14 @@ import java.io.IOException;
 @Slf4j
 public class DeepgramTokenService implements DeepgramTokenServiceI {
 
+    public static final String TEMPORARILY_GENERATED_TOKEN = "Temporarily generated token";
+    public static final String MEMBER = "member";
+    public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String ACCEPT = "accept";
+    public static final String CONTENT_TYPE = "content-type";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String TOKEN = "Token ";
     @Value("${deepgram.project.id}")
     private String projectId;
 
@@ -28,17 +36,17 @@ public class DeepgramTokenService implements DeepgramTokenServiceI {
     @Override
     public String generateTemporaryToken() throws IOException {
 
-        DeepgramDto deepgramDto = new DeepgramDto("Temporarily generated token", new String[]{"member"}, ttlSeconds);
+        DeepgramDto deepgramDto = new DeepgramDto(TEMPORARILY_GENERATED_TOKEN, new String[]{MEMBER}, ttlSeconds);
 //        DeepgramDto deepgramDto = new DeepgramDto("Temporarily generated token", new String[]{"project:read", "project:write"}, ttlSeconds);
         String json = new Gson().toJson(deepgramDto);
-        RequestBody body = RequestBody.create(json, okhttp3.MediaType.parse("application/json; charset=utf-8"));
+        RequestBody body = RequestBody.create(json, okhttp3.MediaType.parse(APPLICATION_JSON_CHARSET_UTF_8));
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(apiUrl)
                 .post(body)
-                .addHeader("accept", "application/json")
-                .addHeader("content-type", "application/json")
-                .addHeader("Authorization", "Token " + apiKey)
+                .addHeader(ACCEPT, APPLICATION_JSON)
+                .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                .addHeader(AUTHORIZATION, TOKEN + apiKey)
                 .build();
 
 //        try (Response response = client.newCall(request).execute()) {

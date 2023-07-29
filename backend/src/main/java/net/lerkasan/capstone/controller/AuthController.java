@@ -13,9 +13,11 @@ import net.lerkasan.capstone.dto.auth.AuthenticationRequest;
 
 @RestController
 //@CrossOrigin
-@RequestMapping("/api/v1/auth")
+@RequestMapping(AuthController.AUTH_ENDPOINT)
 public class AuthController {
 
+    public static final String AUTH_ENDPOINT = "/api/v1/auth";
+    public static final String LOGIN = "/login";
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -26,7 +28,7 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping("/login")
+    @PostMapping(LOGIN)
     public AuthenticationResponse authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
