@@ -1,5 +1,4 @@
 <template>
-
     <nav id="header" class="w-full z-30 top-10 py-1 bg-white shadow-lg border-b border-blue-400 mt-10">
         <div class="w-full flex items-center justify-between mt-0 px-6 py-2">
             <label for="menu-toggle" class="cursor-pointer md:hidden block">
@@ -43,37 +42,18 @@
                                 </button>
                             </router-link>
                         </li>
-<!--                        <li v-if="user">-->
-<!--                            <button class="group relative h-12 w-48 overflow-hidden rounded-lg bg-white text-lg shadow">-->
-<!--                                <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>-->
-<!--                                <span class="relative text-black group-hover:text-white"> Start an interview </span>-->
-<!--                            </button>-->
-<!--                        </li>-->
                     </ul>
                 </nav>
             </div>
 
             <div class="order-2 md:order-3 flex flex-wrap items-center justify-end mr-0 md:mr-4" id="nav-content">
                 <div v-if="username">
-                    <!--                    <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">-->
-                    <!--                        <svg class="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20"-->
-                    <!--                             xmlns="http://www.w3.org/2000/svg">-->
-                    <!--                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd">-->
-                    <!--                            </path>-->
-                    <!--                        </svg>-->
-                    <!--                    </div>-->
                     <div class="auth flex items-center w-full md:w-full">
-<!--                            <button class="group relative h-12 w-48 overflow-hidden rounded-lg bg-white text-lg shadow">-->
-<!--                                <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>-->
-<!--                                <span class="relative text-black group-hover:text-white"> Start an interview </span>-->
-<!--                            </button>-->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                         </svg>
                         <button class="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
-<!--                            <router-link to="/me">-->
                                 Welcome, {{ username }}
-<!--                            </router-link>-->
                         </button>
                         <button class="
                             bg-blue-600
@@ -99,13 +79,8 @@
         </div>
     </nav>
 
-<!--    <img src="../../public/images/background.jpg" alt="Succeed at you interview and get hired">-->
-
-
-
     <router-view v-slot="{ Component }">
         <suspense>
-            <!--        <suspense timeout="0">-->
             <template #default>
                 <component :is="Component" :key="$route.path"></component>
             </template>
@@ -114,83 +89,6 @@
             </template>
         </suspense>
     </router-view>
-
-
-
-
-<!--    <div class="container">-->
-<!--        <div class="centered capitalize">-->
-<!--            Succeed at you interview and get hired-->
-<!--        </div>-->
-<!--        <img src="../background.jpg" alt="Succeed at you interview and get hired">-->
-
-<!--    </div>-->
-
-
-    <!--    <router-view class="view one"></router-view>-->
-
-
-<!--    <div class="w-1/2 mx-auto">-->
-<!--        <div class="w-full shadow-2xl subpixel-antialiased rounded h-64 bg-black border-black mx-auto">-->
-<!--            <div class="flex items-center h-6 rounded-t bg-gray-100 border-b border-gray-500 text-center text-black" id="headerTerminal">-->
-<!--                <div class="flex ml-2 items-center text-center border-red-900 bg-red-500  hover:bg-red-400 shadow-inner rounded-full w-3 h-3" id="closebtn">-->
-<!--                </div>-->
-<!--                <div class="ml-2 border-yellow-900 bg-yellow-500 hover:bg-yellow-400 shadow-inner rounded-full w-3 h-3" id="minbtn">-->
-<!--                </div>-->
-<!--                <div class="ml-2 border-green-900 bg-green-500 hover:bg-green-400 shadow-inner rounded-full w-3 h-3" id="maxbtn">-->
-<!--                </div>-->
-<!--                <div class="mx-auto pr-16" id="terminaltitle">-->
-<!--                    <p class="text-center text-sm">Terminal</p>-->
-<!--                </div>-->
-
-<!--            </div>-->
-<!--            <div class="pl-1 pt-1 h-auto  text-green-200 font-mono text-xs bg-black" id="console">-->
-<!--                <p class="pb-1">Last login: Wed Sep 25 09:11:04 on levil190</p>-->
-<!--                <p class="pb-1">Laraben:Devprojects levin$<input type="text" class="bg-black text-blue-600 focus:border-0 focus:outline-0 ml-1" autofocus/></p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-
-<!--    <div class="w-1/2 mx-auto">-->
-<!--        <div class="w-full shadow-2xl subpixel-antialiased rounded h-64 bg-black border-black mx-auto">-->
-<!--            <div class="flex items-center h-6 rounded-t bg-gray-100 border-b border-gray-500 text-center text-black" id="headerTerminal">-->
-<!--                <div class="flex ml-2 items-center text-center border-red-900 bg-red-500 shadow-inner rounded-full w-3 h-3" id="closebtn">-->
-<!--                </div>-->
-<!--                <div class="ml-2 border-yellow-900 bg-yellow-500 shadow-inner rounded-full w-3 h-3" id="minbtn">-->
-<!--                </div>-->
-<!--                <div class="ml-2 border-green-900 bg-green-500 shadow-inner rounded-full w-3 h-3" id="maxbtn">-->
-<!--                </div>-->
-<!--                <div class="mx-auto pr-16" id="terminaltitle">-->
-<!--                    <p class="text-center text-sm">Terminal</p>-->
-<!--                </div>-->
-
-<!--            </div>-->
-<!--            <div class="pl-1 pt-1 h-auto  text-green-200 font-mono text-xs bg-black" id="console">-->
-<!--                <p class="pb-1">Last login: Wed Sep 25 09:11:04 on ttys002</p>-->
-<!--                <p class="pb-1">Laraben:Devprojects laraben$</p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-
-
-
-
-
-    <!--    <RecordAudio/>-->
-    <!--    <SignUpNew/>-->
-    <!--    <Suspense>-->
-    <!--        <SignUpNew/>-->
-    <!--    </Suspense>-->
-    <!--        <LoginForm/>-->
-    <!--    </Suspense>-->
-    <!--    <Suspense>-->
-    <!--        <RecordAudio/>-->
-    <!--    </Suspense>-->
-    <!--    <Suspense>-->
-    <!--        <HelloWorld/>-->
-    <!--    </Suspense>-->
 </template>
 
 <script setup>
@@ -200,7 +98,6 @@ import AuthService from "@/services/AuthService";
 
 let username = ref('');
 username.value = localStorage.getItem("username");
-console.log("user on home page " + username.value);
 
 async function logout() {
     await AuthService.logout();

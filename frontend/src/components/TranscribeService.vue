@@ -32,7 +32,6 @@ async function getTranscribeCredentials() {
         const message = `An error has occurred: ${response.status}`;
         throw new Error(message);
     }
-    console.log(response);
     return response.data;
 }
 

@@ -33,7 +33,6 @@ async function getTopics() {
 }
 
 function submitTopics() {
-    // console.log(selectedTopics.value);
     window.localStorage.setItem('selectedTopics', JSON.stringify(selectedTopics.value));
 
     window.location.href = "/interview";
@@ -73,14 +72,6 @@ function submitTopics() {
                 </div>
             </fieldset>
 
-            <!-- clip-path with :after and :before can achieve this effect also -->
-<!--            <button-->
-<!--                @click="submitTopics"-->
-<!--                class='btn w-48 h-16 cursor-pointer relative-->
-<!--    after:absolute after:block after:w-full after:h-full after:rounded-xl-->
-<!--    after:top-0 after:left-0 after:-z-10 text-white text-2xl font-medium rounded-xl-->
-<!--	shadow-[0_4px_6px_-1px_rgba(0,0,0,.6)] transition-all hover:shadow-none duration-500-->
-<!--'>-->
             <button
                 @click="submitTopics"
                 class="text-md font-medium

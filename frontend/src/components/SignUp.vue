@@ -4,7 +4,6 @@ import {required, email, minLength, sameAs, maxLength, helpers} from '@vuelidate
 import {computed, ref} from "vue";
 import apiClient from "@/services/AxiosInstance";
 import SignUpSuccess from "@/components/SignUpSuccess.vue";
-// import SignUpForm from "@/components/SignUpForm.vue";
 
 const form = ref({
         username: '',
@@ -15,11 +14,9 @@ const form = ref({
     }
 )
 
-// const isUsernameAvailable = (value) => fetch(`/api/v1/signup/available?username=${value}`).then(response => response.json());
-
 const rules = {
     username: {
-        required, // $lazy: true, // $autoDirty: true,
+        required,
         min: minLength(3),
         max: maxLength(25),
         name_validation: {
@@ -34,32 +31,15 @@ const rules = {
                 if (value === '') return true
                 return apiClient.get('/signup/available?username=' + value)
                     .then(response => {
-                        // console.log("validation response: " + response.data)
-                        // console.log(response.data);
                         return response.data
                     })
                     .catch(error => {
                         console.log(error)
                     })
             }))
-
-        // unique_validation: {
-        //     // $validator: helpers.withAsync(async (value) => {
-        //     //     await new Promise((resolve) => setTimeout(resolve, 1000))
-        //     //     await uniqueUsername(value)
-        //     // }),
-        //     // $validator: helpers.withParams(helpers.withAsync(uniqueUsername)),
-        //     // $validator: await uniqueUsername,
-        //     $validator: helpers.withParams({
-        //             type: 'mustBeCool' },
-        //         (value) => helpers.withAsync(isUsernameAvailable(value))),
-        //     // $validator: helpers.withAsync(isUsernameAvailable),
-        //     $message: 'Username already exists'
-        //
-        // }
     },
     firstName: {
-        required, // $lazy: true, //$autoDirty: true,
+        required,
         min: minLength(3),
         max: maxLength(50),
         name_validation: {
@@ -68,10 +48,7 @@ const rules = {
         }
     },
     email: {
-        required, email, // $lazy: true,
-        // unique_validation: {
-        //     $message: 'Email already exists',
-
+        required, email,
         unique: helpers.withMessage(
             ({ $params }) => {
                 if (!$params.$pending) return 'Email already exists';
@@ -80,41 +57,15 @@ const rules = {
             if (value === '') return true
             return apiClient.get('/signup/available?email=' + value)
                 .then(response => {
-                    // console.log("validation response: " + response.data)
-                    // console.log(response.data);
                     return response.data
                 })
                 .catch(error => {
                     console.log(error)
                 })
         }))
-
-        // $message: 'Email already exists',
-        //     unique: helpers.withAsync(value => {
-        //     if (value === '') return true
-        //     return apiClient.get('/signup/available?email=' + value)
-        //         .then(response => {
-        //             console.log("validation response: " + response.data)
-        //             // console.log(response.data);
-        //             return response.data
-        //         })
-        //         .catch(error => {
-        //             console.log(error)
-        //         })
-        // })
-    // }
-
-        // unique_validation: {
-        //     $validator: helpers.withAsync(async (value) => {
-        //         await new Promise((resolve) => setTimeout(resolve, 1000));
-        //         await uniqueEmail(value)
-        // }),
-        //     // $validator: helpers.withParams(helpers.withAsync(uniqueEmail)),
-        //     $message: 'Email already exists'
-        // }
     },
     password: {
-        required, // $lazy: true, //$autoDirty: true,
+        required,
         min: minLength(8),
         password_validation: {
             $validator: validPassword,
@@ -122,7 +73,7 @@ const rules = {
         }
     },
     confirmPassword: {
-        required, // $lazy: true, //$autoDirty: true,
+        required,
         sameAsPassword: sameAs(computed(()=> form.value.password), "password field")
     }
 }
@@ -139,8 +90,6 @@ function validName(name) {
 }
 
 async function validUsernamePattern(username) {
-    // let validNamePattern = new RegExp("^[A-Za-z][A-Za-z0-9]{2,24}$");
-    // let validNamePattern = new RegExp("^[a-zA-Z]+(?:[a-zA-Z0-9]+)*$");
     let validNamePattern = new RegExp("^[A-Za-z][A-Za-z0-9]*$");
     return validNamePattern.test(username);
 }
@@ -155,63 +104,36 @@ function validPassword(password) {
 
 async function isUniqueUsername(username) {
     let endpoint = `/api/v1/signup/available?username=${username}`;
-    // let body = {
-    //     username: username
-    // }
-    // body.username = username;
     let response = await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + endpoint, {
         method: "GET", // or 'PUT'
-        // headers: {
-        //     "Content-Type": "application/json",
-        // },
-        // body: JSON.stringify(body),
     })
         .catch(error => {
             console.log(error.message)
         });
     let isUniqueStr = await response.text();
     let isUnique = (isUniqueStr.toLowerCase() === "true");
-    console.log("Username response: " + isUnique);
     if (!isUnique) {
         uniqueUsernameError.value = "Username already exist. Please use another username";
     }
     return isUnique;
-    // return Boolean(isUnique);
 }
 
 async function isUniqueEmail(email) {
     let endpoint = `/api/v1/signup/available?email=${email}`;
-    // let body = {
-    //     email: email
-    // }
-    // body.username = username;
     let response = await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + endpoint, {
-        method: "GET", // or 'PUT'
-        // headers: {
-        //     "Content-Type": "application/json",
-        // },
-        // body: JSON.stringify(body),
+        method: "GET",
     })
         .catch(error => {
             console.log(error.message)
         });
     let isUniqueStr = await response.text();
     let isUnique = (isUniqueStr.toLowerCase() === "true");
-    console.log("Email response text: " + isUnique);
     if (!isUnique) {
         uniqueEmailError.value = "Email already exist. Please use another email";
     }
     return isUnique;
-    // return Boolean(isUnique);
 }
 
-// function resetUsernameError() {
-//     uniqueUsernameError.value = '';
-// }
-//
-// function resetEmailError() {
-//     uniqueEmailError.value = '';
-// }
 
 function resetSignupError() {
     signupError.value = '';
@@ -232,32 +154,17 @@ async function register() {
         return
     }
 
-    // await isUniqueUsername(form.value.username);
     let checkUsername = await isUniqueUsername(form.value.username);
-    // // if (!checkUsername) {
-    // //     uniqueUsernameError = "Username already exist. Please use another username";
-    // // }
-    // //
     let checkEmail = await isUniqueEmail(form.value.email);
-    // await isUniqueEmail(form.value.email);
-    // // if (!checkEmail) {
-    // //     uniqueEmailError = "Email already exist. Please use another email";
-    // // }
-    //
+
     if (checkUsername && checkEmail) {
-        console.log("is username unique: " + checkUsername);
-        console.log("is email unique: " + checkEmail);
-
-
         let modifiedFormData = form.value;
         modifiedFormData.rawPassword = Array.from(form.value.password);
         delete modifiedFormData.password;
         delete modifiedFormData.confirmPassword;
 
-        // try {
-        //     const response = await fetch()
         let signupResponse = await fetch(process.env.VUE_APP_BACKEND_PROTOCOL + "://" + process.env.VUE_APP_BACKEND_HOST + "/api/v1/signup", {
-            method: "POST", // or 'PUT'
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -275,22 +182,8 @@ async function register() {
             showPopupTimeout();
             v$.value.$reset();
             document.getElementById("registrationForm").reset();
-            // alert("Thank you for registering. Please confirm your email.");
-            // window.location.href = "/";
         }
-
-        // document.getElementById("registrationForm").reset();
-
-        // const result = await response.json();
-        // alert("Thank you for registering. Please confirm your email.");
-        // console.log("Success:", result);
-        // } catch (error) {
-        //     console.error("Error:", error);
-        // }
-
-        // window.location.href = "/";
     }
-    // console.log(v$)
 }
 
 </script>
@@ -320,9 +213,6 @@ async function register() {
                     <div class="mt-10">
                         <form id="registrationForm" @change="resetSignupError">
                             <div class="flex flex-col mb-5">
-                                <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Username:-->
-                                <!--                        </label>-->
                                 <div class="relative">
                                     <div :class="{ 'hasError': v$.username.$error }">
                                         <div class="tooltip w-full">
@@ -372,16 +262,10 @@ async function register() {
                                          :key="index">
                                         <div class="error-msg">{{ error.$message }}</div>
                                     </div>
-                                    <!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
-                                    <!--                                <div class="error-msg">{{ uniqueUsernameError }}</div>-->
-                                    <!--                            </div>-->
                                 </div>
                             </div>
 
                             <div class="flex flex-col mb-5">
-                                <!--                        <label for="firstName" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            First name:-->
-                                <!--                        </label>-->
                                 <div class="relative">
                                     <div :class="{ 'hasError': v$.firstName.$error }">
                                         <div class="tooltip w-full">
@@ -435,9 +319,6 @@ async function register() {
                             </div>
 
                             <div class="flex flex-col mb-5">
-                                <!--                        <label for="email" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Email:-->
-                                <!--                        </label>-->
                                 <div class="relative">
                                     <div :class="{ 'hasError': v$.email.$error }">
                                         <div class="tooltip w-full">
@@ -484,16 +365,10 @@ async function register() {
                                          :key="index">
                                         <div class="error-msg">{{ error.$message }}</div>
                                     </div>
-                                    <!--                            <div class="input-errors mb-1 text-xs tracking-wide text-gray-600">-->
-                                    <!--                                <div class="error-msg">{{ uniqueEmailError }}</div>-->
-                                    <!--                            </div>-->
                                 </div>
                             </div>
 
                             <div class="flex flex-col mb-6">
-                                <!--                        <label for="password" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Password:-->
-                                <!--                        </label>-->
                                 <div class="relative">
                                     <div :class="{ 'hasError': v$.password.$error }">
                                         <div class="tooltip w-full">
@@ -544,9 +419,6 @@ async function register() {
                             </div>
 
                             <div class="flex flex-col mb-6">
-                                <!--                        <label for="confirmPassword" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                                <!--                            Confirm password:-->
-                                <!--                        </label>-->
                                 <div class="relative">
                                     <div :class="{ 'hasError': v$.confirmPassword.$error }">
                                         <div class="tooltip w-full">
@@ -721,16 +593,6 @@ div.hasError input {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
-}
-
-.v-enter-active,
-.v-leave-active {
-    transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-    opacity: 0;
 }
 
 </style>

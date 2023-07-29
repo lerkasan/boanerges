@@ -1,12 +1,4 @@
 <template>
-<!--    <div>-->
-<!--        <input type="text" v-model="user.username" placeholder="Username" />-->
-<!--        <input type="password" v-model="user.password" placeholder="Password" />-->
-<!--        <button @click="login">Login</button>-->
-<!--    </div>-->
-
-
-
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
         <div class="
@@ -26,12 +18,8 @@
             </div>
 
             <div class="mt-10">
-<!--                <form action="login" method="post">-->
                 <form @change="resetLoginError">
                     <div class="flex flex-col mb-5">
-                        <!--                        <label for="username" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                        <!--                            Username:-->
-                        <!--                        </label>-->
                         <div class="relative">
                             <div :class="{ 'hasError': v$.username.$error }">
                                 <div class="tooltip w-full">
@@ -85,9 +73,6 @@
                     </div>
 
                     <div class="flex flex-col mb-6">
-                        <!--                        <label for="password" class="mb-1 text-sm tracking-wide text-gray-600">-->
-                        <!--                            Password:-->
-                        <!--                        </label>-->
                         <div class="relative">
                             <div :class="{ 'hasError': v$.password.$error }">
                                 <div class="tooltip w-full">
@@ -209,14 +194,6 @@ import AuthService from "@/services/AuthService";
 import {ref} from "vue";
 import {required} from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
-// import jwt from "jsonwebtoken";
-// import {useRouter} from "vue-router";
-// import apiClient from "@/services/AxiosInstance";
-
-// let user = ref({
-//     username: "",
-//     password: "",
-// });
 
 let loginError = ref('');
 
@@ -233,7 +210,6 @@ const rules = {
 
 const v$ = ref(useVuelidate(rules, user));
 
-// const router = useRouter();
 
 // decode the logged in user
 function parseJwt(token) {
@@ -252,17 +228,11 @@ async function login() {
                 if (response.data.token) {
                     window.localStorage.clear();
                     window.localStorage.setItem("jwtToken", response.data.token);
-                    // loggedin user
+
                     const decodedJwt = parseJwt(response.data.token);
                     let user = decodedJwt.sub;
-                    console.log(user);
                     window.localStorage.setItem("username", user);
                 }
-                // this.$router.push("/books");
-
-                // router.push("/books");
-                // router.push("/books");
-                // window.location.href = "http://localhost:9090/api/v1/books";
                 window.location.href = "/";
             } else {
                 loginError.value = "User hasn't confirmed email or username/password is incorrect";
@@ -272,7 +242,6 @@ async function login() {
         loginError.value = "User hasn't confirmed email or username/password is incorrect";
         console.error(error);
     }
-    // await apiClient.get("/books").then((response) => console.log(response));
 }
 
 function resetLoginError() {
