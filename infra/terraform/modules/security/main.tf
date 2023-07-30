@@ -140,6 +140,16 @@ resource "aws_security_group_rule" "appserver_allow_outbound_http_to_all" {
   security_group_id = aws_security_group.appserver.id
 }
 
+resource "aws_security_group_rule" "appserver_allow_outbound_smtps_to_all" {
+  type              = "egress"
+  description       = "SMTPS egress"
+  from_port         = local.smtps_port
+  to_port           = local.smtps_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.appserver.id
+}
+
 resource "aws_security_group_rule" "appserver_allow_inbound_ssh_from_ec2_connect_endpoint" {
   type              = "ingress"
   description       = "SSH ingress"
@@ -200,6 +210,7 @@ locals {
   ssh_port   = 22
   http_port  = 80
   https_port = 443
+  smtps_port  = 587
   mysql_port = 3306
 
   admin_public_ip = data.external.admin_public_ip.result["admin_public_ip"]

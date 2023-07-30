@@ -85,6 +85,7 @@ server {
     location / {
         root   /var/www/${APP_NAME};
         index  index.html index.htm;
+        try_files $uri $uri/ /index.html;
         autoindex off;
 
         limit_except GET HEAD POST { deny all; }
