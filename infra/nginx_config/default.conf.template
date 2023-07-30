@@ -10,14 +10,12 @@ server {
 server {
     listen 80;
 
-#    server_name lerkasan.net;
-#    server_name localhost;
-#    server_name %DOMAIN_NAME% localhost %PRIVATE_IP%;
-     server_name ${NGINX_HOST} ${PRIVATE_IP} localhost;
+    server_name ${NGINX_HOST} ${PRIVATE_IP} localhost;
 
     ssi off;
     server_tokens off; # hides version on 404 or 500 pages
-#    more_clear_headers 'Server'; # removes Server header from response headers
+
+    client_max_body_size 20M;
 
     # Proxy headers
     proxy_set_header Host $host;
@@ -31,7 +29,7 @@ server {
     add_header X-Frame-Options "SAMEORIGIN";  # avoid clickjacking
     # add_header X-Frame-Options "DENY";
     add_header X-XSS-Protection "1; mode=block";
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self' https://lerkasan.net lerkasan.net boanerges-radio-voice.s3.amazonaws.com; style-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com 'unsafe-inline'; font-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com; frame-src 'self'; connect-src 'self' https://lerkasan.net lerkasan.net api.deepgram.com wss://api.deepgram.com api.deepgram.com https://apis.google.com https://boanerges-radio-voice.s3.us-east-1.amazonaws.com boanerges-radio-voice.s3.us-east-1.amazonaws.com https://transcribe.us-east-1.amazonaws.com transcribe.us-east-1.amazonaws.com; object-src 'none' ";
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self' blob:https://lerkasan.net blob:lerkasan.net https://lerkasan.net lerkasan.net boanerges-radio-voice.s3.amazonaws.com; style-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com 'unsafe-inline'; font-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com; frame-src 'self'; connect-src 'self' https://lerkasan.net lerkasan.net api.deepgram.com wss://api.deepgram.com api.deepgram.com https://apis.google.com https://boanerges-radio-voice.s3.us-east-1.amazonaws.com boanerges-radio-voice.s3.us-east-1.amazonaws.com https://transcribe.us-east-1.amazonaws.com transcribe.us-east-1.amazonaws.com; object-src 'none' ";
     add_header X-Content-Type-Options nosniff;
     # End Security headers
 
