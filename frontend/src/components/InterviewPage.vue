@@ -104,6 +104,11 @@
 </div>
     <div>
         <main>
+            <div v-show="questionAudioUrl" className="audio-player">
+                <audio id="question_audio">
+                    <source :src="questionAudioUrl" :type="mimeType">
+                </audio>
+            </div>
             <div v-if="audioUrl" className="audio-player">
                 <audio id="recorded_audio">
                     <source :src="audioUrl" :type="mimeType">
@@ -286,23 +291,18 @@ async function getQuestion() {
             .then(response => {
                 question.value = response.data.text;
                 questionAudioUrl.value = response.data.audioUrl;
-                let oldQuestionAudio = document.getElementById("question_audio");
-                if (oldQuestionAudio !== undefined && oldQuestionAudio !== null) {
-                    oldQuestionAudio.remove();
+                let questionAudio = document.getElementById("question_audio");
+                if (questionAudio !== undefined && questionAudio !== null) {
+                    loading.value = false;
+                    questionAudio.src = response.data.audioUrl;
+                    questionAudio.controls = false;
+                    questionAudio.autoplay = false;
+                    questionAudio.addEventListener("ended", () => {
+                        audioPlaying.value = false;
+                    });
+                    audioPlaying.value = true;
+                    questionAudio.play();
                 }
-
-                loading.value = false;
-                let questionAudio = document.createElement('audio');
-                questionAudio.id = "question_audio";
-                questionAudio.src = response.data.audioUrl;
-                questionAudio.controls = false;
-                questionAudio.autoplay = false;
-                audioPlaying.value = true;
-                questionAudio.addEventListener("ended", () => {
-                    audioPlaying.value = false;
-                });
-                audioPlaying.value = true;
-                questionAudio.play();
 
                 window.localStorage.setItem('currentQuestion', response.data.text);
                 window.localStorage.setItem('currentQuestionAudio', response.data.audioUrl);
