@@ -122,8 +122,7 @@
 <script setup>
 
 import {ref} from "vue";
-import { TranscribeClient, StartTranscriptionJobCommand, GetTranscriptionJobCommand } from "@aws-sdk/client-transcribe";
-import { S3Client, GetObjectCommand,  PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import apiClient from "@/services/AxiosInstance";
 
 let stream;
@@ -150,10 +149,6 @@ const permission = ref(false);
 const recordingStatus = ref(false);
 const audioUrl = ref("");
 const mimeType = ref(audioMime.mimeType);
-let transcribedText = ref("");
-let transcribingJob = ref("");
-let transcribingJobStatus = ref("");
-let transcribeClient;
 let credentials;
 let transcripts = ref([]);
 let randomUuid;
@@ -368,11 +363,6 @@ async function startRecording() {
     audioPlaying.value = false;
     audioUrl.value = '';
 
-    transcribeClient = new TranscribeClient({
-        region,
-        credentials
-    });
-
     await openWebSocket();
 
     mediaRecorder.value.ondataavailable = async (event) => {
@@ -440,56 +430,7 @@ async function stopRecording() {
     let answerText = transcripts.value.join(' ');
 
     await saveAnswer(answerText, answerS3Url);
-
-    const startTranscribingInput = { // StartTranscriptionJobRequest
-        TranscriptionJobName: "boanerges-transcribe-" + randomUuid,
-        LanguageCode: "en-US",
-        MediaSampleRateHertz: Number(48000),
-        MediaFormat: "webm", // "mp3" || "mp4" || "wav" || "flac" || "ogg" || "amr" || "webm",
-        Media: {
-            MediaFileUri: "s3://boanerges-radio-voice/answerAudio-" + randomUuid + ".webm" //s3 location  s3://DOC-EXAMPLE-BUCKET/my-media-file.flac
-        },
-        OutputBucketName: "boanerges-radio-voice",
-        OutputKey: "automatedresult-" + randomUuid +".json",
     }
-
-    const startTranscribingCmd = new StartTranscriptionJobCommand(startTranscribingInput);
-    transcribingJob.value = await transcribeClient.send(startTranscribingCmd);
-
-    const GetTranscriptionJobInput = {
-        TranscriptionJobName: "boanerges-transcribe-" + randomUuid,
-    };
-    const GetTranscriptionJobCmd = new GetTranscriptionJobCommand(GetTranscriptionJobInput);
-
-    setTimeout(() => {
-        getTranscribedText();
-    }, 150000);
-
-    async function getTranscribedText() {
-        for (let attempts = 0; attempts < 10; attempts++) {
-            let transcribeResponse = await transcribeClient.send(GetTranscriptionJobCmd);
-            transcribingJobStatus.value = transcribeResponse.TranscriptionJob.TranscriptionJobStatus;
-        }
-
-        if (transcribingJobStatus.value === "COMPLETED") {
-            try {
-                let s3GetCmd = new GetObjectCommand({
-                    Bucket: "boanerges-radio-voice",
-                    Key: "automatedresult-"+randomUuid+".json"
-                });
-
-                let s3GetResponse = await s3Client.send(s3GetCmd);
-                let responseBody = await s3GetResponse.Body.transformToString();
-                let responseBodyJson = JSON.parse(responseBody);
-                transcribedText.value = responseBodyJson.results.transcripts[0].transcript;
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-    }
-    }
-    // mediarecorder.onstop ends here
 }
 
 async function getTranscribeCredentials() {
@@ -513,14 +454,12 @@ async function created() {
 }
 
 async function openWebSocket() {
-    // await getMicrophonePermission();
     const DG_URL = 'wss://api.deepgram.com/v1/listen?punctuate=true';
     await getDeepgramToken().then(() => {
         let token = window.localStorage.getItem('deepgramToken');
         socket = new WebSocket(DG_URL, ['token', token])
         socket.onopen = startStreaming;
         socket.onmessage = handleResponse;
-        // socket.onmessage = handleResponse;
         socket.onerror = (error) => {
             console.log("WebSocket error:", error);
         };
