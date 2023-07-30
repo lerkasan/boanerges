@@ -13,7 +13,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.polly.PollyClient;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -54,7 +54,7 @@ public class AppConfig {
     @Bean
     public PollyClient pollyClient() {
         return PollyClient.builder()
-                .credentialsProvider(ProfileCredentialsProvider.create())
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .region(Region.US_EAST_1)
                 .build();
     }
@@ -62,7 +62,7 @@ public class AppConfig {
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-                .credentialsProvider(ProfileCredentialsProvider.create())
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .region(Region.US_EAST_1)
                 .build();
     }
@@ -70,7 +70,7 @@ public class AppConfig {
     @Bean
     public StsClient stsClient() {
         return StsClient.builder()
-                .credentialsProvider(ProfileCredentialsProvider.create())
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .region(Region.US_EAST_1)
                 .build();
     }
@@ -78,7 +78,7 @@ public class AppConfig {
     @Bean
     public S3Presigner s3Presigner() {
         return S3Presigner.builder()
-                .credentialsProvider(ProfileCredentialsProvider.create())
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .region(Region.US_EAST_1)
                 .build();
     }
