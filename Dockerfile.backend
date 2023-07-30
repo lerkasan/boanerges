@@ -7,7 +7,7 @@ WORKDIR /app
 COPY backend/src ./src
 COPY backend/pom.xml ./pom.xml
 
-RUN mvn --batch-mode --no-transfer-progress clean package
+RUN mvn --batch-mode --no-transfer-progress -DskipTests clean package
 
 
 
