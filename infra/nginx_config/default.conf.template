@@ -31,7 +31,7 @@ server {
     add_header X-Frame-Options "SAMEORIGIN";  # avoid clickjacking
     # add_header X-Frame-Options "DENY";
     add_header X-XSS-Protection "1; mode=block";
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self' boanerges-radio-voice.s3.amazonaws.com; style-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com 'unsafe-inline'; font-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com; frame-src 'self'; connect-src 'self' api.deepgram.com wss://api.deepgram.com api.deepgram.com https://apis.google.com https://transcribe.*.amazonaws.com transcribe.*.amazonaws.com; object-src 'none' ";
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self' boanerges-radio-voice.s3.amazonaws.com; style-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com 'unsafe-inline'; font-src 'self' https://fonts.googleapis.com fonts.googleapis.com https://use.fontawesome.com use.fontawesome.com; frame-src 'self'; connect-src 'self' api.deepgram.com wss://api.deepgram.com api.deepgram.com https://apis.google.com https://transcribe.us-east-1.amazonaws.com transcribe.us-east-1.amazonaws.com; object-src 'none' ";
     add_header X-Content-Type-Options nosniff;
     # End Security headers
 
