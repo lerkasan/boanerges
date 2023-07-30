@@ -31,6 +31,11 @@ resource "aws_lb_target_group" "app" {
     unhealthy_threshold = 4
   }
 
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 86400  // 1 day in seconds
+  }
+
   tags = {
     Name        = join("_", [var.project_name, "_app_tg"])
     terraform   = "true"
