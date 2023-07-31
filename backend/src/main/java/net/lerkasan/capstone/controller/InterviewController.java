@@ -50,7 +50,7 @@ public class InterviewController {
     }
 
     @PostMapping
-    public ResponseEntity<InterviewDto> createInterview(@Valid @RequestBody(required = true) InterviewDto interviewDto, Authentication authentication) {
+    public ResponseEntity<InterviewDto> createInterview(@Valid @RequestBody InterviewDto interviewDto, Authentication authentication) {
         User currentUser = userService.findByUsername(authentication.getName());
         Interview interview = interviewDtoMapper.toInterview(interviewDto);
         interview.setUser(currentUser);
@@ -63,5 +63,20 @@ public class InterviewController {
                 .buildAndExpand(createdInterview.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdInterviewDto);
+    }
+
+    @PutMapping(ID)
+    public void renameInterview(@PathVariable Long id, @RequestParam String name, @AuthenticationPrincipal UserDetails currentUser) {
+        User user = userService.findByUsername(currentUser.getUsername());
+        Interview interview = interviewService.findByIdAndUserId(id, user.getId());
+        interview.setName(name);
+        interviewService.update(interview);
+    }
+
+    @DeleteMapping(ID)
+    public void deleteInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
+        User user = userService.findByUsername(currentUser.getUsername());
+        Interview interview = interviewService.findByIdAndUserId(id, user.getId());
+        interviewService.delete(interview);
     }
 }

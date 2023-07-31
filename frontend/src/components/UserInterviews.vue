@@ -3,8 +3,35 @@
 
 import apiClient from "@/services/AxiosInstance";
 import {ref} from "vue";
+import {maxLength, minLength, required} from "@vuelidate/validators";
+import useVuelidate from "@vuelidate/core";
 
+let renaming = ref(-1);
 const interviews = ref();
+
+const form = ref({
+        name: ''
+    }
+)
+
+const rules = {
+    name: {
+        required,
+        min: minLength(3),
+        max: maxLength(500),
+        name_validation: {
+            $validator: validName,
+            $message: 'Only letters, spaces and digits are allowed'
+        },
+    }
+}
+
+const v$ = ref(useVuelidate(rules, form));
+
+function validName(name) {
+    let validNamePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z0-9]+)*$");
+    return validNamePattern.test(name);
+}
 
 getUserInterviews();
 
@@ -18,6 +45,23 @@ async function getUserInterviews() {
     interviews.value = response.data;
     return response.data;
 }
+
+async function deleteInterview(id) {
+    await apiClient.delete(`/interviews/${id}`);
+    window.location.href = "/interviews";
+}
+
+async function renameInterview(id) {
+    if (renaming.value === -1) {
+        renaming.value = id;
+    } else {
+        await apiClient.put(`/interviews/${id}?name=${form.value.name}`)
+            .catch(err => console.log("error " + err));
+        renaming = -1;
+        window.location.href = "/interviews";
+    }
+}
+
 
 </script>
 
@@ -38,14 +82,74 @@ async function getUserInterviews() {
                                     <details class="group">
                                         <summary
                                             class="flex justify-between items-center font-bold cursor-pointer list-none">
-                                            <span> {{ interview.name }} </span>
-                                            <span class="transition group-open:rotate-180">
-                                                <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                                                     stroke="currentColor" stroke-linecap="round"
-                                                     stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
-                                                     width="24"><path d="M6 9l6 6 6-6"></path>
-                                                </svg>
-                                            </span>
+
+                                            <div class="wrapper interview">
+                                                <div class="text-left">
+                                                    <span class="transition group-open:rotate-180">
+                                                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
+                                                            stroke="currentColor" stroke-linecap="round"
+                                                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                                                            width="24"><path d="M6 9l6 6 6-6"></path>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="pl-16">
+                                                        {{ interview.name }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex right-2 justify-center">
+
+                                                    <div v-if="renaming === interview.id">
+                                                        <div :class="{ 'hasError': v$.name.$error }">
+                                                            <i
+                                                                :class="{
+                                                            'text-red-500': v$.name.$error,
+                                                            'text-blue-500': !v$.name.$invalid
+                                                        }">
+                                                            </i>
+                                                            <input
+                                                                id="username"
+                                                                v-model="v$.name.$model"
+                                                                :class="{
+                                                                    'border-red-500 focus:border-red-500': v$.name.$error,
+                                                                    'border-[#42d392] ': !v$.name.$invalid
+                                                                }"
+                                                                class="
+                                                                text-sm px-8 mx-8
+                                                                placeholder-gray-500
+                                                                flex right-2 justify-end
+                                                                rounded-md border border-gray-400
+                                                                focus:outline-none focus:border-blue-400"
+                                                                name="username"
+                                                                placeholder="Enter new name"
+                                                                type="text"
+                                                                @blur="v$.name.$touch"
+                                                            >
+                                                        </div>
+                                                        <!-- Error Message -->
+                                                        <div
+                                                            v-for="(error, index) of v$.name.$errors"
+                                                            :key="index"
+                                                            class="input-errors mb-1 text-xs tracking-wide text-gray-600">
+                                                            <span class="error-msg">{{ error.$message }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <span class="flex right-2 justify-end">
+                                                            <button
+                                                                class="inline-block mx-2 px-6 py-2 border-2 border-blue-600 text-blue-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                                                                @click="renameInterview(interview.id)">
+                                                                    Rename
+                                                            </button>
+                                                            <button
+                                                                class="inline-block mx-2 px-6 py-2 border-2 border-red-600 text-red-600 disabled:opacity-25 font-bold text-sm leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                                                                @click="deleteInterview(interview.id)">
+                                                                    Delete
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </summary>
                                         <div class="text-neutral-600 mt-3 group-open:animate-fadeIn">
                                             <div v-for="question in interview.questions" :key="question.id">
@@ -56,7 +160,7 @@ async function getUserInterviews() {
                                                             {{ question.text }}
                                                         </div>
                                                         <div>
-                                                            <audio controls class="text-left">
+                                                            <audio class="text-left" controls>
                                                                 <source :src="question.audioUrl" type="audio/mpeg">
                                                             </audio>
                                                         </div>
@@ -70,13 +174,12 @@ async function getUserInterviews() {
                                                                 {{ answer.text }}
                                                             </div>
                                                             <div>
-                                                                <audio controls class="text-left">
+                                                                <audio class="text-left" controls>
                                                                     <source :src="answer.audioUrl" type="audio/mpeg">
                                                                 </audio>
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <div v-if="answer.feedback.text"
                                                          class="text-left px-8 mr-2 mb-6 py-6 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white">
                                                         <div class="wrapper question">
@@ -84,7 +187,7 @@ async function getUserInterviews() {
                                                                 {{ answer.feedback.text }}
                                                             </div>
                                                             <div>
-                                                                <audio controls class="text-left">
+                                                                <audio class="text-left" controls>
                                                                     <source :src="answer.feedback.audioUrl"
                                                                             type="audio/mpeg">
                                                                 </audio>
@@ -101,20 +204,22 @@ async function getUserInterviews() {
                     </div>
                 </div>
             </div>
-
             <!-- End Card -->
         </div>
-        <!-- clip-path with :after and :before can achieve this effect also -->
+        <div v-else>
+            No interviews
+        </div>
         <!-- End Grid -->
     </div>
     <!-- End Card Section -->
 </template>
 
-<style scoped lang="css">
+<style lang="css" scoped>
 
 .wrapper {
     display: grid;
     grid-template-columns: 6fr 1fr;
 }
+
 
 </style>
