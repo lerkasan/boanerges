@@ -3,7 +3,6 @@ package net.lerkasan.capstone.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -29,7 +28,6 @@ public class InterviewDto {
     @NonNull
     @NotBlank(message = NAME_FIELD_IS_REQUIRED)
     @Size(min = 3, max = 500)
-    @Pattern(regexp = "^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$", message = NAME_CHARACTERS)
     private String name;
 
     @NonNull

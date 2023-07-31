@@ -8,11 +8,15 @@ import InterviewPage from "@/components/InterviewPage.vue";
 import SelectTopics from "@/components/SelectTopics.vue";
 import RecentQuestions from "@/components/RecentQuestions.vue";
 import UserInterviews from "@/components/UserInterviews.vue";
+import HomePage from "@/components/HomePage.vue";
+import AboutPage from "@/components/AboutPage.vue";
 
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
+        { path: '/', component: HomePage},
+        { path: '/about', component: AboutPage},
         { path: '/signup', component: SignUp},
         { path: '/login', component: LoginForm},
         { path: '/topics', component: SelectTopics},

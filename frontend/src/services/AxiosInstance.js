@@ -25,4 +25,16 @@ apiClient.interceptors.request.use(
     }
 );
 
+apiClient.interceptors.response.use(function (response) {
+    return response;
+}, function (error) {
+    if (401 === error.response.status) {
+        window.localStorage.clear();
+        window.location.href = "/login";
+        // return Promise.resolve(error.response);
+    } else {
+        return Promise.reject(error);
+    }
+});
+
 export default apiClient;

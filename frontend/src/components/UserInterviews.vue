@@ -55,10 +55,12 @@ async function renameInterview(id) {
     if (renaming.value === -1) {
         renaming.value = id;
     } else {
-        await apiClient.put(`/interviews/${id}?name=${form.value.name}`)
-            .catch(err => console.log("error " + err));
-        renaming = -1;
-        window.location.href = "/interviews";
+        renaming.value = -1;
+        if (form.value.name) {
+            await apiClient.put(`/interviews/${id}?name=${form.value.name}`)
+                .catch(err => console.log("error " + err));
+            window.location.href = "/interviews";
+        }
     }
 }
 
@@ -69,16 +71,29 @@ async function renameInterview(id) {
     <!-- Card Section -->
     <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
         <!-- Grid -->
-        <div v-if="interviews">
+        <div v-if="!interviews">
+            <button v-if="loading" type="button" class="bg-indigo-400 h-max w-max justify-center items-center rounded-lg text-white font-bold hover:bg-indigo-300 hover:cursor-not-allowed duration-[500ms,800ms]" disabled>
+                <div class="flex items-center justify-center m-[10px]">
+                    <div class="h-5 w-5 border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                    <div class="ml-2"> Loading... </div>
+                </div>
+            </button>
+        </div>
+        <div v-else-if="!interviews.length">
+            <span class="font-bold text-xl bg-white px-2">
+                No interviews
+            </span>
+        </div>
+        <div v-else>
             <!-- Card -->
 
             <div v-for="interview in interviews" :key="interview.id"
-                 class="checkbox-label group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md transition dark:bg-slate-900 dark:border-gray-800">
-                <div class="p-4 md:p-5">
+                 class="checkbox-label group flex flex-col bg-white bg-opacity-70 border shadow-sm rounded-xl hover:shadow-md transition dark:bg-slate-900 dark:border-gray-800">
+                <div class="p-2 md:p-3">
                     <div class="flex justify-between items-center">
                         <div>
                             <div>
-                                <div class="py-5">
+                                <div class="py-2">
                                     <details class="group">
                                         <summary
                                             class="flex justify-between items-center font-bold cursor-pointer list-none">
@@ -205,9 +220,6 @@ async function renameInterview(id) {
                 </div>
             </div>
             <!-- End Card -->
-        </div>
-        <div v-else>
-            No interviews
         </div>
         <!-- End Grid -->
     </div>

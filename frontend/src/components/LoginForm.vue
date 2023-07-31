@@ -1,6 +1,6 @@
 <template>
     <div
-        class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        class="min-h-screen flex flex-col items-center justify-center bg-opacity-50 bg-gray-100">
         <div class="
           flex flex-col
           bg-white
@@ -166,24 +166,17 @@
                     </div>
                 </form>
             </div>
-        </div>
-        <div class="flex justify-center items-center mt-6">
-            <a
-                href="#"
-                target="_blank"
-                class="
-                inline-flex
-                items-center
-                text-gray-700
-                font-medium
-                text-sm text-center"
-            >
-                <span class="ml-2">Don't have an account?
+            <div class="flex justify-center items-center mt-6">
+                <span class="ml-2 inline-flex
+                    items-center
+                    text-gray-700
+                    font-medium
+                    text-sm text-center">Don't have an account?
                     <router-link class="text-sm ml-2 text-blue-500 font-bold" to="/signup">
                         Sign up
                     </router-link>
                 </span>
-            </a>
+            </div>
         </div>
     </div>
 

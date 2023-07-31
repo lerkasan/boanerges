@@ -55,7 +55,7 @@ function submitTopics() {
                 <div v-if="topics" class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             <!-- Card -->
 
-                    <div v-for="topic in topics" :key="topic.id" class="checkbox-label group flex flex-col bg-white border-2 shadow-sm rounded-xl hover:shadow-md transition dark:bg-slate-900 dark:border-gray-800">
+                    <div v-for="topic in topics" :key="topic.id" class="checkbox-label group flex flex-col bg-opacity-70 bg-white border-4 shadow-sm rounded-xl hover:shadow-md transition dark:bg-slate-900 dark:border-gray-800">
                         <div class="p-4 md:p-5">
                             <div class="flex justify-between items-center">
                                 <div>
@@ -96,7 +96,7 @@ function submitTopics() {
 
 @layer components {
     .checkbox-label:has(input:checked) {
-        @apply border-blue-600 border-2;
+        @apply border-blue-600 border-4;
     }
 }
 

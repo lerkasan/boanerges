@@ -1,5 +1,4 @@
-This project is published at GitHub repository [https://github.com/lerkasan/boanerges](https://github.com/lerkasan/boanerges)
-Moreover, it will be soon deployed at http://lerkasan.net website.
+Please visit the deployed project at [http://lerkasan.net](http://lerkasan.net)
 
 The project is an interactive system that helps job seekers to practice answering technical interview questions.
 
