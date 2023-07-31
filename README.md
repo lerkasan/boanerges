@@ -66,6 +66,13 @@ The project was built using the following technologies:
 - GitHub Actions
 - Terraform
 
+![text2speech.jpg](img%2Ftext2speech.jpg)
+
+![speech2text.jpg](img%2Fspeech2text.jpg)
+
+Project infrastructure:
+![infrastructure _final.jpg](img%2Finfrastructure%20_final.jpg)
+
 Here is a database schema of the project:
 ![database_schema.png](database_schema.png)
 
