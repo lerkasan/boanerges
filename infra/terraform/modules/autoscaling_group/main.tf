@@ -49,7 +49,7 @@ resource "aws_autoscaling_group" "appserver" {
   }
 
   timeouts {
-    delete = "5m"
+    delete = "15m"
   }
 
   tag {
