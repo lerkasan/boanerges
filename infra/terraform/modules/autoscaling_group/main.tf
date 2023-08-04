@@ -35,13 +35,13 @@ resource "aws_autoscaling_group" "appserver" {
   name                      = join("_", [var.project_name, "_autoscaling_group"])
   max_size                  = 2
   min_size                  = 2
-  health_check_grace_period = 1200
+  health_check_grace_period = 1500
   health_check_type         = "ELB"
   desired_capacity          = 2
   target_group_arns         = [ var.alb_target_group_arn ]
   vpc_zone_identifier       = var.private_subnets_ids
 
-  default_instance_warmup     = 300
+#  default_instance_warmup     = 300
 
   launch_template {
     id      = aws_launch_template.appserver.id
