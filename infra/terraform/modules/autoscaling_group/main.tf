@@ -41,6 +41,8 @@ resource "aws_autoscaling_group" "appserver" {
   target_group_arns         = [ var.alb_target_group_arn ]
   vpc_zone_identifier       = var.private_subnets_ids
 
+  default_instance_warmup     = 300
+
   launch_template {
     id      = aws_launch_template.appserver.id
     version = "$Latest"
@@ -84,8 +86,6 @@ resource "aws_launch_template" "appserver" {
   user_data                   = data.cloudinit_config.user_data.rendered
   key_name                    = var.appserver_private_ssh_key_name
   vpc_security_group_ids      = [ var.ec2_sg_id ]
-
-  default_instance_warmup     = 600
 
   monitoring {
     enabled = true
