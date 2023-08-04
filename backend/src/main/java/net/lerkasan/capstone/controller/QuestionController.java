@@ -1,6 +1,7 @@
 package net.lerkasan.capstone.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.dto.QuestionDto;
 import net.lerkasan.capstone.mapper.QuestionDtoMapper;
 import net.lerkasan.capstone.model.Interview;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping
 public class QuestionController {
@@ -26,6 +28,8 @@ public class QuestionController {
     public static final String GENERATE_QUESTIONS_ENDPOINT = "/api/v1/questions";
     public static final String SAVE_QUESTIONS_ENDPOINT = "/api/v1/interviews/{interviewId}/questions";
     public static final String ID = "/{id}";
+    public static final String GENERATING_QUESTION_FOR_TOPIC_WITH_ID = "Generating question for topic with id: {}";
+    public static final String SAVING_QUESTION = "Saving question: {}";
     private final TopicServiceI topicService;
 
     private final QuestionDtoMapper questionDtoMapper;
@@ -46,6 +50,7 @@ public class QuestionController {
 
     @PostMapping(GENERATE_QUESTIONS_ENDPOINT)
     public QuestionDto generateQuestion(@RequestParam Long topicId) {
+        log.info(GENERATING_QUESTION_FOR_TOPIC_WITH_ID, topicId);
         Topic topic = topicService.findById(topicId);
         return questionService.generateQuestion(topic);
     }
@@ -56,6 +61,7 @@ public class QuestionController {
         Interview interview = interviewService.findByIdAndUserId(interviewId, currentUser.getId());
         Question question = questionDtoMapper.toQuestion(questionDto);
         question.setInterview(interview);
+        log.info(SAVING_QUESTION, question);
         Question createdQuestion = questionService.create(question);
         QuestionDto createdQuestionDto = questionDtoMapper.toQuestionDto(createdQuestion);
 
