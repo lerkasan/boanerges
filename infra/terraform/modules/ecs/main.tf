@@ -1,67 +1,67 @@
-resource "aws_iam_role" "backend_iam_role" {
-  name        = join("", [title(var.project_name), "BackendECSTaskRole"])
-  description = "The backend task role for ECS"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_ecs.json
-}
-
-data "aws_iam_policy_document" "assume_role_ecs" {
-  statement {
-    sid           = "ECSAssumeRole"
-    effect        = "Allow"
-    actions       = [ "sts:AssumeRole" ]
-    principals {
-      type        = "Service"
-      identifiers = [ "ecs-tasks.amazonaws.com" ]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "GetSSMParameters" {
-  role       = aws_iam_role.backend_iam_role.name
-  policy_arn = aws_iam_policy.read_access_to_ssm_parameters.arn
-}
-
-resource "aws_iam_policy" "read_access_to_ssm_parameters" {
-  name        = "read-access-to-parameters"
-  description = "Allow to get deployment information to retrieve a commitId hash"
-  policy      = data.aws_iam_policy_document.read_access_to_ssm_parameters.json
-}
-
-data "aws_iam_policy_document" "read_access_to_ssm_parameters" {
-
-  statement {
-    sid       = "SSMGetParameter"
-    effect    = "Allow"
-    actions   = [ "ssm:GetParameter" ]
-    resources = [
-      var.ssm_param_db_host_arn,
-      var.ssm_param_db_name_arn,
-      var.ssm_param_db_username_arn,
-      var.ssm_param_db_password_arn
-    ]
-  }
-
-  statement {
-    sid       = "KMSDecrypt"
-    effect    = "Allow"
-    actions   = [
-      "kms:Decrypt",
-      "kms:DescribeKey"
-    ]
-    resources = [ var.kms_key_arn ]
-  }
-
+#resource "aws_iam_role" "backend_iam_role" {
+#  name        = join("", [title(var.project_name), "BackendECSTaskRole"])
+#  description = "The backend task role for ECS"
+#  assume_role_policy = data.aws_iam_policy_document.assume_role_ecs.json
+#}
+#
+#data "aws_iam_policy_document" "assume_role_ecs" {
 #  statement {
-#    sid       = "CloudWatchLogs"
+#    sid           = "ECSAssumeRole"
+#    effect        = "Allow"
+#    actions       = [ "sts:AssumeRole" ]
+#    principals {
+#      type        = "Service"
+#      identifiers = [ "ecs-tasks.amazonaws.com" ]
+#    }
+#  }
+#}
+#
+#resource "aws_iam_role_policy_attachment" "DecryptAccessToKmsKey" {
+#  role       = aws_iam_role.backend_iam_role.name
+#  policy_arn = aws_iam_policy.decrypt_access_to_kms_key.arn
+#}
+#
+#resource "aws_iam_policy" "decrypt_access_to_kms_key" {
+#  name        = "read-access-to-parameters"
+#  description = "Allow to get deployment information to retrieve a commitId hash"
+#  policy      = data.aws_iam_policy_document.decrypt_access_to_kms_key.json
+#}
+#
+#data "aws_iam_policy_document" "decrypt_access_to_kms_key" {
+#
+##  statement {
+##    sid       = "SSMGetParameter"
+##    effect    = "Allow"
+##    actions   = [ "ssm:GetParameter" ]
+##    resources = [
+##      var.ssm_param_db_host_arn,
+##      var.ssm_param_db_name_arn,
+##      var.ssm_param_db_username_arn,
+##      var.ssm_param_db_password_arn
+##    ]
+##  }
+#
+#  statement {
+#    sid       = "KMSDecrypt"
 #    effect    = "Allow"
 #    actions   = [
-#      "logs:CreateLogStream",
-#      "logs:PutLogEvents",
-#      "logs:CreateLogGroup"
+#      "kms:Decrypt",
+#      "kms:DescribeKey"
 #    ]
-#    resources = [ "*" ]
+#    resources = [ var.kms_key_arn ]
 #  }
-}
+#
+##  statement {
+##    sid       = "CloudWatchLogs"
+##    effect    = "Allow"
+##    actions   = [
+##      "logs:CreateLogStream",
+##      "logs:PutLogEvents",
+##      "logs:CreateLogGroup"
+##    ]
+##    resources = [ "*" ]
+##  }
+#}
 
 
 

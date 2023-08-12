@@ -39,6 +39,137 @@ data "aws_ssm_parameter" "this" {
   name = each.value
 }
 
+data "aws_iam_policy_document" "read_access_to_ssm_parameters" {
+
+  statement {
+    sid       = "SSMGetParameter"
+    effect    = "Allow"
+    actions   = ["ssm:GetParameter"]
+    resources = [ for param in var.secret_params : data.aws_ssm_parameter.this[param] ]
+  }
+}
+
+////
+
+resource "aws_iam_role" "backend_iam_role" {
+  name        = join("", [title(var.project_name), "BackendECSTaskRole"])
+  description = "The backend task role for ECS"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_ecs.json
+}
+
+data "aws_iam_policy_document" "assume_role_ecs" {
+  statement {
+    sid           = "ECSAssumeRole"
+    effect        = "Allow"
+    actions       = [ "sts:AssumeRole" ]
+    principals {
+      type        = "Service"
+      identifiers = [ "ecs-tasks.amazonaws.com" ]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "DecryptAccessToKmsKey" {
+  role       = aws_iam_role.backend_iam_role.name
+  policy_arn = aws_iam_policy.decrypt_access_to_kms_key.arn
+}
+
+resource "aws_iam_role_policy_attachment" "GetSSMParameters" {
+  role       = aws_iam_role.backend_iam_role.name
+  policy_arn = aws_iam_policy.read_access_to_ssm_parameters.arn
+}
+
+resource "aws_iam_policy" "read_access_to_ssm_parameters" {
+  name        = "read-access-to-parameters"
+  description = "Allow to get deployment information to retrieve a commitId hash"
+  policy      = data.aws_iam_policy_document.read_access_to_ssm_parameters.json
+}
+
+resource "aws_iam_policy" "decrypt_access_to_kms_key" {
+  name        = "read-access-to-parameters"
+  description = "Allow to get deployment information to retrieve a commitId hash"
+  policy      = data.aws_iam_policy_document.decrypt_access_to_kms_key.json
+}
+
+data "aws_iam_policy_document" "decrypt_access_to_kms_key" {
+
+  #  statement {
+  #    sid       = "SSMGetParameter"
+  #    effect    = "Allow"
+  #    actions   = [ "ssm:GetParameter" ]
+  #    resources = [
+  #      var.ssm_param_db_host_arn,
+  #      var.ssm_param_db_name_arn,
+  #      var.ssm_param_db_username_arn,
+  #      var.ssm_param_db_password_arn
+  #    ]
+  #  }
+
+  statement {
+    sid       = "KMSDecrypt"
+    effect    = "Allow"
+    actions   = [
+      "kms:Decrypt",
+      "kms:DescribeKey"
+    ]
+    resources = [ module.rds.kms_key_arn ]
+  }
+
+  #  statement {
+  #    sid       = "CloudWatchLogs"
+  #    effect    = "Allow"
+  #    actions   = [
+  #      "logs:CreateLogStream",
+  #      "logs:PutLogEvents",
+  #      "logs:CreateLogGroup"
+  #    ]
+  #    resources = [ "*" ]
+  #  }
+}
+
+////
+
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name        = join("", [title(var.project_name), "ECSTaskExecutionRole"])
+  description = "The task execution role for ECS"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_ecs.json
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonECSTaskExecutionRolePolicy_attachment" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "DecryptAccessToKmsKeyExecutionRole" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.decrypt_access_to_kms_key.arn
+}
+
+resource "aws_iam_role_policy_attachment" "GetSSMParametersExecutionRole" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.read_access_to_ssm_parameters.arn
+}
+
+#resource "aws_iam_policy" "create_cloudwatch_logs" {
+#  name        = "create_cloudwatch_logs"
+#  description = "Allow ECS agent to create cloudwatch logs"
+#  policy      = data.aws_iam_policy_document.create_cloudwatch_logs.json
+#}
+
+#data "aws_iam_policy_document" "create_cloudwatch_logs" {
+#
+#    statement {
+#      sid       = "CloudWatchLogs"
+#      effect    = "Allow"
+#      actions   = [
+#        "logs:CreateLogStream",
+#        "logs:PutLogEvents",
+#        "logs:CreateLogGroup"
+#      ]
+#      resources = [ "*" ]
+#    }
+#}
+
 resource "aws_ecr_repository" "backend" {
   name = "boanerges-backend"
 }
@@ -75,6 +206,7 @@ module "ecs" {
   target_group_arn            = each.value.target_group_arn
   task_name                   = each.value.task_name
   tmp_size_in_mb              = each.value.tmp_size_in_mb
+#  kms_key_arn                 = module.rds.kms_key_arn
 }
 #
 #module "autoscaling_group" {

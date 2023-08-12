@@ -115,3 +115,8 @@ variable "secrets" {
   }))
   sensitive   = true
 }
+
+#variable "kms_key_arn" {
+#  description = "ARN of the KMS key used to encrypt the SSM parameters"
+#  type        = string
+#}
