@@ -1,38 +1,117 @@
-module "autoscaling_group" {
-  source = "./modules/autoscaling_group"
+#locals {
+#  task_name = "${var.project_name}-${var.environment}"
 
-  vpc_id                          = module.network.vpc_id
-  private_subnets_ids             = module.network.private_subnets_ids
-  ec2_sg_id                       = module.security.ec2_sg_id
-  kms_key_arn                     = module.rds.kms_key_arn
-  ssm_param_db_host_arn           = module.rds.ssm_param_db_host_arn
-  ssm_param_db_name_arn           = module.rds.ssm_param_db_name_arn
-  ssm_param_db_password_arn       = module.rds.ssm_param_db_password_arn
-  ssm_param_db_username_arn       = module.rds.ssm_param_db_username_arn
-  codedeploy_deployment_group_arn = module.codedeploy.deployment_group_arn
-  ec2_connect_endpoint_sg_id      = module.security.ec2_connect_endpoint_sg_id
-  alb_target_group_arn            = module.loadbalancer.target_group_arn
+#  env_vars = [
+#    {
+#      name  = "DB_PORT",
+#      value = var.database_port
+#    },
+#    {
+#      name  = "SPRING_SERVER_PORT",
+#      value = var.spring_server_port
+#    }
+#  ]
 
-  project_name = var.project_name
-  environment  = var.environment
-  aws_region   = var.aws_region
-  az_letters   = var.az_letters
+#  secret_params = [
+#    "DB_HOST",
+#    "DB_NAME",
+#    "DB_USERNAME",
+#    "DB_PASSWORD",
+#    "AWS_STS_ROLE_ARN",
+#    "DEEPGRAM_API_KEY",
+#    "DEEPGRAM_PROJECT_ID",
+#    "OPENAI_API_KEY",
+#    "SMTP_USERNAME",
+#    "SMTP_PASSWORD"
+#  ]
 
-  ec2_instance_type   = "t3.micro"
-  os                  = "ubuntu"
-  os_architecture     = "amd64"
-  os_version          = "22.04"
-  os_releases         = { "22.04" = "jammy" }
-  ami_virtualization  = "hvm"
-  ami_architectures   = { "amd64" = "x86_64" }
-  ami_owner_ids       = {"ubuntu" = "099720109477" }   #Canonical
+#  secrets = [ for secret in var.secret_params:
+#    {
+#      name = secret,
+#      valueFrom = data.aws_ssm_parameter.this[secret].arn
+#    }
+#  ]
 
-  appserver_private_ssh_key_name = "appserver_ssh_key"
-  admin_public_ssh_keys = [ "admin_public_ssh_key"]
+#}
 
-# Dependency is used to ensure that EC2 instance will have Internet access during userdata execution to be able to install packages
-  depends_on = [module.network.internet_gateway_id, module.network.nat_gateway_ids]
+data "aws_ssm_parameter" "this" {
+  for_each = var.secret_params
+  name = each.value
 }
+
+resource "aws_ecr_repository" "backend" {
+  name = "boanerges-backend"
+}
+
+resource "aws_ecr_repository" "frontend" {
+  name = "boanerges-frontend"
+}
+
+resource "aws_ecs_cluster" "boanerges" {
+  name = "boanerges"
+}
+
+module "ecs" {
+  for_each = var.services
+#  for_each = { for service in var.services : service.service_name => service }
+
+  source = "./modules/ecs"
+
+  awslogs_group               = each.value.awslogs_group
+  cluster_id                  = each.value.cluster_id
+  container_count             = each.value.container_count
+  container_cpu               = each.value.container_cpu
+  container_image             = each.value.container_image
+  container_memory            = each.value.container_memory
+  container_port              = each.value.container_port
+  ecs_task_role_arn           = each.value.ecs_task_role_arn
+  ecs_task_execution_role_arn = each.value.ecs_task_execution_role_arn
+  env_vars                    = each.value.env_vars
+  secrets                     = each.value.secrets
+  grace_period_in_seconds     = each.value.grace_period_in_seconds
+  private_subnets_ids         = each.value.private_subnets_ids
+  security_group_ids          = each.value.security_group_ids
+  service_name                = each.value.service_name
+  target_group_arn            = each.value.target_group_arn
+  task_name                   = each.value.task_name
+  tmp_size_in_mb              = each.value.tmp_size_in_mb
+}
+#
+#module "autoscaling_group" {
+#  source = "./modules/autoscaling_group"
+#
+#  vpc_id                          = module.network.vpc_id
+#  private_subnets_ids             = module.network.private_subnets_ids
+#  ec2_sg_id                       = module.security.ec2_sg_id
+#  kms_key_arn                     = module.rds.kms_key_arn
+#  ssm_param_db_host_arn           = module.rds.ssm_param_db_host_arn
+#  ssm_param_db_name_arn           = module.rds.ssm_param_db_name_arn
+#  ssm_param_db_password_arn       = module.rds.ssm_param_db_password_arn
+#  ssm_param_db_username_arn       = module.rds.ssm_param_db_username_arn
+#  codedeploy_deployment_group_arn = module.codedeploy.deployment_group_arn
+#  ec2_connect_endpoint_sg_id      = module.security.ec2_connect_endpoint_sg_id
+#  alb_target_group_arn            = module.loadbalancer.target_group_arn
+#
+#  project_name = var.project_name
+#  environment  = var.environment
+#  aws_region   = var.aws_region
+#  az_letters   = var.az_letters
+#
+#  ec2_instance_type   = "t3.micro"
+#  os                  = "ubuntu"
+#  os_architecture     = "amd64"
+#  os_version          = "22.04"
+#  os_releases         = { "22.04" = "jammy" }
+#  ami_virtualization  = "hvm"
+#  ami_architectures   = { "amd64" = "x86_64" }
+#  ami_owner_ids       = {"ubuntu" = "099720109477" }   #Canonical
+#
+#  appserver_private_ssh_key_name = "appserver_ssh_key"
+#  admin_public_ssh_keys = [ "admin_public_ssh_key"]
+#
+## Dependency is used to ensure that EC2 instance will have Internet access during userdata execution to be able to install packages
+#  depends_on = [module.network.internet_gateway_id, module.network.nat_gateway_ids]
+#}
 
 module "loadbalancer" {
   source = "./modules/loadbalancer"
@@ -54,7 +133,7 @@ module "rds" {
   vpc_id              = module.network.vpc_id
   private_subnets_ids = module.network.private_subnets_ids
   rds_sg_id           = module.security.rds_sg_id
-  iam_role_arn        = module.autoscaling_group.iam_role_arn
+  iam_role_arn        = module.ecs["backend"].task_role_arn
 
   project_name = var.project_name
   environment  = var.environment
@@ -71,15 +150,15 @@ module "rds" {
   database_username   = var.database_username
 }
 
-module "codedeploy" {
-  source = "./modules/codedeploy"
-
-  target_group_name      = module.loadbalancer.target_group_name
-  autoscaling_group_name = module.autoscaling_group.name
-
-  project_name = var.project_name
-  environment  = var.environment
-}
+#module "codedeploy" {
+#  source = "./modules/codedeploy"
+#
+#  target_group_name      = module.loadbalancer.target_group_name
+#  autoscaling_group_name = module.autoscaling_group.name
+#
+#  project_name = var.project_name
+#  environment  = var.environment
+#}
 
 module "network" {
   source = "./modules/network"

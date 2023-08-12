@@ -1,0 +1,38 @@
+[
+  {
+    "name": "${container_name}",
+    "image": "${container_image}",
+    "essential": true,
+    "readonlyRootFilesystem": true,
+    "tmpfs": [
+      {
+        "containerPath": "/tmp",
+        "size": ${tmp_size_in_mb}
+      }
+    ],
+    "linuxParameters": {
+      "capabilities": {
+        "drop": [
+          "ALL"
+        ]
+      }
+    },
+    "portMappings": [
+      {
+        "containerPort": ${container_port},
+        "hostPort": ${host_port}
+      }
+    ],
+    "environment": ${env_variables},
+    "secrets": ${secrets},
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-region" : "${aws_region}",
+        "awslogs-group" : "${awslogs_group}",
+        "awslogs-stream-prefix" : "${awslogs_stream_prefix}",
+        "tag": "{{ with split .ImageName \":\" }}{{join . \"_\"}}{{end}}/{{.Name}}/{{.ID}}"
+      }
+    }
+  }
+]

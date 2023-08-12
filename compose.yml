@@ -23,7 +23,7 @@ services:
       - NGINX_HOST=lerkasan.net
       - PRIVATE_IP
     volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
+#      - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/logs:/var/log/nginx/
     ports:
       - "80:80"
