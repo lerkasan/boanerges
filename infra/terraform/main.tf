@@ -35,7 +35,7 @@
 #}
 
 data "aws_ssm_parameter" "this" {
-  for_each = var.secret_params
+  for_each = toset(var.secret_params)
   name = each.value
 }
 
@@ -183,8 +183,8 @@ resource "aws_ecs_cluster" "boanerges" {
 }
 
 module "ecs" {
-  for_each = var.services
-#  for_each = { for service in var.services : service.service_name => service }
+#  for_each = toset(var.services.service_name)
+  for_each = { for service in var.services : service.service_name => service }
 
   source = "./modules/ecs"
 
@@ -265,7 +265,9 @@ module "rds" {
   vpc_id              = module.network.vpc_id
   private_subnets_ids = module.network.private_subnets_ids
   rds_sg_id           = module.security.rds_sg_id
-  iam_role_arn        = module.ecs["backend"].task_role_arn
+  iam_role_arn        = aws_iam_role.ecs_task_execution_role.arn
+#  iam_role_arn        = module.ecs.task_role_arn
+#  iam_role_arn        = module.ecs[join("-", [var.project_name, "-backend"])].task_role_arn
 
   project_name = var.project_name
   environment  = var.environment

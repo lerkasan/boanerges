@@ -112,14 +112,14 @@ resource "aws_ecs_service" "this" {
     security_groups  = var.security_group_ids
   }
 
-  log_configuration {
-    log_driver: "awslogs"
-    options = {
-      awslogs-region  = var.aws_region
-      awslogs-group   = var.awslogs_group
-      tag             = "{{ with split .ImageName \":\" }}{{join . \"_\"}}{{end}}/{{.Name}}/{{.ID}}"
-    }
-  }
+#  log_configuration {
+#    log_driver = "awslogs"
+#    options    = {
+#      awslogs-region  = var.aws_region
+#      awslogs-group   = var.awslogs_group
+#      tag             = "{{ with split .ImageName \":\" }}{{join . \"_\"}}{{end}}/{{.Name}}/{{.ID}}"
+#    }
+#  }
 
 #  "logConfiguration": {
 #    "logDriver": "awslogs",

@@ -59,6 +59,7 @@ variable "spring_server_port" {
 variable "secret_params" {
   description = "list of secret ssm parameters"
   type        = list(string)
+  default     = []
 }
 
 locals {
