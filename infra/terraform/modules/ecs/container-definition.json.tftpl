@@ -30,8 +30,7 @@
       "options": {
         "awslogs-region" : "${aws_region}",
         "awslogs-group" : "${awslogs_group}",
-        "awslogs-stream-prefix" : "${awslogs_stream_prefix}",
-        "tag": "{{ with split .ImageName \":\" }}{{join . \"_\"}}{{end}}/{{.Name}}/{{.ID}}"
+        "awslogs-stream-prefix" : "${awslogs_stream_prefix}"
       }
     }
   }

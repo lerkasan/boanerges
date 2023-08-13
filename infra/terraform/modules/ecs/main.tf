@@ -69,14 +69,18 @@ data "template_file" "container_definition" {
   template = file("${path.module}/container-definition.json.tftpl")
 
   vars = {
+    aws_region            = var.aws_region
     container_name        = var.task_name
     #    container_image       = "${var.aws_account}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project_name}-backend:latest"
 #    container_image       = aws_ecr_repository.boanerges.repository_url/"${var.project_name}-backend:latest"
     container_image       = var.container_image
     container_port        = var.container_port
+    host_port             = var.container_port
     tmp_size_in_mb        = var.tmp_size_in_mb
     env_variables         = jsonencode(var.env_vars)
     secrets               = jsonencode(var.secrets)
+    awslogs_group         = "boanerges__ecs_logs"
+    awslogs_stream_prefix = "boanerges"
   }
 }
 

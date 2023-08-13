@@ -16,10 +16,11 @@ resource "aws_lb" "app" {
 }
 
 resource "aws_lb_target_group" "frontend" {
-  name     = join("-", [var.project_name, "-frontend-tg"])
-  port     = local.http_port
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = join("-", [var.project_name, "-frontend-tg"])
+  port        = local.http_port
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
   deregistration_delay = 300
 
   health_check {
@@ -46,16 +47,17 @@ resource "aws_lb_target_group" "frontend" {
 }
 
 resource "aws_lb_target_group" "backend" {
-  name     = join("-", [var.project_name, "-backend-tg"])
-  port     = local.http_port
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = join("-", [var.project_name, "-backend-tg"])
+  port        = local.http_port
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
   deregistration_delay = 300
 
   health_check {
     healthy_threshold   = 3
     interval            = 60
-    matcher              = "200"
+    matcher             = "200"
     path                = "/api/health"
     protocol            = "HTTP"
     timeout             = 30

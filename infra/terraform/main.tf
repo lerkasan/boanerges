@@ -34,9 +34,25 @@
 
 #}
 
+locals {
+  secrets = [ for secret in var.secret_params:
+    {
+      name = secret,
+      valueFrom = data.aws_ssm_parameter.this[secret].arn
+    }
+  ]
+}
+
 data "aws_ssm_parameter" "this" {
   for_each = toset(var.secret_params)
   name = each.value
+
+  depends_on = [
+    module.rds.ssm_param_db_host_arn,
+    module.rds.ssm_param_db_name_arn,
+    module.rds.ssm_param_db_username_arn,
+    module.rds.ssm_param_db_password_arn
+  ]
 }
 
 data "aws_iam_policy_document" "read_access_to_ssm_parameters" {
@@ -45,7 +61,7 @@ data "aws_iam_policy_document" "read_access_to_ssm_parameters" {
     sid       = "SSMGetParameter"
     effect    = "Allow"
     actions   = ["ssm:GetParameter"]
-    resources = [ for param in var.secret_params : data.aws_ssm_parameter.this[param] ]
+    resources = [ for param in var.secret_params : data.aws_ssm_parameter.this[param].arn ]
   }
 }
 
@@ -86,7 +102,7 @@ resource "aws_iam_policy" "read_access_to_ssm_parameters" {
 }
 
 resource "aws_iam_policy" "decrypt_access_to_kms_key" {
-  name        = "read-access-to-parameters"
+  name        = "decrypt-access-to-kms-key"
   description = "Allow to get deployment information to retrieve a commitId hash"
   policy      = data.aws_iam_policy_document.decrypt_access_to_kms_key.json
 }
@@ -170,13 +186,13 @@ resource "aws_iam_role_policy_attachment" "GetSSMParametersExecutionRole" {
 #    }
 #}
 
-resource "aws_ecr_repository" "backend" {
-  name = "boanerges-backend"
-}
-
-resource "aws_ecr_repository" "frontend" {
-  name = "boanerges-frontend"
-}
+#resource "aws_ecr_repository" "backend" {
+#  name = "boanerges-backend"
+#}
+#
+#resource "aws_ecr_repository" "frontend" {
+#  name = "boanerges-frontend"
+#}
 
 resource "aws_ecs_cluster" "boanerges" {
   name = "boanerges"
@@ -189,21 +205,21 @@ module "ecs" {
   source = "./modules/ecs"
 
   awslogs_group               = each.value.awslogs_group
-  cluster_id                  = each.value.cluster_id
+  cluster_id                  = aws_ecs_cluster.boanerges.id
   container_count             = each.value.container_count
   container_cpu               = each.value.container_cpu
   container_image             = each.value.container_image
   container_memory            = each.value.container_memory
   container_port              = each.value.container_port
-  ecs_task_role_arn           = each.value.ecs_task_role_arn
-  ecs_task_execution_role_arn = each.value.ecs_task_execution_role_arn
-  env_vars                    = each.value.env_vars
-  secrets                     = each.value.secrets
+  ecs_task_role_arn           = aws_iam_role.ecs_task_execution_role.arn
+  ecs_task_execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  env_vars                    = var.env_vars
+  secrets                     = local.secrets
   grace_period_in_seconds     = each.value.grace_period_in_seconds
-  private_subnets_ids         = each.value.private_subnets_ids
-  security_group_ids          = each.value.security_group_ids
+  private_subnets_ids         = module.network.private_subnets_ids
+  security_group_ids          = [ module.security.frontend_security_group_id ]
   service_name                = each.value.service_name
-  target_group_arn            = each.value.target_group_arn
+  target_group_arn            = module.loadbalancer.frontend_target_group_arn
   task_name                   = each.value.task_name
   tmp_size_in_mb              = each.value.tmp_size_in_mb
 #  kms_key_arn                 = module.rds.kms_key_arn
@@ -257,6 +273,8 @@ module "loadbalancer" {
   environment  = var.environment
   aws_region   = var.aws_region
   az_letters   = var.az_letters
+
+  depends_on = []
 }
 
 module "rds" {
