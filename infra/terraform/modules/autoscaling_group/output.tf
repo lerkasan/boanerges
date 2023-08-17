@@ -8,6 +8,10 @@ output "iam_role_arn" {
   description = "IAM role ARN of the EC2 instances"
 }
 
+output "arn" {
+  value       = aws_autoscaling_group.appserver.arn
+  description = "ARN of the autoscaling group"
+}
 output "name" {
   value       = aws_autoscaling_group.appserver.name
   description = "Name of the autoscaling group"

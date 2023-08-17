@@ -56,11 +56,11 @@ variable "database_password" {
 #  default     = 8080
 #}
 
-variable "secret_params" {
-  description = "list of secret ssm parameters"
-  type        = list(string)
-  default     = []
-}
+#variable "secret_params" {
+#  description = "list of secret ssm parameters"
+#  type        = list(string)
+#  default     = []
+#}
 
 #locals {
 #  secrets = [
@@ -110,23 +110,38 @@ variable "services" {
       container_port              = number
 #      ecs_task_role_arn           = string
 #      ecs_task_execution_role_arn = string
-#      env_vars                    = list(object(
-#        {
-#          name = string
-#          value = string
-#        }
-#      ))
+      env_vars                    = list(object(
+        {
+          name = string
+          value = string
+        }
+      ))
 #      secrets                     = list(object(
 #        {
 #          name = string
 #          valueFrom = string
 #        }
 #      ))
+      secrets                     = list(string)
+      capabilities                = list(string)
       grace_period_in_seconds     = number
 #      private_subnets_ids         = list(string)
 #      security_group_ids          = list(string)
 #      target_group_arn            = string
-      tmp_size_in_mb              = number
+#      tmp_size_in_mb              = number
+      tmpfs                       = list(object(
+        {
+          containerPath = string
+          size          = number
+        }
+      ))
+      volumes                     = list(object(
+        {
+          name          = string
+          hostPath      = string
+          containerPath = string
+        }
+      ))
     }
   ))
   default = []

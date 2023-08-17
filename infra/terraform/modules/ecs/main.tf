@@ -76,23 +76,54 @@ data "template_file" "container_definition" {
     container_image       = var.container_image
     container_port        = var.container_port
     host_port             = var.container_port
-    tmp_size_in_mb        = var.tmp_size_in_mb
+    capabilities          = jsonencode(var.capabilities)
+    tmpfs                 = jsonencode(var.tmpfs)
     env_variables         = jsonencode(var.env_vars)
     secrets               = jsonencode(var.secrets)
+    volume_mounts         = jsonencode(
+      [ for volume in var.volumes:
+        {
+          containerPath = volume.containerPath,
+          sourceVolume  = volume.name
+        }
+      ]
+    )
     awslogs_group         = "boanerges__ecs_logs"
     awslogs_stream_prefix = "boanerges"
   }
 }
 
+#"mountPoints": [
+#  {
+#    "containerPath": "/etc/nginx/conf.d",
+#    "sourceVolume": "nginx-conf"
+#  }
+#],
+
 resource "aws_ecs_task_definition" "this" {
   family                = var.task_name
   container_definitions = data.template_file.container_definition.rendered
+
+#  volume {
+#    name      = "nginx-conf"
+#    host_path = "nginx-conf"
+#  }
+
+  dynamic "volume" {
+    for_each = var.volumes
+
+    content {
+      name      = volume.value.name
+      host_path = volume.value.hostPath
+    }
+  }
+
   task_role_arn         = var.ecs_task_role_arn
 
   network_mode             = "awsvpc"
   cpu                      = var.container_cpu
   memory                   = var.container_memory
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["EC2"]
   execution_role_arn       = var.ecs_task_execution_role_arn
 }
 
@@ -100,7 +131,7 @@ resource "aws_ecs_service" "this" {
   name            = var.service_name
   cluster         = var.cluster_id
   task_definition = aws_ecs_task_definition.this.arn
-  launch_type     = "FARGATE"
+  launch_type     = "EC2"
   desired_count   = var.container_count
 
   health_check_grace_period_seconds = var.grace_period_in_seconds
@@ -114,6 +145,19 @@ resource "aws_ecs_service" "this" {
   network_configuration {
     subnets          = var.private_subnets_ids
     security_groups  = var.security_group_ids
+  }
+
+
+  ## Spread tasks evenly accross all Availability Zones for High Availability
+  ordered_placement_strategy {
+    type  = "spread"
+    field = "attribute:ecs.availability-zone"
+  }
+
+  ## Make use of all available space on the Container Instances
+  ordered_placement_strategy {
+    type  = "binpack"
+    field = "memory"
   }
 
 #  log_configuration {
@@ -141,6 +185,40 @@ resource "aws_ecs_service" "this" {
 
   tags = {
     Name        = join("_", [var.project_name, "_ecs_service"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
+resource "aws_ecs_capacity_provider" "this" {
+  name  = "${var.project_name}_ECS_CapacityProvider_${var.environment}"
+
+  auto_scaling_group_provider {
+    auto_scaling_group_arn         = var.auto_scaling_group_arn
+#    managed_termination_protection = "ENABLED"
+
+#    managed_scaling {
+#      maximum_scaling_step_size = var.maximum_scaling_step_size
+#      minimum_scaling_step_size = var.minimum_scaling_step_size
+#      status                    = "ENABLED"
+#      target_capacity           = var.target_capacity
+#    }
+
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "this" {
+  cluster_name       = var.cluster_name
+  capacity_providers = [aws_ecs_capacity_provider.this.name]
+}
+
+
+resource "aws_cloudwatch_log_group" "ecs_logs" {
+  name          = join("_", [var.project_name, "ecs_logs"])
+
+  tags          = {
+    Name        = join("_", [var.project_name, "nginx_log_group"])
     terraform   = "true"
     environment = var.environment
     project     = var.project_name

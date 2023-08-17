@@ -48,7 +48,7 @@ resource "aws_lb_target_group" "frontend" {
 
 resource "aws_lb_target_group" "backend" {
   name        = join("-", [var.project_name, "-backend-tg"])
-  port        = local.http_port
+  port        = local.backend_http_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
@@ -168,7 +168,8 @@ data "aws_acm_certificate" "lerkasan_net" {
 }
 
 locals {
-  http_port = 80
+  http_port  = 80
   https_port = 443
+  backend_http_port = 8080
   availability_zones = [for az_letter in var.az_letters : format("%s%s", var.aws_region, az_letter)]
 }

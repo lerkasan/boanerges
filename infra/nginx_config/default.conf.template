@@ -69,13 +69,13 @@ server {
 
 
     # Backend
-    location /api/ {
-        proxy_pass http://backend:8080/api/;
-        proxy_redirect off;
-        autoindex off;
-
-        limit_except GET HEAD POST PUT DELETE { deny all; }
-    }
+#    location /api/ {
+#        proxy_pass http://backend:8080/api/;
+#        proxy_redirect off;
+#        autoindex off;
+#
+#        limit_except GET HEAD POST PUT DELETE { deny all; }
+#    }
 
     # Frontend
     location / {

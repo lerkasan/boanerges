@@ -4,17 +4,13 @@
     "image": "${container_image}",
     "essential": true,
     "readonlyRootFilesystem": true,
-    "tmpfs": [
-      {
-        "containerPath": "/tmp",
-        "size": ${tmp_size_in_mb}
-      }
-    ],
+    "tmpfs": ${tmpfs},
     "linuxParameters": {
       "capabilities": {
         "drop": [
           "ALL"
-        ]
+        ],
+        "add": ${capabilities}
       }
     },
     "portMappings": [
@@ -25,6 +21,7 @@
     ],
     "environment": ${env_variables},
     "secrets": ${secrets},
+    "mountPoints": ${volume_mounts},
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {

@@ -1,3 +1,16 @@
+resource "aws_security_group" "ec2_ecs_node" {
+  name        = join("_", [var.project_name, "_ec2_ecs_node_security_group"])
+  description = "security group for EC2 nodes of ECS cluster"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name        = join("_", [var.project_name, "_ec2_ecs_node_sg"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
 resource "aws_security_group" "backend" {
   name        = join("_", [var.project_name, "_backend_security_group"])
   description = "security group for application backend server"
@@ -24,18 +37,18 @@ resource "aws_security_group" "frontend" {
   }
 }
 
-#resource "aws_security_group" "ec2_connect_endpoint" {
-#  name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
-#  description = "security group for ec2 instance connect endpoint"
-#  vpc_id      = var.vpc_id
-#
-#  tags = {
-#    Name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
-#    terraform   = "true"
-#    environment = var.environment
-#    project     = var.project_name
-#  }
-#}
+resource "aws_security_group" "ec2_connect_endpoint" {
+  name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
+  description = "security group for ec2 instance connect endpoint"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name        = join("_", [var.project_name, "ec2_connect_endpoint_sg"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
 
 resource "aws_security_group" "alb" {
   name        = join("_", [var.project_name, "_alb_security_group"])
@@ -173,6 +186,26 @@ resource "aws_security_group_rule" "frontend_allow_outbound_http_to_all" {
   security_group_id = aws_security_group.frontend.id
 }
 
+resource "aws_security_group_rule" "ec2_ecs_node_allow_outbound_https_to_all" {
+  type              = "egress"
+  description       = "HTTPS egress"
+  from_port         = local.https_port
+  to_port           = local.https_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.ec2_ecs_node.id
+}
+
+resource "aws_security_group_rule" "ec2_ecs_node_allow_outbound_http_to_all" {
+  type              = "egress"
+  description       = "HTTP egress"
+  from_port         = local.http_port
+  to_port           = local.http_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.ec2_ecs_node.id
+}
+
 resource "aws_security_group_rule" "backend_allow_outbound_smtps_to_all" {
   type              = "egress"
   description       = "SMTPS egress"
@@ -183,25 +216,25 @@ resource "aws_security_group_rule" "backend_allow_outbound_smtps_to_all" {
   security_group_id = aws_security_group.backend.id
 }
 
-#resource "aws_security_group_rule" "appserver_allow_inbound_ssh_from_ec2_connect_endpoint" {
-#  type              = "ingress"
-#  description       = "SSH ingress"
-#  from_port         = local.ssh_port
-#  to_port           = local.ssh_port
-#  protocol          = "tcp"
-#  source_security_group_id = aws_security_group.ec2_connect_endpoint.id
-#  security_group_id = aws_security_group.backend.id
-#}
-#
-#resource "aws_security_group_rule" "appserver_allow_inbound_ssh_from_admin_ip" {
-#  type              = "ingress"
-#  description       = "SSH ingress"
-#  from_port         = local.ssh_port
-#  to_port           = local.ssh_port
-#  protocol          = "tcp"
-#  cidr_blocks       = [format("%s/%s", local.admin_public_ip, 32)]
-#  security_group_id = aws_security_group.backend.id
-#}
+resource "aws_security_group_rule" "ec2_ecs_node_allow_inbound_ssh_from_ec2_connect_endpoint" {
+  type              = "ingress"
+  description       = "SSH ingress"
+  from_port         = local.ssh_port
+  to_port           = local.ssh_port
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.ec2_connect_endpoint.id
+  security_group_id = aws_security_group.ec2_ecs_node.id
+}
+
+resource "aws_security_group_rule" "ec2_ecs_node_allow_inbound_ssh_from_admin_ip" {
+  type              = "ingress"
+  description       = "SSH ingress"
+  from_port         = local.ssh_port
+  to_port           = local.ssh_port
+  protocol          = "tcp"
+  cidr_blocks       = [format("%s/%s", local.admin_public_ip, 32)]
+  security_group_id = aws_security_group.ec2_ecs_node.id
+}
 
 resource "aws_security_group_rule" "backend_allow_outbound_to_database" {
   type                     = "egress"
@@ -229,15 +262,15 @@ resource "aws_security_group_rule" "database_allow_inbound_from_backend" {
 
 # -------------------- EC2 Instance Connect Endpoint rules ---------------------------
 
-#resource "aws_security_group_rule" "ec2_connect_endpoint_allow_outbound_ssh_to_appserver" {
-#  type              = "egress"
-#  description       = "SSH egress"
-#  from_port         = local.ssh_port
-#  to_port           = local.ssh_port
-#  protocol          = "tcp"
-#  source_security_group_id = aws_security_group.backend.id
-#  security_group_id        = aws_security_group.ec2_connect_endpoint.id
-#}
+resource "aws_security_group_rule" "ec2_connect_endpoint_allow_outbound_ssh_to_ec2_ecs_node" {
+  type              = "egress"
+  description       = "SSH egress"
+  from_port         = local.ssh_port
+  to_port           = local.ssh_port
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.ec2_ecs_node.id
+  security_group_id        = aws_security_group.ec2_connect_endpoint.id
+}
 
 locals {
   ssh_port   = 22

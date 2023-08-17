@@ -34,17 +34,19 @@
 
 #}
 
-locals {
-  secrets = [ for secret in var.secret_params:
-    {
-      name = secret,
-      valueFrom = data.aws_ssm_parameter.this[secret].arn
-    }
-  ]
-}
+#locals {
+#  secrets = [ for secret in var.secret_params:
+#    {
+#      name = secret,
+#      valueFrom = data.aws_ssm_parameter.this[secret].arn
+#    }
+#  ]
+#}
 
-data "aws_ssm_parameter" "this" {
-  for_each = toset(var.secret_params)
+data "aws_ssm_parameter" "backend_secret" {
+#  for_each = toset(var.secret_params)
+  for_each = toset(var.services[0].secrets)
+
   name = each.value
 
   depends_on = [
@@ -60,8 +62,11 @@ data "aws_iam_policy_document" "read_access_to_ssm_parameters" {
   statement {
     sid       = "SSMGetParameter"
     effect    = "Allow"
-    actions   = ["ssm:GetParameter"]
-    resources = [ for param in var.secret_params : data.aws_ssm_parameter.this[param].arn ]
+    actions   = [
+      "ssm:GetParameter",
+      "ssm:GetParameters"
+    ]
+    resources = [ for param in var.services[0].secrets : data.aws_ssm_parameter.backend_secret[param].arn ]
   }
 }
 
@@ -204,8 +209,10 @@ module "ecs" {
 
   source = "./modules/ecs"
 
+  auto_scaling_group_arn      = module.autoscaling_group.arn
   awslogs_group               = each.value.awslogs_group
   cluster_id                  = aws_ecs_cluster.boanerges.id
+  cluster_name                = aws_ecs_cluster.boanerges.name
   container_count             = each.value.container_count
   container_cpu               = each.value.container_cpu
   container_image             = each.value.container_image
@@ -213,53 +220,70 @@ module "ecs" {
   container_port              = each.value.container_port
   ecs_task_role_arn           = aws_iam_role.ecs_task_execution_role.arn
   ecs_task_execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  env_vars                    = var.env_vars
-  secrets                     = local.secrets
+#  secrets                     = local.secrets
   grace_period_in_seconds     = each.value.grace_period_in_seconds
   private_subnets_ids         = module.network.private_subnets_ids
-  security_group_ids          = [ module.security.frontend_security_group_id ]
+  security_group_ids          = [ each.value.service_name == "${var.project_name}-frontend" ? module.security.frontend_security_group_id : module.security.backend_security_group_id ]
   service_name                = each.value.service_name
-  target_group_arn            = module.loadbalancer.frontend_target_group_arn
+  target_group_arn            = each.value.service_name == "${var.project_name}-frontend" ? module.loadbalancer.frontend_target_group_arn : module.loadbalancer.backend_target_group_arn
   task_name                   = each.value.task_name
-  tmp_size_in_mb              = each.value.tmp_size_in_mb
+#  tmp_size_in_mb              = each.value.tmp_size_in_mb
 #  kms_key_arn                 = module.rds.kms_key_arn
+
+  capabilities                = each.value.capabilities
+
+  tmpfs                       = each.value.tmpfs
+
+  env_vars                    = each.value.env_vars
+
+  volumes                     = each.value.volumes
+
+  secrets                     = [ for secret in each.value.secrets:
+    {
+      name = secret,
+      valueFrom = data.aws_ssm_parameter.backend_secret[secret].arn
+    }
+  ]
 }
 #
-#module "autoscaling_group" {
-#  source = "./modules/autoscaling_group"
-#
-#  vpc_id                          = module.network.vpc_id
-#  private_subnets_ids             = module.network.private_subnets_ids
-#  ec2_sg_id                       = module.security.ec2_sg_id
-#  kms_key_arn                     = module.rds.kms_key_arn
-#  ssm_param_db_host_arn           = module.rds.ssm_param_db_host_arn
-#  ssm_param_db_name_arn           = module.rds.ssm_param_db_name_arn
-#  ssm_param_db_password_arn       = module.rds.ssm_param_db_password_arn
-#  ssm_param_db_username_arn       = module.rds.ssm_param_db_username_arn
+module "autoscaling_group" {
+  source = "./modules/autoscaling_group"
+
+  vpc_id                          = module.network.vpc_id
+  private_subnets_ids             = module.network.private_subnets_ids
+  ec2_sg_id                       = module.security.ec2_sg_id
+  kms_key_arn                     = module.rds.kms_key_arn
+  ssm_param_db_host_arn           = module.rds.ssm_param_db_host_arn
+  ssm_param_db_name_arn           = module.rds.ssm_param_db_name_arn
+  ssm_param_db_password_arn       = module.rds.ssm_param_db_password_arn
+  ssm_param_db_username_arn       = module.rds.ssm_param_db_username_arn
 #  codedeploy_deployment_group_arn = module.codedeploy.deployment_group_arn
-#  ec2_connect_endpoint_sg_id      = module.security.ec2_connect_endpoint_sg_id
+  ec2_connect_endpoint_sg_id      = module.security.ec2_connect_endpoint_sg_id
 #  alb_target_group_arn            = module.loadbalancer.target_group_arn
-#
-#  project_name = var.project_name
-#  environment  = var.environment
-#  aws_region   = var.aws_region
-#  az_letters   = var.az_letters
-#
+
+  ecs_cluster_name                = aws_ecs_cluster.boanerges.name
+
+  project_name = var.project_name
+  environment  = var.environment
+  aws_region   = var.aws_region
+  az_letters   = var.az_letters
+
+  ec2_instance_type   = "t3.medium"
 #  ec2_instance_type   = "t3.micro"
-#  os                  = "ubuntu"
-#  os_architecture     = "amd64"
-#  os_version          = "22.04"
-#  os_releases         = { "22.04" = "jammy" }
-#  ami_virtualization  = "hvm"
-#  ami_architectures   = { "amd64" = "x86_64" }
-#  ami_owner_ids       = {"ubuntu" = "099720109477" }   #Canonical
-#
-#  appserver_private_ssh_key_name = "appserver_ssh_key"
-#  admin_public_ssh_keys = [ "admin_public_ssh_key"]
-#
-## Dependency is used to ensure that EC2 instance will have Internet access during userdata execution to be able to install packages
-#  depends_on = [module.network.internet_gateway_id, module.network.nat_gateway_ids]
-#}
+  os                  = "ubuntu"
+  os_architecture     = "amd64"
+  os_version          = "22.04"
+  os_releases         = { "22.04" = "jammy" }
+  ami_virtualization  = "hvm"
+  ami_architectures   = { "amd64" = "x86_64" }
+  ami_owner_ids       = {"ubuntu" = "099720109477" }   #Canonical
+
+  appserver_private_ssh_key_name = "appserver_ssh_key"
+  admin_public_ssh_keys = [ "admin_public_ssh_key"]
+
+# Dependency is used to ensure that EC2 instance will have Internet access during userdata execution to be able to install packages
+  depends_on = [module.network.internet_gateway_id, module.network.nat_gateway_ids]
+}
 
 module "loadbalancer" {
   source = "./modules/loadbalancer"

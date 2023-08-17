@@ -24,4 +24,13 @@ public class HomeRedirectController {
                 .location(URI.create(HTTP_LOCALHOST_8080))
                 .build();
     }
+
+    @GetMapping("/api/health")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Void> healthCheck() {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
 }

@@ -33,18 +33,18 @@
 
 resource "aws_autoscaling_group" "appserver" {
   name                      = join("_", [var.project_name, "_autoscaling_group"])
-  max_size                  = 2
+  max_size                  = 3
   min_size                  = 2
   health_check_grace_period = 1500
   health_check_type         = "ELB"
-  desired_capacity          = 2
-  target_group_arns         = [ var.alb_target_group_arn ]
+  desired_capacity          = 3
+#  target_group_arns         = [ var.alb_target_group_arn ]
   vpc_zone_identifier       = var.private_subnets_ids
 
 #  default_instance_warmup     = 300
 
   launch_template {
-    id      = aws_launch_template.appserver.id
+    id      = aws_launch_template.ecs_node.id
     version = "$Latest"
   }
 
@@ -75,15 +75,31 @@ resource "aws_autoscaling_group" "appserver" {
     value               = var.project_name
     propagate_at_launch = true
   }
+
+  tag {
+    key                 = "AmazonECSManaged"
+    value               = true
+    propagate_at_launch = true
+  }
+}
+
+data "template_file" "ecs_node_user_data" {
+  template = file("${path.module}/templates/ecs_userdata.sh")
+
+  vars = {
+    ecs_cluster_name = var.ecs_cluster_name
+  }
 }
 
 
-resource "aws_launch_template" "appserver" {
-  name                        = join("_", [var.project_name, "_appserver"])
+resource "aws_launch_template" "ecs_node" {
+  name                        = join("_", [var.project_name, "_ecs_node"])
 
-  image_id                    = data.aws_ami.ubuntu.id
+  image_id                    = data.aws_ami.amazon_linux2.id
+#  image_id                    = data.aws_ami.ubuntu.id
   instance_type               = var.ec2_instance_type
-  user_data                   = data.cloudinit_config.user_data.rendered
+  user_data                   = base64encode(data.template_file.ecs_node_user_data.rendered)
+#  user_data                   = data.cloudinit_config.user_data.rendered
   key_name                    = var.appserver_private_ssh_key_name
   vpc_security_group_ids      = [ var.ec2_sg_id ]
 
@@ -136,7 +152,10 @@ data "aws_iam_policy_document" "assume_role_ec2" {
     actions       = [ "sts:AssumeRole" ]
     principals {
       type        = "Service"
-      identifiers = [ "ec2.amazonaws.com" ]
+      identifiers = [
+        "ec2.amazonaws.com",
+        "ecs.amazonaws.com"
+      ]
     }
   }
 }
@@ -146,71 +165,114 @@ resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "GetDeploymentAndGetSSMParameter" {
+resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" {
   role       = aws_iam_role.appserver_iam_role.name
-  policy_arn = aws_iam_policy.read_access_to_parameters_and_deployments.arn
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
-resource "aws_iam_policy" "read_access_to_parameters_and_deployments" {
-  name        = "read-access-to-parameters-and-deployments"
-  description = "Allow to get deployment information to retrieve a commitId hash"
-  policy      = data.aws_iam_policy_document.read_access_to_parameters_and_deployments.json
-}
+#resource "aws_iam_role_policy_attachment" "GetDeploymentAndGetSSMParameter" {
+#  role       = aws_iam_role.appserver_iam_role.name
+#  policy_arn = aws_iam_policy.read_access_to_parameters_and_deployments.arn
+#}
+#
+#resource "aws_iam_policy" "read_access_to_parameters_and_deployments" {
+#  name        = "read-access-to-parameters-and-deployments"
+#  description = "Allow to get deployment information to retrieve a commitId hash"
+#  policy      = data.aws_iam_policy_document.read_access_to_parameters_and_deployments.json
+#}
 
-data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
-  statement {
-    sid       = "CodeDeployGetDeployments"
-    effect    = "Allow"
-    actions   = [
-      "codedeploy:GetDeployment",
-      "codedeploy:ListDeployments"
-    ]
-    resources = [ var.codedeploy_deployment_group_arn ]
-  }
-
-  statement {
-    sid       = "SSMGetParameter"
-    effect    = "Allow"
-    actions   = [ "ssm:GetParameter" ]
-    resources = [
-      var.ssm_param_db_host_arn,
-      var.ssm_param_db_name_arn,
-      var.ssm_param_db_username_arn,
-      var.ssm_param_db_password_arn
-    ]
-  }
-
-  statement {
-    sid       = "KMSDecrypt"
-    effect    = "Allow"
-    actions   = [
-      "kms:Decrypt",
-      "kms:DescribeKey"
-    ]
-    resources = [ var.kms_key_arn ]
-  }
-
-  statement {
-    sid       = "CloudWatchLogs"
-    effect    = "Allow"
-    actions   = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-      "logs:CreateLogGroup"
-    ]
-    resources = [ "*" ]
-  }
-}
+#data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
+##  statement {
+##    sid       = "CodeDeployGetDeployments"
+##    effect    = "Allow"
+##    actions   = [
+##      "codedeploy:GetDeployment",
+##      "codedeploy:ListDeployments"
+##    ]
+##    resources = [ var.codedeploy_deployment_group_arn ]
+##  }
+#
+#  statement {
+#    sid       = "SSMGetParameter"
+#    effect    = "Allow"
+#    actions   = [ "ssm:GetParameter" ]
+#    resources = [
+#      var.ssm_param_db_host_arn,
+#      var.ssm_param_db_name_arn,
+#      var.ssm_param_db_username_arn,
+#      var.ssm_param_db_password_arn
+#    ]
+#  }
+#
+#  statement {
+#    sid       = "KMSDecrypt"
+#    effect    = "Allow"
+#    actions   = [
+#      "kms:Decrypt",
+#      "kms:DescribeKey"
+#    ]
+#    resources = [ var.kms_key_arn ]
+#  }
+#
+#  statement {
+#    sid       = "CloudWatchLogs"
+#    effect    = "Allow"
+#    actions   = [
+#      "logs:CreateLogStream",
+#      "logs:PutLogEvents",
+#      "logs:CreateLogGroup"
+#    ]
+#    resources = [ "*" ]
+#  }
+#}
 
 data "aws_ami" "amazon_linux2" {
   owners      = ["amazon"]
   most_recent = true
 
   filter {
+    name   = "virtualization-type"
+    values = [ var.ami_virtualization ]
+  }
+
+  filter {
+    name   = "architecture"
+    values = [ local.ami_architecture ]
+  }
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-ebs"]
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
   }
 }
+
+
+#data "aws_ami" "amazon_linux_2" {
+#  most_recent = true
+#
+#  filter {
+#    name   = "virtualization-type"
+#    values = ["hvm"]
+#  }
+#
+#  filter {
+#    name   = "owner-alias"
+#    values = ["amazon"]
+#  }
+#
+#  filter {
+#    name   = "name"
+#    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+#  }
+#
+#  owners = ["amazon"]
+#}
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true

@@ -49,6 +49,16 @@ variable "ecs_task_execution_role_arn" {
   type        = string
 }
 
+variable "auto_scaling_group_arn" {
+  description = "ARN of a auto scaling group of a capacity provider"
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "Cluster name"
+  type        = string
+}
+
 variable "awslogs_group" {
   description = "awslogs group for ECS service"
   type        = string
@@ -79,10 +89,10 @@ variable "container_memory" {
   type        = number
 }
 
-variable "tmp_size_in_mb" {
-  description = "Container /tmp size in MB"
-  type        = number
-}
+#variable "tmp_size_in_mb" {
+#  description = "Container /tmp size in MB"
+#  type        = number
+#}
 
 variable "grace_period_in_seconds" {
   description = "Container grace period in seconds"
@@ -94,9 +104,31 @@ variable "private_subnets_ids" {
   type        = list(string)
 }
 
+variable "capabilities" {
+  description = "List of linux kernel capabilities to add to service"
+  type        = list(string)
+}
+
 variable "security_group_ids" {
   description = "List of ids of security groups"
   type        = list(string)
+}
+
+variable "tmpfs" {
+  description = "Temporary filesystems"
+  type        = list(object({
+    containerPath = string
+    size          = number
+  }))
+}
+
+variable "volumes" {
+  description = "Volumes"
+  type        = list(object({
+    name          = string
+    hostPath      = string
+    containerPath = string
+  }))
 }
 
 variable "env_vars" {
