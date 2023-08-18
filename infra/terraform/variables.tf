@@ -112,8 +112,8 @@ variable "services" {
 #      ecs_task_execution_role_arn = string
       env_vars                    = list(object(
         {
-          name = string
-          value = string
+          name  = string
+          value = any
         }
       ))
 #      secrets                     = list(object(

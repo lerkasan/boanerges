@@ -84,6 +84,10 @@ services = [
       {
         name  = "SPRING_SERVER_PORT",
         value = 8080
+      },
+      {
+        name  = "AWS_REGION",
+        value = "us-east-1"
       }
     ]
     capabilities = []
