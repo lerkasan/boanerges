@@ -4,7 +4,16 @@ server {
     listen 80 default_server;
     listen [::]:80 ipv6only=on default_server;
     server_name _;
-    deny all;
+
+    # deny all;
+
+    if ($http_user_agent ~* (ELB-HealthChecker/2.0)) {
+        return 200;
+    }
+
+    if ($http_user_agent !~* (ELB-HealthChecker/2.0)) {
+        return 403;
+    }
 }
 
 server {

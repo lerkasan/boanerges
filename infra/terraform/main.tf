@@ -244,6 +244,8 @@ module "ecs" {
       valueFrom = data.aws_ssm_parameter.backend_secret[secret].arn
     }
   ]
+
+  depends_on = [ module.rds ]
 }
 #
 module "autoscaling_group" {
