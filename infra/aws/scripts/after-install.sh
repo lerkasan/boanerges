@@ -10,7 +10,7 @@ REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
 
 DEPLOYMENT_ID=$(aws deploy list-deployments --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP_NAME --region $REGION --include-only-statuses "InProgress" --query "deployments[0]" --output text --no-paginate)
 
-GITHUB_TOKEN=$(aws ssm get-parameter --region $REGION --name GITHUB_TOKEN --with-decryption --query Parameter.Value --output text)
+GITHUB_TOKEN=$(aws ssm get-parameter --region $REGION --name ${APPLICATION_NAME^^}_GITHUB_TOKEN --with-decryption --query Parameter.Value --output text)
 COMMIT_SHA=$(aws deploy get-deployment --deployment-id $DEPLOYMENT_ID --query "deploymentInfo.revision.gitHubLocation.commitId" --output text)
 REPOSITORY=$(aws deploy get-deployment --deployment-id $DEPLOYMENT_ID --query "deploymentInfo.revision.gitHubLocation.repository" --output text)
 GITHUB_USER=$(echo $REPOSITORY | cut -d "/" -f 1)

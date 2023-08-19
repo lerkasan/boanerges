@@ -140,7 +140,7 @@ resource "aws_route_table" "private" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = each.value.id
+    nat_gateway_id = each.value.id
   }
 
   tags = {

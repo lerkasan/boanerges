@@ -4,6 +4,7 @@
     "image": "${container_image}",
     "essential": true,
     "readonlyRootFilesystem": true,
+    "cpu": ${container_cpu},
     "tmpfs": ${tmpfs},
     "linuxParameters": {
       "capabilities": {
@@ -15,6 +16,7 @@
     },
     "portMappings": [
       {
+        "protocol": "tcp",
         "containerPort": ${container_port},
         "hostPort": ${host_port}
       }
@@ -22,6 +24,13 @@
     "environment": ${env_variables},
     "secrets": ${secrets},
     "mountPoints": ${volume_mounts},
+    "volumesFrom": [],
+    "healthcheck": {
+      "command": [ "CMD-SHELL", "curl -f http://localhost:${container_port} || exit 1" ],
+      "interval": 60,
+      "retries": 5,
+      "timeout": 30
+    },
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {

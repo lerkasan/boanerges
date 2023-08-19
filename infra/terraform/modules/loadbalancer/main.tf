@@ -20,7 +20,8 @@ resource "aws_lb_target_group" "frontend" {
   port        = local.http_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "ip"
+#  target_type = "instance"  # compatible with network_mode="bridge" of aws_ecs_task_definition resource
+  target_type = "ip"  # compatible with network_mode="awsvpc" of aws_ecs_task_definition resource
   deregistration_delay = 300
 
   health_check {
@@ -51,7 +52,8 @@ resource "aws_lb_target_group" "backend" {
   port        = local.backend_http_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "ip"
+#  target_type = "instance"   # compatible with network_mode="bridge" of aws_ecs_task_definition resource
+  target_type = "ip"          # compatible with network_mode="awsvpc" of aws_ecs_task_definition resource
   deregistration_delay = 300
 
   health_check {

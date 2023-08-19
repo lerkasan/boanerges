@@ -75,6 +75,7 @@ data "template_file" "container_definition" {
 #    container_image       = aws_ecr_repository.boanerges.repository_url/"${var.project_name}-backend:latest"
     container_image       = var.container_image
     container_port        = var.container_port
+    container_cpu        = var.container_cpu
     host_port             = var.container_port
     capabilities          = jsonencode(var.capabilities)
     tmpfs                 = jsonencode(var.tmpfs)
@@ -120,7 +121,8 @@ resource "aws_ecs_task_definition" "this" {
 
   task_role_arn         = var.ecs_task_role_arn
 
-  network_mode             = "awsvpc"
+  network_mode             = "awsvpc"  # compatible with target_type="ip" of aws_lb_target_group resource. awsvpc mode needs awsvpctrunking to increase max limit of ENI (elastic network interfaces) per ec2 instance to avoid RESOURCE:ENI error. awsvpctrunking is available only for some ec2 instance types. https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-eni.html
+#  network_mode             = "bridge"   # compatible with target_type="instance" of aws_lb_target_group resource. bridge mode might cause "host port in use" issues when ecs tries to start several same tasks (containers)
   cpu                      = var.container_cpu
   memory                   = var.container_memory
   requires_compatibilities = ["EC2"]
@@ -142,7 +144,7 @@ resource "aws_ecs_service" "this" {
     container_port   = var.container_port
   }
 
-  network_configuration {
+  network_configuration {   # required for task definitions that use the awsvpc network mode, and not supported for other network modes
     subnets          = var.private_subnets_ids
     security_groups  = var.security_group_ids
   }
@@ -196,14 +198,14 @@ resource "aws_ecs_capacity_provider" "this" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = var.auto_scaling_group_arn
-#    managed_termination_protection = "ENABLED"
+    managed_termination_protection = "ENABLED"
 
-#    managed_scaling {
-#      maximum_scaling_step_size = var.maximum_scaling_step_size
-#      minimum_scaling_step_size = var.minimum_scaling_step_size
-#      status                    = "ENABLED"
-#      target_capacity           = var.target_capacity
-#    }
+    managed_scaling {
+      maximum_scaling_step_size = 2
+      minimum_scaling_step_size = 1
+      status                    = "ENABLED"
+      target_capacity           = 3
+    }
 
   }
 }

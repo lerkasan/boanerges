@@ -34,4 +34,6 @@ COPY infra/nginx_config/default.conf.template /etc/nginx/templates/default.conf.
 #RUN chown nginx:nginx /docker-entrypoint.d/insert_domain_name_in_config.sh && \
 #    chmod +x /docker-entrypoint.d/insert_domain_name_in_config.sh
 
+RUN apk add curl
+
 EXPOSE 80

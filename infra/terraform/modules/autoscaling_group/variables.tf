@@ -166,6 +166,16 @@ variable "ec2_sg_id" {
   type        = string
 }
 
+#variable "frontend_sg_id" {
+#  description = "Id of the frontend security group for EC2 instance"  #  for bridge network mode of task definition
+#  type        = string
+#}
+#
+#variable "backend_sg_id" {
+#  description = "Id of the backend security group for EC2 instance"  # for bridge network mode of task definition
+#  type        = string
+#}
+
 variable "ec2_connect_endpoint_sg_id" {
   description = "Id of the security group for EC2 instance connect endpoint"
   type        = string

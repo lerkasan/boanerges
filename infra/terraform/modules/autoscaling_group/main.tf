@@ -33,7 +33,7 @@
 
 resource "aws_autoscaling_group" "appserver" {
   name                      = join("_", [var.project_name, "_autoscaling_group"])
-  max_size                  = 3
+  max_size                  = 4
   min_size                  = 2
   health_check_grace_period = 1500
   health_check_type         = "ELB"
@@ -101,6 +101,7 @@ resource "aws_launch_template" "ecs_node" {
   user_data                   = base64encode(data.template_file.ecs_node_user_data.rendered)
 #  user_data                   = data.cloudinit_config.user_data.rendered
   key_name                    = var.appserver_private_ssh_key_name
+#  vpc_security_group_ids      = [ var.ec2_sg_id, var.frontend_sg_id, var.backend_sg_id ]   # for bridge network mode of task definition
   vpc_security_group_ids      = [ var.ec2_sg_id ]
 
   monitoring {
