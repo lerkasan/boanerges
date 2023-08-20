@@ -33,19 +33,40 @@
 
 resource "aws_autoscaling_group" "appserver" {
   name                      = join("_", [var.project_name, "_autoscaling_group"])
-  max_size                  = 4
-  min_size                  = 2
+  max_size                  = 6
+  min_size                  = 2 # 2
   health_check_grace_period = 1500
   health_check_type         = "ELB"
-  desired_capacity          = 3
+  desired_capacity          = 2 # 2
 #  target_group_arns         = [ var.alb_target_group_arn ]
   vpc_zone_identifier       = var.private_subnets_ids
 
+  protect_from_scale_in     = true   #  To enable managed termination protection for a capacity provider, the Auto Scaling group must have instance protection from scale in enabled
+
 #  default_instance_warmup     = 300
+
+  enabled_metrics = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances"
+  ]
 
   launch_template {
     id      = aws_launch_template.ecs_node.id
     version = "$Latest"
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   timeouts {

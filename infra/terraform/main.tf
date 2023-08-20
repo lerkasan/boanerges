@@ -199,6 +199,17 @@ resource "aws_iam_role_policy_attachment" "GetSSMParametersExecutionRole" {
 #  name = "boanerges-frontend"
 #}
 
+resource "aws_cloudwatch_log_group" "ecs_logs" {
+  name          = join("_", [var.project_name, "ecs_logs"])
+
+  tags          = {
+    Name        = join("_", [var.project_name, "nginx_log_group"])
+    terraform   = "true"
+    environment = var.environment
+    project     = var.project_name
+  }
+}
+
 resource "aws_ecs_cluster" "boanerges" {
   name = "boanerges"
 }
@@ -273,7 +284,7 @@ module "autoscaling_group" {
   aws_region   = var.aws_region
   az_letters   = var.az_letters
 
-  ec2_instance_type   = "t3.medium"  # it's better (than t3.micro) for awsvpc network mode of ecs task definition, as t3.medium can have a maximum of 3 ENI (elastic network interfaces) - 1 for ec2 instance and 1 per a ecs task. So only 2 tasks can run on t3.medium not causing RESOURCE:ENI error. In order to have more ENI awsvpctrunking is available for some ec2 instance types. t3 family is not compatible with awsvpctrunking https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-eni.html
+  ec2_instance_type   = "t3.small"  # it's better (than t3.micro) for awsvpc network mode of ecs task definition, as t3.small can have a maximum of 3 ENI (elastic network interfaces) - 1 for ec2 instance and 1 per a ecs task. So only 2 tasks can run on t3.medium not causing RESOURCE:ENI error. In order to have more ENI awsvpctrunking is available for some ec2 instance types. t3 family is not compatible with awsvpctrunking https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-eni.html
 #  ec2_instance_type   = "t3.micro"
   os                  = "ubuntu"
   os_architecture     = "amd64"

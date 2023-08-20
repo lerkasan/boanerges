@@ -198,13 +198,13 @@ resource "aws_ecs_capacity_provider" "this" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = var.auto_scaling_group_arn
-    managed_termination_protection = "ENABLED"
+    managed_termination_protection = "ENABLED"   # To enable managed termination protection for a capacity provider, the Auto Scaling group must have instance protection from scale in enabled
 
     managed_scaling {
       maximum_scaling_step_size = 2
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
-      target_capacity           = 3
+      target_capacity           = 100
     }
 
   }
@@ -215,14 +215,46 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
   capacity_providers = [aws_ecs_capacity_provider.this.name]
 }
 
+resource "aws_appautoscaling_target" "ecs_target" {
+  max_capacity       = 4
+  min_capacity       = 2
+  resource_id        = "service/${var.cluster_name}/${aws_ecs_service.this.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
 
-resource "aws_cloudwatch_log_group" "ecs_logs" {
-  name          = join("_", [var.project_name, "ecs_logs"])
+resource "aws_appautoscaling_policy" "ecs_cpu_policy" {
+  name               = "${var.project_name}_CPUTargetTrackingScaling_${var.environment}"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
 
-  tags          = {
-    Name        = join("_", [var.project_name, "nginx_log_group"])
-    terraform   = "true"
-    environment = var.environment
-    project     = var.project_name
+  target_tracking_scaling_policy_configuration {
+    target_value = 85
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
+
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+  }
+}
+
+resource "aws_appautoscaling_policy" "ecs_memory_policy" {
+  name               = "${var.project_name}_MemoryTargetTrackingScaling_${var.environment}"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    target_value = 85
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
+
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
   }
 }
