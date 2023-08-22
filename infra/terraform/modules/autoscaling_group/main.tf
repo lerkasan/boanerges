@@ -121,7 +121,8 @@ data "template_file" "ecs_node_user_data" {
 resource "aws_launch_template" "ecs_node" {
   name                        = join("_", [var.project_name, "_ecs_node"])
 
-  image_id                    = data.aws_ami.amazon_linux2.id
+  image_id                    = data.aws_ami.amazon_linux_2023.id
+#  image_id                    = data.aws_ami.amazon_linux2.id
 #  image_id                    = data.aws_ami.ubuntu.id
   instance_type               = var.ec2_instance_type
   user_data                   = base64encode(data.template_file.ecs_node_user_data.rendered)
@@ -275,6 +276,32 @@ data "aws_ami" "amazon_linux2" {
   filter {
     name   = "name"
     values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+  }
+}
+
+data "aws_ami" "amazon_linux_2023" {
+  owners      = ["amazon"]
+  most_recent = true
+
+  filter {
+    name   = "virtualization-type"
+    values = [ var.ami_virtualization ]
+  }
+
+  filter {
+    name   = "architecture"
+    values = [ local.ami_architecture ]
+  }
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-ecs-hvm-*-x86_64"]  # al2023-ami-ecs-hvm-2023.0.20230809-kernel-6.1-x86_64
+#    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]   # amzn2-ami-ecs-hvm-2.0.20230809-x86_64-ebs
   }
 }
 
