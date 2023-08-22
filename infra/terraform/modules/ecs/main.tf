@@ -133,7 +133,15 @@ resource "aws_ecs_service" "this" {
   name            = var.service_name
   cluster         = var.cluster_id
   task_definition = aws_ecs_task_definition.this.arn
-  launch_type     = "EC2"
+#  launch_type     = "EC2"   # replaced with capacity_provider_strategy to allow ec2 autoscaling to be triggered
+
+  force_new_deployment = true
+
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.this.name  ## TODO TODO TODO with force_new_deployment = true
+    weight = 1
+  }
+
   desired_count   = var.container_count
 
   health_check_grace_period_seconds = var.grace_period_in_seconds
@@ -197,11 +205,11 @@ resource "aws_ecs_capacity_provider" "this" {
   name  = "${var.project_name}_ECS_CapacityProvider_${var.environment}"
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = var.auto_scaling_group_arn
+    auto_scaling_group_arn         = var.autoscaling_group_arn
     managed_termination_protection = "ENABLED"   # To enable managed termination protection for a capacity provider, the Auto Scaling group must have instance protection from scale in enabled
 
     managed_scaling {
-      maximum_scaling_step_size = 2
+      maximum_scaling_step_size = 1
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
       target_capacity           = 100

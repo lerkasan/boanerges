@@ -49,10 +49,15 @@ variable "ecs_task_execution_role_arn" {
   type        = string
 }
 
-variable "auto_scaling_group_arn" {
+variable "autoscaling_group_arn" {
   description = "ARN of a auto scaling group of a capacity provider"
   type        = string
 }
+
+#variable "autoscaling_group_name" {
+#  description = "Name of a auto scaling group of a capacity provider"
+#  type        = string
+#}
 
 variable "cluster_name" {
   description = "Cluster name"

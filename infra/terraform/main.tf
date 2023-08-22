@@ -220,7 +220,8 @@ module "ecs" {
 
   source = "./modules/ecs"
 
-  auto_scaling_group_arn      = module.autoscaling_group.arn
+  autoscaling_group_arn      = module.autoscaling_group.arn
+#  autoscaling_group_name      = module.autoscaling_group.name
   awslogs_group               = each.value.awslogs_group
   cluster_id                  = aws_ecs_cluster.boanerges.id
   cluster_name                = aws_ecs_cluster.boanerges.name

@@ -33,7 +33,7 @@
 
 resource "aws_autoscaling_group" "appserver" {
   name                      = join("_", [var.project_name, "_autoscaling_group"])
-  max_size                  = 6
+  max_size                  = 4
   min_size                  = 2 # 2
   health_check_grace_period = 1500
   health_check_type         = "ELB"
@@ -44,6 +44,8 @@ resource "aws_autoscaling_group" "appserver" {
   protect_from_scale_in     = true   #  To enable managed termination protection for a capacity provider, the Auto Scaling group must have instance protection from scale in enabled
 
 #  default_instance_warmup     = 300
+
+  default_cooldown          = 300
 
   enabled_metrics = [
     "GroupMinSize",
@@ -67,6 +69,9 @@ resource "aws_autoscaling_group" "appserver" {
 
   lifecycle {
     create_before_destroy = true
+
+    # Optional: Allow external changes without Terraform plan difference
+    ignore_changes = [ desired_capacity ]
   }
 
   timeouts {
