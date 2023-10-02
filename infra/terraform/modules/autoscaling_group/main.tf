@@ -121,9 +121,9 @@ data "template_file" "ecs_node_user_data" {
 resource "aws_launch_template" "ecs_node" {
   name                        = join("_", [var.project_name, "_ecs_node"])
 
-  image_id                    = data.aws_ami.amazon_linux_2023.id
+#  image_id                    = data.aws_ami.amazon_linux_2023.id
 #  image_id                    = data.aws_ami.amazon_linux2.id
-#  image_id                    = data.aws_ami.ubuntu.id
+  image_id                    = data.aws_ami.ubuntu.id
   instance_type               = var.ec2_instance_type
   user_data                   = base64encode(data.template_file.ecs_node_user_data.rendered)
 #  user_data                   = data.cloudinit_config.user_data.rendered
