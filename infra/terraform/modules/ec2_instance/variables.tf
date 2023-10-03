@@ -170,8 +170,3 @@ variable "ec2_connect_endpoint_sg_id" {
   description = "Id of the security group for EC2 instance connect endpoint"
   type        = string
 }
-
-variable "alb_target_group_arn" {
-  description = "A target group arn of a load balancer"
-  type        = string
-}

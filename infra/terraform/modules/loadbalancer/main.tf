@@ -20,16 +20,16 @@ resource "aws_lb_target_group" "app" {
   port     = local.http_port
   protocol = "HTTP"
   vpc_id   = var.vpc_id
-  deregistration_delay = 300
+  deregistration_delay = 30
 
   health_check {
-    healthy_threshold   = 3
+    healthy_threshold   = 5
     interval            = 60
     matcher              = "200"
     path                = "/"
     protocol            = "HTTP"
-    timeout             = 30
-    unhealthy_threshold = 5
+    timeout             = 10
+    unhealthy_threshold = 4
   }
 
   stickiness {
@@ -45,15 +45,14 @@ resource "aws_lb_target_group" "app" {
   }
 }
 
-#resource "aws_lb_target_group_attachment" "app" {
-#  for_each         = toset(local.availability_zones)
-#
-#  target_group_arn = aws_lb_target_group.app.arn
-#  target_id        = aws_lb.app.arn
-##  target_id        = var.ec2_instances_ids[index(local.availability_zones, each.value)]
-##  target_id        = aws_instance.appserver[each.value].id
-#  port             = local.http_port
-#}
+resource "aws_lb_target_group_attachment" "app" {
+  for_each         = toset(local.availability_zones)
+
+  target_group_arn = aws_lb_target_group.app.arn
+  target_id        = var.ec2_instances_ids[index(local.availability_zones, each.value)]
+#  target_id        = aws_instance.appserver[each.value].id
+  port             = local.http_port
+}
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app.arn

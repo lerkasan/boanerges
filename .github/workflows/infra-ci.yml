@@ -18,7 +18,7 @@ jobs:
 
   infrastructure:
     name: Provision AWS infrastructure
-    if: (github.ref == 'refs/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     permissions:
       contents: read
       id-token: write  # GitHub OIDC Token
@@ -29,8 +29,7 @@ jobs:
   deploy:
     name: Deploy to AWS
     needs: [ infrastructure ]
-    if: (github.ref == 'refs/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
-#    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     permissions:
       contents: read
       id-token: write  # GitHub OIDC Token

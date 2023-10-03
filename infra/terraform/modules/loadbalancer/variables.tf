@@ -38,10 +38,10 @@ variable "public_subnets_ids" {
 
 # ----------------- EC2 parameters ---------------------
 
-#variable "ec2_instances_ids" {
-#  description = "A list of ec2 instances ids"
-#  type        = list(string)
-#}
+variable "ec2_instances_ids" {
+  description = "A list of ec2 instances ids"
+  type        = list(string)
+}
 
 # ----------------- Security parameters ---------------------
 

@@ -34,7 +34,6 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
 resource "aws_codedeploy_deployment_group" "this" {
   app_name                = aws_codedeploy_app.this.name
   deployment_group_name   = "production"
-  autoscaling_groups      = [var.autoscaling_group_name]
   service_role_arn        = aws_iam_role.codedeploy.arn
   deployment_config_name  = "CodeDeployDefault.OneAtATime"
   #  deployment_config_name = aws_codedeploy_deployment_config.this.id

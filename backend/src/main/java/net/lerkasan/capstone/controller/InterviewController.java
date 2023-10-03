@@ -1,7 +1,6 @@
 package net.lerkasan.capstone.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lerkasan.capstone.dto.InterviewDto;
 import net.lerkasan.capstone.mapper.InterviewDtoMapper;
 import net.lerkasan.capstone.model.Interview;
@@ -20,15 +19,12 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
 @RequestMapping(InterviewController.INTERVIEWS_ENDPOINT)
 public class InterviewController {
 
     public static final String INTERVIEWS_ENDPOINT = "/api/v1/interviews";
     public static final String ID = "/{id}";
-    public static final String CREATING_INTERVIEW = "Creating interview: {}";
-    public static final String GETTING_INTERVIEW_WITH_ID_FOR_USER = "Getting interview with id: {} for user: {}";
     private final InterviewDtoMapper interviewDtoMapper;
     private final InterviewServiceI interviewService;
     private final UserServiceI userService;
@@ -43,7 +39,6 @@ public class InterviewController {
     @GetMapping(ID)
     public InterviewDto getInterview(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
         User user = userService.findByUsername(currentUser.getUsername());
-        log.info(GETTING_INTERVIEW_WITH_ID_FOR_USER, id, user);
         Interview interview = interviewService.findByIdAndUserId(id, user.getId());
         return interviewDtoMapper.toInterviewDto(interview);
     }
@@ -59,7 +54,6 @@ public class InterviewController {
         User currentUser = userService.findByUsername(authentication.getName());
         Interview interview = interviewDtoMapper.toInterview(interviewDto);
         interview.setUser(currentUser);
-        log.info(CREATING_INTERVIEW, interview);
         Interview createdInterview = interviewService.create(interview);
         InterviewDto createdInterviewDto = interviewDtoMapper.toInterviewDto(createdInterview);
 

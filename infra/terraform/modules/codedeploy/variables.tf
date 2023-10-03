@@ -18,8 +18,3 @@ variable "target_group_name" {
   description   = "A target group name of a load balancer"
   type          = string
 }
-
-variable "autoscaling_group_name" {
-  description   = "An autoscaling group name"
-  type          = string
-}

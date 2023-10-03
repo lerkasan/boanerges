@@ -11,8 +11,7 @@ jobs:
 
   deploy:
     name: Deploy to AWS EC2
-    if: (github.ref == 'refs/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
-#    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # GitHub OIDC Token
@@ -49,8 +48,7 @@ jobs:
 
       - name: Create Deployment at AWS CodeDeploy
         id: codedeploy
-        if: (github.ref == 'refs/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
-#        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: |
           deployment_id=$(aws deploy create-deployment --application-name ${{ vars.APPLICATION_NAME }} --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} --github-location repository=$GITHUB_REPOSITORY,commitId=$GITHUB_SHA --ignore-application-stop-failures --query "deploymentId" --output text --no-paginate)
           echo deployment_id=$deployment_id >> "$GITHUB_OUTPUT"
