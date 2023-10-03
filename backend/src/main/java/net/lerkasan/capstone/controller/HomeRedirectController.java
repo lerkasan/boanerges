@@ -13,33 +13,15 @@ import java.net.URI;
 @RequestMapping("/")
 public class HomeRedirectController {
 
-//    public static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
-
-//    @GetMapping("/")
-//    @ResponseStatus(HttpStatus.PERMANENT_REDIRECT)
-//    public ResponseEntity<Void> getBooks() {
-//
-//        return ResponseEntity
-//                .status(HttpStatus.PERMANENT_REDIRECT)
-//                .location(URI.create(HTTP_LOCALHOST_8080))
-//                .build();
-//    }
+    public static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 
     @GetMapping("/")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> homeHealthCheck() {
+    @ResponseStatus(HttpStatus.PERMANENT_REDIRECT)
+    public ResponseEntity<Void> getBooks() {
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
-    }
-
-    @GetMapping("/api/health")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> healthCheck() {
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.PERMANENT_REDIRECT)
+                .location(URI.create(HTTP_LOCALHOST_8080))
                 .build();
     }
 }

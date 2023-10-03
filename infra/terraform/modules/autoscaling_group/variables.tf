@@ -127,10 +127,10 @@ variable "vpc_id" {
 
 # ---------------- CodeDeploy parameters -------------------
 
-#variable "codedeploy_deployment_group_arn" {
-#  description = "ARN of a CodeDeploy deployment group"
-#  type        = string
-#}
+variable "codedeploy_deployment_group_arn" {
+  description = "ARN of a CodeDeploy deployment group"
+  type        = string
+}
 
 # ---------------- SSM parameters -------------------
 
@@ -166,27 +166,12 @@ variable "ec2_sg_id" {
   type        = string
 }
 
-#variable "frontend_sg_id" {
-#  description = "Id of the frontend security group for EC2 instance"  #  for bridge network mode of task definition
-#  type        = string
-#}
-#
-#variable "backend_sg_id" {
-#  description = "Id of the backend security group for EC2 instance"  # for bridge network mode of task definition
-#  type        = string
-#}
-
 variable "ec2_connect_endpoint_sg_id" {
   description = "Id of the security group for EC2 instance connect endpoint"
   type        = string
 }
 
-#variable "alb_target_group_arn" {
-#  description = "A target group arn of a load balancer"
-#  type        = string
-#}
-
-variable "ecs_cluster_name" {
-  description = "ECS cluster name"
+variable "alb_target_group_arn" {
+  description = "A target group arn of a load balancer"
   type        = string
 }

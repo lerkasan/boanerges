@@ -4,16 +4,7 @@ server {
     listen 80 default_server;
     listen [::]:80 ipv6only=on default_server;
     server_name _;
-
-    # deny all;
-
-    if ($http_user_agent ~* (ELB-HealthChecker/2.0)) {
-        return 200;
-    }
-
-    if ($http_user_agent !~* (ELB-HealthChecker/2.0)) {
-        return 403;
-    }
+    deny all;
 }
 
 server {
@@ -78,13 +69,13 @@ server {
 
 
     # Backend
-#    location /api/ {
-#        proxy_pass http://backend:8080/api/;
-#        proxy_redirect off;
-#        autoindex off;
-#
-#        limit_except GET HEAD POST PUT DELETE { deny all; }
-#    }
+    location /api/ {
+        proxy_pass http://backend:8080/api/;
+        proxy_redirect off;
+        autoindex off;
+
+        limit_except GET HEAD POST PUT DELETE { deny all; }
+    }
 
     # Frontend
     location / {

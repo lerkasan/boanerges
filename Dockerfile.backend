@@ -23,8 +23,7 @@ RUN mkdir /app &&  \
     adduser --disabled-password --shell /usr/sbin/nologin --ingroup javauser javauser && \
     chown -R javauser:javauser /app && \
     mkdir -p /var/lib/tomcat/logs && \
-    chown -R javauser:javauser /var/lib/tomcat && \
-    apk add curl
+    chown -R javauser:javauser /var/lib/tomcat
 
 VOLUME ["/var/lib/tomcat"]
 

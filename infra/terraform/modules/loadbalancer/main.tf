@@ -15,13 +15,11 @@ resource "aws_lb" "app" {
   }
 }
 
-resource "aws_lb_target_group" "frontend" {
-  name        = join("-", [var.project_name, "-frontend-tg"])
-  port        = local.http_port
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-#  target_type = "instance"  # compatible with network_mode="bridge" of aws_ecs_task_definition resource
-  target_type = "ip"  # compatible with network_mode="awsvpc" of aws_ecs_task_definition resource
+resource "aws_lb_target_group" "app" {
+  name     = join("-", [var.project_name, "-app-tg"])
+  port     = local.http_port
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
   deregistration_delay = 300
 
   health_check {
@@ -40,39 +38,7 @@ resource "aws_lb_target_group" "frontend" {
   }
 
   tags = {
-    Name        = join("_", [var.project_name, "_frontend_tg"])
-    terraform   = "true"
-    environment = var.environment
-    project     = var.project_name
-  }
-}
-
-resource "aws_lb_target_group" "backend" {
-  name        = join("-", [var.project_name, "-backend-tg"])
-  port        = local.backend_http_port
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-#  target_type = "instance"   # compatible with network_mode="bridge" of aws_ecs_task_definition resource
-  target_type = "ip"          # compatible with network_mode="awsvpc" of aws_ecs_task_definition resource
-  deregistration_delay = 300
-
-  health_check {
-    healthy_threshold   = 3
-    interval            = 60
-    matcher             = "200"
-    path                = "/api/health"
-    protocol            = "HTTP"
-    timeout             = 30
-    unhealthy_threshold = 5
-  }
-
-  stickiness {
-    type            = "lb_cookie"
-    cookie_duration = 86400  // 1 day in seconds
-  }
-
-  tags = {
-    Name        = join("_", [var.project_name, "_backend_tg"])
+    Name        = join("_", [var.project_name, "_app_tg"])
     terraform   = "true"
     environment = var.environment
     project     = var.project_name
@@ -121,40 +87,11 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.frontend.arn
+    target_group_arn = aws_lb_target_group.app.arn
   }
 
   tags = {
     Name        = join("_", [var.project_name, "_app_lb_listener"])
-    terraform   = "true"
-    environment = var.environment
-    project     = var.project_name
-  }
-}
-
-resource "aws_lb_listener_rule" "backend" {
-  listener_arn = aws_lb_listener.https.arn
-  priority     = 100
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.backend.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/api/*"]
-    }
-  }
-
-  condition {
-    host_header {
-      values = ["lerkasan.net"]
-    }
-  }
-
-  tags = {
-    Name        = join("_", [var.project_name, "_app_lb_listener_rule"])
     terraform   = "true"
     environment = var.environment
     project     = var.project_name
@@ -170,8 +107,7 @@ data "aws_acm_certificate" "lerkasan_net" {
 }
 
 locals {
-  http_port  = 80
+  http_port = 80
   https_port = 443
-  backend_http_port = 8080
   availability_zones = [for az_letter in var.az_letters : format("%s%s", var.aws_region, az_letter)]
 }

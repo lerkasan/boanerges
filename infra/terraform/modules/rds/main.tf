@@ -78,7 +78,7 @@ resource "aws_kms_grant" "decrypt_access_for_ec2" {
 }
 
 resource "aws_ssm_parameter" "database_host" {
-  name        = join("_", [upper(var.project_name), "DB_HOST"])
+  name        = join("_", [var.project_name, "database_host"])
   description = "Demo database host"
   type        = "SecureString"
   key_id      = aws_kms_key.ssm_param_encrypt_key.id
@@ -93,7 +93,7 @@ resource "aws_ssm_parameter" "database_host" {
 }
 
 resource "aws_ssm_parameter" "database_name" {
-  name        = join("_", [upper(var.project_name), "DB_NAME"])
+  name        = join("_", [var.project_name, "database_name"])
   description = "Demo database name"
   type        = "SecureString"
   key_id      = aws_kms_key.ssm_param_encrypt_key.id
@@ -108,7 +108,7 @@ resource "aws_ssm_parameter" "database_name" {
 }
 
 resource "aws_ssm_parameter" "database_username" {
-  name        = join("_", [upper(var.project_name), "DB_USERNAME"])
+  name        = join("_", [var.project_name, "database_username"])
   description = "Demo database username"
   type        = "SecureString"
   key_id      = aws_kms_key.ssm_param_encrypt_key.id
@@ -123,7 +123,7 @@ resource "aws_ssm_parameter" "database_username" {
 }
 
 resource "aws_ssm_parameter" "database_password" {
-  name        = join("_", [upper(var.project_name), "DB_PASSWORD"])
+  name        = join("_", [var.project_name, "database_password"])
   description = "Demo database password"
   type        = "SecureString"
   key_id      = aws_kms_key.ssm_param_encrypt_key.id

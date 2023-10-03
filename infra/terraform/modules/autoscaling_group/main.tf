@@ -33,45 +33,19 @@
 
 resource "aws_autoscaling_group" "appserver" {
   name                      = join("_", [var.project_name, "_autoscaling_group"])
-  max_size                  = 4
-  min_size                  = 2 # 2
+  max_size                  = 2
+  min_size                  = 2
   health_check_grace_period = 1500
   health_check_type         = "ELB"
-  desired_capacity          = 2 # 2
-#  target_group_arns         = [ var.alb_target_group_arn ]
+  desired_capacity          = 2
+  target_group_arns         = [ var.alb_target_group_arn ]
   vpc_zone_identifier       = var.private_subnets_ids
-
-  protect_from_scale_in     = true   #  To enable managed termination protection for a capacity provider, the Auto Scaling group must have instance protection from scale in enabled
 
 #  default_instance_warmup     = 300
 
-  default_cooldown          = 300
-
-  enabled_metrics = [
-    "GroupMinSize",
-    "GroupMaxSize",
-    "GroupDesiredCapacity",
-    "GroupInServiceInstances",
-    "GroupPendingInstances",
-    "GroupStandbyInstances",
-    "GroupTerminatingInstances",
-    "GroupTotalInstances"
-  ]
-
   launch_template {
-    id      = aws_launch_template.ecs_node.id
+    id      = aws_launch_template.appserver.id
     version = "$Latest"
-  }
-
-  instance_refresh {
-    strategy = "Rolling"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-
-    # Optional: Allow external changes without Terraform plan difference
-    ignore_changes = [ desired_capacity ]
   }
 
   timeouts {
@@ -101,34 +75,16 @@ resource "aws_autoscaling_group" "appserver" {
     value               = var.project_name
     propagate_at_launch = true
   }
-
-  tag {
-    key                 = "AmazonECSManaged"
-    value               = true
-    propagate_at_launch = true
-  }
-}
-
-data "template_file" "ecs_node_user_data" {
-  template = file("${path.module}/templates/ecs_userdata.sh")
-
-  vars = {
-    ecs_cluster_name = var.ecs_cluster_name
-  }
 }
 
 
-resource "aws_launch_template" "ecs_node" {
-  name                        = join("_", [var.project_name, "_ecs_node"])
+resource "aws_launch_template" "appserver" {
+  name                        = join("_", [var.project_name, "_appserver"])
 
-#  image_id                    = data.aws_ami.amazon_linux_2023.id
-#  image_id                    = data.aws_ami.amazon_linux2.id
   image_id                    = data.aws_ami.ubuntu.id
   instance_type               = var.ec2_instance_type
-  user_data                   = base64encode(data.template_file.ecs_node_user_data.rendered)
-#  user_data                   = data.cloudinit_config.user_data.rendered
+  user_data                   = data.cloudinit_config.user_data.rendered
   key_name                    = var.appserver_private_ssh_key_name
-#  vpc_security_group_ids      = [ var.ec2_sg_id, var.frontend_sg_id, var.backend_sg_id ]   # for bridge network mode of task definition
   vpc_security_group_ids      = [ var.ec2_sg_id ]
 
   monitoring {
@@ -180,10 +136,7 @@ data "aws_iam_policy_document" "assume_role_ec2" {
     actions       = [ "sts:AssumeRole" ]
     principals {
       type        = "Service"
-      identifiers = [
-        "ec2.amazonaws.com",
-        "ecs.amazonaws.com"
-      ]
+      identifiers = [ "ec2.amazonaws.com" ]
     }
   }
 }
@@ -193,140 +146,71 @@ resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" {
+resource "aws_iam_role_policy_attachment" "GetDeploymentAndGetSSMParameter" {
   role       = aws_iam_role.appserver_iam_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+  policy_arn = aws_iam_policy.read_access_to_parameters_and_deployments.arn
 }
 
-#resource "aws_iam_role_policy_attachment" "GetDeploymentAndGetSSMParameter" {
-#  role       = aws_iam_role.appserver_iam_role.name
-#  policy_arn = aws_iam_policy.read_access_to_parameters_and_deployments.arn
-#}
-#
-#resource "aws_iam_policy" "read_access_to_parameters_and_deployments" {
-#  name        = "read-access-to-parameters-and-deployments"
-#  description = "Allow to get deployment information to retrieve a commitId hash"
-#  policy      = data.aws_iam_policy_document.read_access_to_parameters_and_deployments.json
-#}
+resource "aws_iam_policy" "read_access_to_parameters_and_deployments" {
+  name        = "read-access-to-parameters-and-deployments"
+  description = "Allow to get deployment information to retrieve a commitId hash"
+  policy      = data.aws_iam_policy_document.read_access_to_parameters_and_deployments.json
+}
 
-#data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
-##  statement {
-##    sid       = "CodeDeployGetDeployments"
-##    effect    = "Allow"
-##    actions   = [
-##      "codedeploy:GetDeployment",
-##      "codedeploy:ListDeployments"
-##    ]
-##    resources = [ var.codedeploy_deployment_group_arn ]
-##  }
-#
-#  statement {
-#    sid       = "SSMGetParameter"
-#    effect    = "Allow"
-#    actions   = [ "ssm:GetParameter" ]
-#    resources = [
-#      var.ssm_param_db_host_arn,
-#      var.ssm_param_db_name_arn,
-#      var.ssm_param_db_username_arn,
-#      var.ssm_param_db_password_arn
-#    ]
-#  }
-#
-#  statement {
-#    sid       = "KMSDecrypt"
-#    effect    = "Allow"
-#    actions   = [
-#      "kms:Decrypt",
-#      "kms:DescribeKey"
-#    ]
-#    resources = [ var.kms_key_arn ]
-#  }
-#
-#  statement {
-#    sid       = "CloudWatchLogs"
-#    effect    = "Allow"
-#    actions   = [
-#      "logs:CreateLogStream",
-#      "logs:PutLogEvents",
-#      "logs:CreateLogGroup"
-#    ]
-#    resources = [ "*" ]
-#  }
-#}
+data "aws_iam_policy_document" "read_access_to_parameters_and_deployments" {
+  statement {
+    sid       = "CodeDeployGetDeployments"
+    effect    = "Allow"
+    actions   = [
+      "codedeploy:GetDeployment",
+      "codedeploy:ListDeployments"
+    ]
+    resources = [ var.codedeploy_deployment_group_arn ]
+  }
+
+  statement {
+    sid       = "SSMGetParameter"
+    effect    = "Allow"
+    actions   = [ "ssm:GetParameter" ]
+    resources = [
+      var.ssm_param_db_host_arn,
+      var.ssm_param_db_name_arn,
+      var.ssm_param_db_username_arn,
+      var.ssm_param_db_password_arn
+    ]
+  }
+
+  statement {
+    sid       = "KMSDecrypt"
+    effect    = "Allow"
+    actions   = [
+      "kms:Decrypt",
+      "kms:DescribeKey"
+    ]
+    resources = [ var.kms_key_arn ]
+  }
+
+  statement {
+    sid       = "CloudWatchLogs"
+    effect    = "Allow"
+    actions   = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup"
+    ]
+    resources = [ "*" ]
+  }
+}
 
 data "aws_ami" "amazon_linux2" {
   owners      = ["amazon"]
   most_recent = true
 
   filter {
-    name   = "virtualization-type"
-    values = [ var.ami_virtualization ]
-  }
-
-  filter {
-    name   = "architecture"
-    values = [ local.ami_architecture ]
-  }
-
-  filter {
-    name   = "owner-alias"
-    values = ["amazon"]
-  }
-
-  filter {
     name   = "name"
-    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+    values = ["amzn2-ami-hvm-*-x86_64-ebs"]
   }
 }
-
-data "aws_ami" "amazon_linux_2023" {
-  owners      = ["amazon"]
-  most_recent = true
-
-  filter {
-    name   = "virtualization-type"
-    values = [ var.ami_virtualization ]
-  }
-
-  filter {
-    name   = "architecture"
-    values = [ local.ami_architecture ]
-  }
-
-  filter {
-    name   = "owner-alias"
-    values = ["amazon"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-ecs-hvm-*-x86_64"]  # al2023-ami-ecs-hvm-2023.0.20230809-kernel-6.1-x86_64
-#    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]   # amzn2-ami-ecs-hvm-2.0.20230809-x86_64-ebs
-  }
-}
-
-
-#data "aws_ami" "amazon_linux_2" {
-#  most_recent = true
-#
-#  filter {
-#    name   = "virtualization-type"
-#    values = ["hvm"]
-#  }
-#
-#  filter {
-#    name   = "owner-alias"
-#    values = ["amazon"]
-#  }
-#
-#  filter {
-#    name   = "name"
-#    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
-#  }
-#
-#  owners = ["amazon"]
-#}
-
 
 data "aws_ami" "ubuntu" {
   most_recent = true
