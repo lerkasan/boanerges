@@ -1,34 +1,122 @@
-resource "aws_instance" "appserver" {
-  for_each                    = toset(local.availability_zones)
+#resource "aws_instance" "appserver" {
+#  for_each                    = toset(local.availability_zones)
+#
+#  availability_zone           = each.value
+####  subnet_id                   = aws_subnet.private[each.value].id
+#  subnet_id                   = var.private_subnets_ids[index(local.availability_zones, each.value)]
+#  associate_public_ip_address = false
+#  ami                         = data.aws_ami.ubuntu.id
+#  instance_type               = var.ec2_instance_type
+#  user_data                   = data.cloudinit_config.user_data.rendered
+#  key_name                    = var.appserver_private_ssh_key_name
+#  vpc_security_group_ids      = [ var.ec2_sg_id ]
+#  monitoring                  = true
+#  iam_instance_profile        = aws_iam_instance_profile.this.name
+#
+#  root_block_device {
+#    delete_on_termination = true
+#    volume_type           = "gp3"
+#    volume_size           = 10
+#  }
+#
+#tags = {
+#    Name        = join("_", [var.project_name, "_appserver"])
+#    terraform   = "true"
+#    environment = var.environment
+#    project     = var.project_name
+#  }
+#
+#  # Dependency is used to ensure that EC2 instance will have Internet access during userdata execution to be able to install packages
+####  depends_on  = [ aws_internet_gateway.this, aws_nat_gateway.this ]
+#}
 
-  availability_zone           = each.value
-#  subnet_id                   = aws_subnet.private[each.value].id
-  subnet_id                   = var.private_subnets_ids[index(local.availability_zones, each.value)]
-  associate_public_ip_address = false
-  ami                         = data.aws_ami.ubuntu.id
+
+resource "aws_autoscaling_group" "appserver" {
+  name                      = join("_", [var.project_name, "_autoscaling_group"])
+  max_size                  = 2
+  min_size                  = 2
+  health_check_grace_period = 1500
+  health_check_type         = "ELB"
+  desired_capacity          = 2
+  target_group_arns         = [ var.alb_target_group_arn ]
+  vpc_zone_identifier       = var.private_subnets_ids
+
+#  default_instance_warmup     = 300
+
+  launch_template {
+    id      = aws_launch_template.appserver.id
+    version = "$Latest"
+  }
+
+  timeouts {
+    delete = "15m"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = join("_", [var.project_name, "_appserver_autoscaling"])
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "terraform"
+    value               = true
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "environment"
+    value               = var.environment
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "project"
+    value               = var.project_name
+    propagate_at_launch = true
+  }
+}
+
+
+resource "aws_launch_template" "appserver" {
+  name                        = join("_", [var.project_name, "_appserver"])
+
+  image_id                    = data.aws_ami.ubuntu.id
   instance_type               = var.ec2_instance_type
   user_data                   = data.cloudinit_config.user_data.rendered
   key_name                    = var.appserver_private_ssh_key_name
   vpc_security_group_ids      = [ var.ec2_sg_id ]
-  monitoring                  = true
-  iam_instance_profile        = aws_iam_instance_profile.this.name
 
-  root_block_device {
-    delete_on_termination = true
-    volume_type           = "gp3"
-    volume_size           = 10
+  monitoring {
+    enabled = true
   }
 
-tags = {
-    Name        = join("_", [var.project_name, "_appserver"])
-    terraform   = "true"
-    environment = var.environment
-    project     = var.project_name
+  iam_instance_profile {
+    name = aws_iam_instance_profile.this.name
   }
 
-  # Dependency is used to ensure that EC2 instance will have Internet access during userdata execution to be able to install packages
-#  depends_on  = [ aws_internet_gateway.this, aws_nat_gateway.this ]
+#  network_interfaces {
+#    associate_public_ip_address = false
+#  }
+
+  block_device_mappings {
+    device_name = "/dev/sda1"
+
+    ebs {
+      delete_on_termination = true
+      volume_type           = "gp3"
+      volume_size           = 10
+    }
+  }
+
+  tags = {
+      Name        = join("_", [var.project_name, "_appserver"])
+      terraform   = "true"
+      environment = var.environment
+      project     = var.project_name
+    }
 }
+
 
 resource "aws_iam_instance_profile" "this" {
   name = join("_", [var.project_name, "_ec2_profile"])
@@ -221,11 +309,11 @@ data "aws_iam_policy_document" "connect_to_ec2_via_ec2_instance_connect_endpoint
       values   = [local.ssh_port]
     }
 
-    condition {
-      test     = "IpAddress"
-      variable = "ec2-instance-connect:privateIpAddress"
-      values   = [ for az in toset(local.availability_zones) : aws_instance.appserver[az].private_ip]
-    }
+#    condition {
+#      test     = "IpAddress"
+#      variable = "ec2-instance-connect:privateIpAddress"
+#      values   = [ for az in toset(local.availability_zones) : aws_instance.appserver[az].private_ip]
+#    }
   }
 
   statement {

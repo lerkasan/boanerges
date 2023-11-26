@@ -1,5 +1,5 @@
-module "ec2" {
-  source = "./modules/ec2_instance"
+module "autoscaling_group" {
+  source = "./modules/autoscaling_group"
 
   vpc_id                          = module.network.vpc_id
   private_subnets_ids             = module.network.private_subnets_ids
@@ -11,6 +11,7 @@ module "ec2" {
   ssm_param_db_username_arn       = module.rds.ssm_param_db_username_arn
   codedeploy_deployment_group_arn = module.codedeploy.deployment_group_arn
   ec2_connect_endpoint_sg_id      = module.security.ec2_connect_endpoint_sg_id
+  alb_target_group_arn            = module.loadbalancer.target_group_arn
 
   project_name = var.project_name
   environment  = var.environment
@@ -38,7 +39,7 @@ module "loadbalancer" {
 
   vpc_id              = module.network.vpc_id
   public_subnets_ids  = module.network.public_subnets_ids
-  ec2_instances_ids   = module.ec2.ec2_instances_ids
+#  ec2_instances_ids   = module.ec2_template.ec2_instances_ids
   alb_sg_id           = module.security.alb_sg_id
 
   project_name = var.project_name
@@ -53,7 +54,7 @@ module "rds" {
   vpc_id              = module.network.vpc_id
   private_subnets_ids = module.network.private_subnets_ids
   rds_sg_id           = module.security.rds_sg_id
-  iam_role_arn        = module.ec2.iam_role_arn
+  iam_role_arn        = module.autoscaling_group.iam_role_arn
 
   project_name = var.project_name
   environment  = var.environment
@@ -73,7 +74,8 @@ module "rds" {
 module "codedeploy" {
   source = "./modules/codedeploy"
 
-  target_group_name   = module.loadbalancer.target_group_name
+  target_group_name      = module.loadbalancer.target_group_name
+  autoscaling_group_name = module.autoscaling_group.name
 
   project_name = var.project_name
   environment  = var.environment

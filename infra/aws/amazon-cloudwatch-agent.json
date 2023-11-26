@@ -144,6 +144,24 @@
             "timezone": "Local"
           },
           {
+            "file_path": "/var/log/syslog",
+            "log_group_name": "boanerges_/ec2/var/log/syslog",
+            "log_stream_name": "{instance_id}_{hostname}",
+            "timezone": "Local"
+          },
+          {
+            "file_path": "/var/log/auth.log",
+            "log_group_name": "boanerges_/ec2/var/log/auth.log",
+            "log_stream_name": "{instance_id}_{hostname}",
+            "timezone": "Local"
+          },
+          {
+            "file_path": "/var/log/kern.log",
+            "log_group_name": "boanerges_/ec2/var/log/kern.log",
+            "log_stream_name": "{instance_id}_{hostname}",
+            "timezone": "Local"
+          },
+          {
             "file_path": "/var/log/secure",
             "log_group_name": "boanerges_/ec2/var/log/secure",
             "log_stream_name": "{instance_id}_{hostname}",
