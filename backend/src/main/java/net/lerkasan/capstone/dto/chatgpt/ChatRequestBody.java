@@ -1,5 +1,6 @@
 package net.lerkasan.capstone.dto.chatgpt;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -19,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-//@JsonIncludeProperties({ "model", "messages", "temperature", "n", "stream", "presence_penalty", "frequency_penalty" })
+@JsonIncludeProperties({ "model", "messages", "temperature", "n", "stream", "max_tokens", "presence_penalty", "frequency_penalty" })
 public class ChatRequestBody {
 
     public static final String PRESENCE_PENALTY = "presence_penalty";
