@@ -47,6 +47,7 @@ services:
     cap_drop:
       - ALL
     environment:
+      - FRONTEND_URL=http://lerkasan.net
       - DB_HOST
       - DB_PORT=3306
       - DB_NAME

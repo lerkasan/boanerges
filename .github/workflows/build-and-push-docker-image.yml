@@ -6,6 +6,21 @@ on:
       app_part:
         required: true
         type: string
+#      environment:
+#        required: false
+#        type: string
+      backend_host:
+        required: false
+        type: string
+      backend_protocol:
+        required: false
+        type: string
+      app_name:
+        required: false
+        type: string
+      aws_region:
+        required: false
+        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -43,7 +58,24 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: type=sha,format=long
 
-      - name: Build and Push container images
+      - name: Build and Push frontend container images
+        if: ${{ inputs.app_part }} == 'frontend'
+        id: docker_build_and_push
+        uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
+        with:
+          file: Dockerfile.${{ inputs.app_part }}
+          build-args: |
+#            ENVIRONMENT=${{ inputs.environment }}
+#            NODE_ENV=${{ inputs.environment }}
+            VUE_APP_BACKEND_HOST=${{ inputs.backend_host }}
+            VUE_APP_BACKEND_PROTOCOL=${{ inputs.backend_protocol }}
+            VUE_APP_AWS_REGION=${{ inputs.aws_region }}
+            APP_NAME=${{ inputs.app_name }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest,${{ steps.docker_meta.outputs.tags }}
+
+      - name: Build and Push backend container images
+        if: ${{ inputs.app_part }} == 'backend'
         id: docker_build_and_push
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
         with:

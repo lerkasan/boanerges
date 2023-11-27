@@ -1,5 +1,6 @@
 package net.lerkasan.capstone.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +14,18 @@ import java.net.URI;
 @RequestMapping("/")
 public class HomeRedirectController {
 
-    public static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
+    @Value("${frontend.url}")
+    private String FRONTEND_URL;
+//    public static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.PERMANENT_REDIRECT)
-    public ResponseEntity<Void> getBooks() {
+    public ResponseEntity<Void> getFrontendHomePage() {
 
         return ResponseEntity
                 .status(HttpStatus.PERMANENT_REDIRECT)
-                .location(URI.create(HTTP_LOCALHOST_8080))
+                .location(URI.create(FRONTEND_URL))
+//                .location(URI.create(HTTP_LOCALHOST_8080))
                 .build();
     }
 }

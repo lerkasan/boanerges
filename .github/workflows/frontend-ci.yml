@@ -92,6 +92,11 @@ jobs:
     uses: ./.github/workflows/build-and-push-docker-image.yml
     with:
       app_part: frontend
+#      environment: production
+      backend_host: lerkasan.net
+      backend_protocol: https
+      app_name: boanerges
+      aws_region: us-east-1
     secrets: inherit
 
 

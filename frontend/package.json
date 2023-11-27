@@ -1,10 +1,10 @@
 {
-  "name": "helloworld",
+  "name": "boanerges",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "serve:development": "vue-cli-service serve --mode development --port 8080",
+    "serve:development": "vue-cli-service serve --mode development --port 8081",
     "build": "vue-cli-service build",
     "build:development": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",

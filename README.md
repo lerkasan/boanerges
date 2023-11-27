@@ -15,12 +15,14 @@ Finally, the text of the transcribed user's answer is sent back to ChatGPT to be
 
 In order to run the backend part of the project locally, you will need to have AWS account with permissions to access AWS Polly, AWS Transcribe, AWS S3, as well as OPEN AI account, and Deepgram account.
 Additionally, you would need to set up the following environment variables:
+- AWS_REGION
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
 - AWS_STS_ROLE_ARN
 - OPENAI_API_KEY
 - DEEPGRAM_API_KEY
 - DEEPGRAM_PROJECT_ID
+- MYSQL_ROOT_PASSWORD
 - DB_HOST
 - DB_NAME
 - DB_USERNAME
@@ -81,10 +83,20 @@ In order to run the project locally in Docker, you need to have the following de
 - Docker Compose
 
 1. Set up environment variables:
-   - MYSQL_ROOT_PASSWORD
-   - DB_NAME
-   - DB_USERNAME
-   - DB_PASSWORD
+- AWS_REGION
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+- AWS_STS_ROLE_ARN
+- OPENAI_API_KEY
+- DEEPGRAM_API_KEY
+- DEEPGRAM_PROJECT_ID
+- MYSQL_ROOT_PASSWORD
+- DB_HOST
+- DB_NAME
+- DB_USERNAME
+- DB_PASSWORD
+- SMTP_USERNAME
+- SMTP_PASSWORD
    
 _Example:_
 `export MYSQL_ROOT_PASSWORD=myextremelysecurepassword`
