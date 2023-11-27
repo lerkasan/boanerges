@@ -65,8 +65,6 @@ jobs:
         with:
           file: Dockerfile.${{ inputs.app_part }}
           build-args: |
-#            ENVIRONMENT=${{ inputs.environment }}
-#            NODE_ENV=${{ inputs.environment }}
             VUE_APP_BACKEND_HOST=${{ inputs.backend_host }}
             VUE_APP_BACKEND_PROTOCOL=${{ inputs.backend_protocol }}
             VUE_APP_AWS_REGION=${{ inputs.aws_region }}
