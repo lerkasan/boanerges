@@ -92,6 +92,6 @@ jobs:
       - name: Sign the Docker images with GitHub OIDC Token
         env:
 #          DIGEST: ${{ format('steps.docker_build_and_push_{0}.outputs.digest', inputs.app_part) }}
-          DIGEST: ${{ steps[format('docker_build_and_push_{0}', input.environment)]['outputs']['digest'] }}
+          DIGEST: ${{ steps[format('docker_build_and_push_{0}', inputs.app_part)]['outputs']['digest'] }}
           TAGS: ${{ steps.docker_meta.outputs.tags }}
         run: cosign sign --yes "${TAGS}@${DIGEST}"
