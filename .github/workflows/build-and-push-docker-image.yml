@@ -60,7 +60,7 @@ jobs:
 
       - name: Build and Push frontend container images
         if: ${{ inputs.app_part }} == 'frontend'
-        id: docker_build_and_push
+        id: docker_build_and_push_frontend
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
         with:
           file: Dockerfile.${{ inputs.app_part }}
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build and Push backend container images
         if: ${{ inputs.app_part }} == 'backend'
-        id: docker_build_and_push
+        id: docker_build_and_push_backend
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
         with:
           file: Dockerfile.${{ inputs.app_part }}
