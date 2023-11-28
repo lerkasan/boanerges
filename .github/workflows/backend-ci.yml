@@ -125,6 +125,8 @@ jobs:
     uses: ./.github/workflows/build-and-push-docker-image.yml
     with:
       app_part: backend
+      app_name: boanerges
+      app_version: 0.0.1-SNAPSHOT
     secrets: inherit
 #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      PIPELINE_AWS_ACCESS_KEY_ID: ${{ secrets.PIPELINE_AWS_ACCESS_KEY_ID }}

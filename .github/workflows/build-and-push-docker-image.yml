@@ -18,6 +18,9 @@ on:
       app_name:
         required: false
         type: string
+      app_version:
+        required: false
+        type: string
       aws_region:
         required: false
         type: string
@@ -78,6 +81,9 @@ jobs:
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
         with:
           file: Dockerfile.${{ inputs.app_part }}
+          build-args: |
+            APP_NAME=${{ inputs.app_name }}
+            APP_VERSION=${{ inputs.app_version }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest,${{ steps.docker_meta.outputs.tags }}
 

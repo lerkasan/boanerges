@@ -13,8 +13,11 @@ RUN mvn --batch-mode --no-transfer-progress -DskipTests clean package
 
 FROM eclipse-temurin:17-jre-alpine@sha256:dd8238c151293ae6a7c22898ef2f0df2af8a05786aef73ccd3248e73765969ed
 
-ARG APP_NAME=boanerges
-ARG APP_VERSION=0.0.1-SNAPSHOT
+ARG APP_NAME
+ARG APP_VERSION
+
+#ARG APP_NAME=boanerges
+#ARG APP_VERSION=0.0.1-SNAPSHOT
 
 #COPY infra/tomcat_config/chown_tomcat_logs.sh /docker-entrypoint.d/chown_tomcat_logs.sh
 
