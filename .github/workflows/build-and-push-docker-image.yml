@@ -62,7 +62,8 @@ jobs:
           tags: type=sha,format=long
 
       - name: Build and Push frontend container images
-        if: ${{ inputs.app_part }} == 'frontend'
+#        if: ${{ inputs.app_part }} == 'frontend'
+        if: ${{ inputs.app_part == 'frontend' }}
         id: docker_build_and_push_frontend
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
         with:
@@ -76,7 +77,8 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest,${{ steps.docker_meta.outputs.tags }}
 
       - name: Build and Push backend container images
-        if: ${{ inputs.app_part }} == 'backend'
+#        if: ${{ inputs.app_part }} == 'backend'
+        if: ${{ inputs.app_part == 'backend' }}
         id: docker_build_and_push_backend
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825   # v4.1.1
         with:

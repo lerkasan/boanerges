@@ -52,6 +52,9 @@ services:
     build:
       dockerfile:
         Dockerfile.backend
+      args:
+        - APP_NAME=boanerges
+        - APP_VERSION=0.0.1-SNAPSHOT
     container_name: backend
     restart: always
     read_only: true
