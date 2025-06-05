@@ -1,6 +1,4 @@
-Please visit the deployed project at [http://lerkasan.net](http://lerkasan.net)
-
-The project is an interactive system that helps job seekers to practice answering technical interview questions.
+ The project is an interactive system that helps job seekers to practice answering technical interview questions.
 
 The project embraces cutting-edge AI technologies and is built with the following technologies:
 ChatGPT API, AWS Polly and AWS Transcribe. Deepgram Stream API.
@@ -75,8 +73,11 @@ The project was built using the following technologies:
 Project infrastructure:
 ![infrastructure _final.jpg](img%2Finfrastructure%20_final.jpg)
 
+CI/CD:
+![dci-cd.png](img%2Fci-cd.png)
+
 Here is a database schema of the project:
-![database_schema.png](database_schema.png)
+![database_schema.png](img%2Fdatabase_schema.png)
 
 In order to run the project locally in Docker, you need to have the following dependencies installed:
 - Docker
